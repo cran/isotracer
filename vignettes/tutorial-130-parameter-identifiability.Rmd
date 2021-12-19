@@ -1,6 +1,6 @@
 ---
 title: "Testing parameter identifiability"
-date: "2021-09-24"
+date: "2021-12-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -66,14 +66,25 @@ params(mod)
 ```
 
 ```
-##  [1] "eta"                          "lambda_algae.sp1"            
-##  [3] "lambda_algae.sp2"             "lambda_daphnia"              
-##  [5] "lambda_NH4"                   "lambda_NO3"                  
-##  [7] "upsilon_algae.sp1_to_daphnia" "upsilon_algae.sp1_to_NO3"    
-##  [9] "upsilon_algae.sp2_to_daphnia" "upsilon_algae.sp2_to_NO3"    
-## [11] "upsilon_daphnia_to_NH4"       "upsilon_NH4_to_algae.sp1"    
-## [13] "upsilon_NH4_to_algae.sp2"     "upsilon_NO3_to_algae.sp1"    
-## [15] "upsilon_NO3_to_algae.sp2"     "zeta"
+## # A tibble: 16 × 2
+##    in_model                     value
+##    <chr>                        <dbl>
+##  1 eta                             NA
+##  2 lambda_algae.sp1                NA
+##  3 lambda_algae.sp2                NA
+##  4 lambda_daphnia                  NA
+##  5 lambda_NH4                      NA
+##  6 lambda_NO3                      NA
+##  7 upsilon_algae.sp1_to_daphnia    NA
+##  8 upsilon_algae.sp1_to_NO3        NA
+##  9 upsilon_algae.sp2_to_daphnia    NA
+## 10 upsilon_algae.sp2_to_NO3        NA
+## 11 upsilon_daphnia_to_NH4          NA
+## 12 upsilon_NH4_to_algae.sp1        NA
+## 13 upsilon_NH4_to_algae.sp2        NA
+## 14 upsilon_NO3_to_algae.sp1        NA
+## 15 upsilon_NO3_to_algae.sp2        NA
+## 16 zeta                            NA
 ```
 
 Let's assume that the two algae species have different preference for ammonium and nitrate:
@@ -167,7 +178,12 @@ plot(mod)
 
 <img src="figures/z-fig-130-unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
 
-We are ready to run the MCMC fit:
+We are ready to set some reasonable vague priors and run the MCMC fit:
+
+
+```r
+mod <- set_priors(mod, normal_p(0, 6))
+```
 
 
 ```r
@@ -176,14 +192,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-
-```
-## Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-## Running the chains for more iterations may help. See
-## http://mc-stan.org/misc/warnings.html#tail-ess
-```
-
-<img src="figures/z-fig-130-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 
 Notice how spread the posteriors for some parameters are. For example,  compare the shape of the histograms for $\eta$ and for $\upsilon_{\textrm{daphnia} \leftarrow \textrm{algae.sp1}}$: the shape of the first one is quite concentrated around its median, while the second one is more spread over the posterior range (we are considering here the relative histogram shapes, not the numerical ranges of the posteriors).
 
@@ -194,7 +203,7 @@ In addition, the chains for the uptake rates from nutrients to the algae species
 mcmc_heatmap(run)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
 
 We have low identifiability for those parameters: many combinations of their values are plausible, but the model does not have enough information to decide which between them. In this particular example, one way to break those chain correlations is to have an experimental design where the nutrient sources are marked in different proportions.
 
@@ -222,7 +231,7 @@ proj <- mod_impr %>% set_obs(NULL) %>% project(end = 10)
 plot(proj)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
 
 Nice! Notice how the trajectories for the proportions of marked tracer differ between algae species with those improved initial conditions, compared to what we had before.
 
@@ -242,7 +251,7 @@ mod_impr <- mod_impr %>% set_obs(spl, comp = "comp", size = "size", prop = "prop
 plot(mod_impr)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
 
 We are ready to run the MCMC fit:
 
@@ -253,7 +262,7 @@ plot(run_impr)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
 
 The uncertainty in the posteriors of the uptake rates seem to have decreased a lot. Let's double-check with a heatmap:
 
@@ -262,7 +271,7 @@ The uncertainty in the posteriors of the uptake rates seem to have decreased a l
 mcmc_heatmap(run_impr)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
 
 This is much better than before: now we can identify most of the parameters without problem.
 

@@ -12,10 +12,10 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 
-RcppExport SEXP _rcpp_module_boot_stan_fit4networkModelMugen_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4networkModel_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rcpp_module_boot_stan_fit4networkModelMugen_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4networkModelMugen_mod, 0},
+    {"_rcpp_module_boot_stan_fit4networkModel_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4networkModel_mod, 0},
     {NULL, NULL, 0}
 };
 

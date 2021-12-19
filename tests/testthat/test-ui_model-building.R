@@ -348,20 +348,28 @@ test_that("set_prior() works", {
                             "upsilon_NH4_to_algae" = 3))
     # Get priors
     p <- priors(x)
-    expect_equal(sort(p[["in_model"]]), sort(params(x)))
+    expect_equal(sort(p[["in_model"]]), sort(params(x, simplify = TRUE)))
+    expect_is(p[["prior"]], "list")
+    ## Check that default is no priors
+    expect_true(all(sapply(p$prior, is.null)))
+    ## Set priors
+    x <- x %>%
+        set_priors(normal_p(0, 5), "", quiet = TRUE)
+    p <- priors(x)
+    expect_equal(sort(p[["in_model"]]), sort(params(x, simplify = TRUE)))
     expect_is(p[["prior"]], "list")
     expect_true(all(sapply(p[["prior"]], class) == "prior"))
     z <- p$prior[[which(p$in_model == "eta")]]
-    expect_true(z$type == "hcauchy")
+    expect_true(z$type == "trun_normal")
     # Change priors
-    capture_output({x <- set_prior(x, uniform(0, 1), "zeta")})
+    capture_output({x <- set_prior(x, uniform_p(0, 1), "zeta")})
     p <- priors(x)
     z <- p$prior[[which(p$in_model == "zeta")]]
     expect_true(z$type == "uniform")
     z <- p$prior[[which(p$in_model == "eta")]]
-    expect_true(z$type == "hcauchy")
+    expect_true(z$type == "trun_normal")
     # Change priors
-    capture_output({x <- set_prior(x, constant(1), "eta", use_regexp = TRUE)})
+    capture_output({x <- set_prior(x, constant_p(1), "eta", use_regexp = TRUE)})
     p <- priors(x)
     z <- p$prior[[which(p$in_model == "zeta")]]
     expect_true(z$type == "constant")
@@ -420,6 +428,7 @@ test_that("add_covariates() works", {
     p <- priors(m)
     expect_is(p, c("tbl_df", "tbl", "data.frame"))
     expect_equal(dim(p), c(9, 2))
+    expect_true(all(sapply(p$prior, is.null)))
     expect_setequal(p$in_model, c("eta", "lambda_algae", "lambda_daphnia",
                                   "lambda_NH4", "upsilon_algae_to_daphnia",
                                   "upsilon_daphnia_to_NH4",

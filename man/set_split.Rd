@@ -18,7 +18,8 @@ update all rows.}
 A \code{networkModel} object.
 }
 \description{
-Flag some network compartments as being split compartments
+This function automatically adds a default prior (uniform on [0,1]) for the
+active portion of split compartments.
 }
 \examples{
 library(magrittr)

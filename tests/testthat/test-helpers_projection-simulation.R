@@ -3,11 +3,11 @@
 test_that("potential_steady_state() works", {
     # No split, no steady state, no lambdas
     m <- aquarium_mod
-    m <- set_prior(m, constant(0), "lambda", quiet = TRUE)
+    m <- set_prior(m, constant_p(0), "lambda", quiet = TRUE)
     m <- set_params(m, sample_params(m))
     expect_true(potential_steady_state(m))
     # One non-zero lambda
-    m <- set_prior(m, hcauchy(1), "lambda_NH4", quiet = TRUE)
+    m <- set_prior(m, hcauchy_p(1), "lambda_NH4", quiet = TRUE)
     m <- set_params(m, sample_params(m))
     expect_false(potential_steady_state(m))
     # Split, steady state, non-zero lambdas
@@ -20,7 +20,7 @@ test_that("potential_steady_state() works", {
 
 test_that("calculate_steady_state_one_row() works for no steady state source, no split", {
     m <- aquarium_mod
-    m <- set_prior(m, constant(0), "lambda", quiet = TRUE)
+    m <- set_prior(m, constant_p(0), "lambda", quiet = TRUE)
     params <- c(eta = 0.142493300983702, lambda_algae = 0, lambda_daphnia = 0, 
                 lambda_NH4 = 0, upsilon_algae_to_daphnia = 7.5051588290849e-05, 
                 upsilon_daphnia_to_NH4 = 0.076850872955939, upsilon_NH4_to_algae = 0.172877125083978, 

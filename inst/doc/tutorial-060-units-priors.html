@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2021-09-24" />
+<meta name="date" content="2021-12-18" />
 
 <title>Units and priors</title>
 
@@ -110,7 +110,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Units and priors</h1>
-<h4 class="date">2021-09-24</h4>
+<h4 class="date">2021-12-18</h4>
 
 
 
@@ -197,9 +197,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="choosing-priors" class="section level2">
 <h2>Choosing priors</h2>
 <p>Once we understand what the physical units of each parameter are, we can make sensible choices for priors.</p>
-<p>For <strong>uptake and loss rates</strong>, half-Cauchy priors are reasonable choices since they allow for any positive value but gives more weight to smaller values and can be scaled by their median. For example, if we consider a stream ecosystem for which the time data was given in days, allowing for 25% of a compartment biomass to be renewed every day is already pretty generous, so a half-Cauchy with scale 0.25 is a slightly informative but reasonable prior.</p>
+<p>For <strong>uptake and loss rates</strong>, normal priors centered at 0 are reasonable choices since they allow for any positive value but gives more weight to smaller values and can be scaled by their standard deviation. For example, if we consider a stream ecosystem for which the time data was given in days, allowing for 25% of a compartment biomass to be renewed every day is already pretty generous, so a normal prior with standard deviation 1 is a slightly informative but still very permissive prior.</p>
+<div class="alert-primary" role="alert">
+<p>For a normal prior centered at 0 (and given that priors are truncated at 0 for rates in <code>isotracer</code>), about 68% of the probability mass is located between 0 and one standard deviation, and about 95% of the probability mass is between 0 and two standard deviations.</p>
+<p>For example, for a prior <code>normal_p(0, 5)</code>:</p>
+<ul>
+<li>68% of the prior probability mass is within [0,5] (one sigma).</li>
+<li>95% of the prior probability mass is within [0,10] (two sigmas).</li>
+<li>99.7% of the prior probability mass is within [0,15] (three sigmas).</li>
+</ul>
+</div>
 <p>For <strong>active portions</strong>, beta priors can be used if the user has any preliminary knowledge about expected active portions, but since the interval is bounded on <span class="math inline">\(\left[0;1\right]\)</span> a uniform prior is proper and acceptable.</p>
-<p>For <strong>coefficients of variation</strong>, half-Cauchy priors are again a reasonable choice. For example, a half-Cauchy with median 0.5 is not very informative but gives more weight to coefficients of variation below 50%.</p>
+<p>For <strong>coefficients of variation</strong>, normal priors are again a reasonable choice. For example, a normal prior <code>normal_p(0, 2)</code> with standard deviation 2 is not very informative but gives more weight to coefficients of variation below 200%.</p>
 </div>
 <div id="setting-priors" class="section level2">
 <h2>Setting priors</h2>
@@ -209,80 +218,68 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 mod &lt;-<span class="st"> </span><span class="kw">new_networkModel</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_topo</span>(<span class="st">&quot;NH4 -&gt; algae -&gt; daphnia -&gt; NH4&quot;</span>)</code></pre></div>
 <p>What are the parameters of the model?</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">params</span>(mod)</code></pre></div>
-<pre><code>## [1] &quot;eta&quot;                      &quot;lambda_algae&quot;             &quot;lambda_daphnia&quot;          
-## [4] &quot;lambda_NH4&quot;               &quot;upsilon_algae_to_daphnia&quot; &quot;upsilon_daphnia_to_NH4&quot;  
-## [7] &quot;upsilon_NH4_to_algae&quot;     &quot;zeta&quot;</code></pre>
-<p>What are the default priors used?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">priors</span>(mod)</code></pre></div>
 <pre><code>## # A tibble: 8 × 2
-##   in_model                 prior                
-##   &lt;chr&gt;                    &lt;list&gt;               
-## 1 eta                      &lt;hcauchy (scale=0.1)&gt;
-## 2 lambda_algae             &lt;hcauchy (scale=0.1)&gt;
-## 3 lambda_daphnia           &lt;hcauchy (scale=0.1)&gt;
-## 4 lambda_NH4               &lt;hcauchy (scale=0.1)&gt;
-## 5 upsilon_algae_to_daphnia &lt;hcauchy (scale=0.1)&gt;
-## 6 upsilon_daphnia_to_NH4   &lt;hcauchy (scale=0.1)&gt;
-## 7 upsilon_NH4_to_algae     &lt;hcauchy (scale=0.1)&gt;
-## 8 zeta                     &lt;hcauchy (scale=0.1)&gt;</code></pre>
-<p>By default, all parameters are given a half-Cauchy prior defined on <span class="math inline">\(\left[0;+\infty\right[\)</span>, with a scale of 0.1 (for a positive half-Cauchy prior, the scale is the median).</p>
+##   in_model                 value
+##   &lt;chr&gt;                    &lt;dbl&gt;
+## 1 eta                         NA
+## 2 lambda_algae                NA
+## 3 lambda_daphnia              NA
+## 4 lambda_NH4                  NA
+## 5 upsilon_algae_to_daphnia    NA
+## 6 upsilon_daphnia_to_NH4      NA
+## 7 upsilon_NH4_to_algae        NA
+## 8 zeta                        NA</code></pre>
 <p>The priors available in <strong>isotracer</strong> are:</p>
 <ul>
-<li><code>constant(value)</code>: This is a special prior, where the parameter value is actually fixed to a constant value given by the user.</li>
-<li><code>hcauchy(scale)</code>: The half-Cauchy prior we mentioned earlier, with <code>hcauchy(0.1)</code> being the default prior.</li>
-<li><code>uniform(min, max)</code>: A uniform prior.</li>
-<li><code>scaled_beta(alpha, beta, scale)</code>: A scaled Beta prior. This prior is basically a regular Beta prior with parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>, which is then stretched so that it is defined on <span class="math inline">\(\left[0;\textrm{scale}\right]\)</span>. A <code>scaled_beta(alpha, beta, 1)</code> is thus a regular Beta prior defined on <span class="math inline">\(\left[0;1\right]\)</span>. Another way to see it is that if a random variable <span class="math inline">\(X\)</span> follows a scaled Beta distribution with parameters <code>(alpha, beta, scale)</code> then <span class="math inline">\(X\)</span>/<code>scale</code> follows a Beta distribution with parameters <code>(alpha, beta)</code>.</li>
+<li><code>constant_p(value)</code>: This is a special prior, where the parameter value is actually fixed to a constant value given by the user.</li>
+<li><code>uniform_p(min, max)</code>: A uniform prior.</li>
+<li><code>hcauchy_p(scale)</code>: The half-Cauchy prior we mentioned earlier, with <code>hcauchy_p(0.1)</code> being the default prior.</li>
+<li><code>scaled_beta_p(alpha, beta, scale)</code>: A scaled Beta prior. This prior is basically a regular Beta prior with parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>, which is then stretched so that it is defined on <span class="math inline">\(\left[0;\textrm{scale}\right]\)</span>. A <code>scaled_beta(alpha, beta, 1)</code> is thus a regular Beta prior defined on <span class="math inline">\(\left[0;1\right]\)</span>. Another way to see it is that if a random variable <span class="math inline">\(X\)</span> follows a scaled Beta distribution with parameters <code>(alpha, beta, scale)</code> then <span class="math inline">\(X\)</span>/<code>scale</code> follows a Beta distribution with parameters <code>(alpha, beta)</code>.</li>
+<li><code>exponential_p(lambda)</code>: An exponential prior with rate = <code>lambda</code>.</li>
+<li><code>gamma_p(alpha, beta)</code>: A gamma prior with shape = <code>alpha</code> and rate = <code>beta</code>.</li>
 </ul>
-<p>Priors of a network model are set using the <code>set_prior()</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span>mod <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_prior</span>(<span class="kw">uniform</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="st">&quot;zeta&quot;</span>)</code></pre></div>
-<pre><code>## Prior modified for parameter(s): 
-##   - zeta</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">priors</span>(mod)</code></pre></div>
+<p>Priors of a network model are set using the <code>set_priors()</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span>mod <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_priors</span>(<span class="kw">uniform_p</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="st">&quot;zeta&quot;</span>)
+<span class="kw">priors</span>(mod)</code></pre></div>
 <pre><code>## # A tibble: 8 × 2
-##   in_model                 prior                   
-##   &lt;chr&gt;                    &lt;list&gt;                  
-## 1 eta                      &lt;hcauchy (scale=0.1)&gt;   
-## 2 lambda_algae             &lt;hcauchy (scale=0.1)&gt;   
-## 3 lambda_daphnia           &lt;hcauchy (scale=0.1)&gt;   
-## 4 lambda_NH4               &lt;hcauchy (scale=0.1)&gt;   
-## 5 upsilon_algae_to_daphnia &lt;hcauchy (scale=0.1)&gt;   
-## 6 upsilon_daphnia_to_NH4   &lt;hcauchy (scale=0.1)&gt;   
-## 7 upsilon_NH4_to_algae     &lt;hcauchy (scale=0.1)&gt;   
-## 8 zeta                     &lt;uniform (min=0,max=10)&gt;</code></pre>
-<p>Note that by default <code>set_prior()</code> assigns priors to all parameters that match the name provided:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span>mod <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_prior</span>(<span class="kw">scaled_beta</span>(<span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">5</span>), <span class="st">&quot;lambda&quot;</span>)</code></pre></div>
-<pre><code>## Prior modified for parameter(s): 
-##   - lambda_algae
-##   - lambda_daphnia
-##   - lambda_NH4</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">priors</span>(mod)</code></pre></div>
+##   in_model                 prior                  
+##   &lt;chr&gt;                    &lt;list&gt;                 
+## 1 eta                      &lt;NULL&gt;                 
+## 2 lambda_algae             &lt;NULL&gt;                 
+## 3 lambda_daphnia           &lt;NULL&gt;                 
+## 4 lambda_NH4               &lt;NULL&gt;                 
+## 5 upsilon_algae_to_daphnia &lt;NULL&gt;                 
+## 6 upsilon_daphnia_to_NH4   &lt;NULL&gt;                 
+## 7 upsilon_NH4_to_algae     &lt;NULL&gt;                 
+## 8 zeta                     &lt;uniform(min=0,max=10)&gt;</code></pre>
+<p>Note that by default <code>set_priors()</code> assigns priors to all parameters that match the name provided:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span>mod <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_priors</span>(<span class="kw">scaled_beta_p</span>(<span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">5</span>), <span class="st">&quot;lambda&quot;</span>)
+<span class="kw">priors</span>(mod)</code></pre></div>
 <pre><code>## # A tibble: 8 × 2
-##   in_model                 prior                                 
-##   &lt;chr&gt;                    &lt;list&gt;                                
-## 1 eta                      &lt;hcauchy (scale=0.1)&gt;                 
-## 2 lambda_algae             &lt;scaled_beta (alpha=4,beta=8,scale=5)&gt;
-## 3 lambda_daphnia           &lt;scaled_beta (alpha=4,beta=8,scale=5)&gt;
-## 4 lambda_NH4               &lt;scaled_beta (alpha=4,beta=8,scale=5)&gt;
-## 5 upsilon_algae_to_daphnia &lt;hcauchy (scale=0.1)&gt;                 
-## 6 upsilon_daphnia_to_NH4   &lt;hcauchy (scale=0.1)&gt;                 
-## 7 upsilon_NH4_to_algae     &lt;hcauchy (scale=0.1)&gt;                 
-## 8 zeta                     &lt;uniform (min=0,max=10)&gt;</code></pre>
+##   in_model                 prior                                
+##   &lt;chr&gt;                    &lt;list&gt;                               
+## 1 eta                      &lt;NULL&gt;                               
+## 2 lambda_algae             &lt;scaled_beta(alpha=4,beta=8,scale=5)&gt;
+## 3 lambda_daphnia           &lt;scaled_beta(alpha=4,beta=8,scale=5)&gt;
+## 4 lambda_NH4               &lt;scaled_beta(alpha=4,beta=8,scale=5)&gt;
+## 5 upsilon_algae_to_daphnia &lt;NULL&gt;                               
+## 6 upsilon_daphnia_to_NH4   &lt;NULL&gt;                               
+## 7 upsilon_NH4_to_algae     &lt;NULL&gt;                               
+## 8 zeta                     &lt;uniform(min=0,max=10)&gt;</code></pre>
 <p>If you want to avoid using partial matching, you can use the argument <code>use_regexp = FALSE</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span>mod <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_prior</span>(<span class="kw">constant</span>(<span class="fl">0.2</span>), <span class="st">&quot;eta&quot;</span>, <span class="dt">use_regexp =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<pre><code>## Prior modified for parameter(s): 
-##   - eta</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">priors</span>(mod)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span>mod <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_priors</span>(<span class="kw">constant_p</span>(<span class="fl">0.2</span>), <span class="st">&quot;eta&quot;</span>, <span class="dt">use_regexp =</span> <span class="ot">FALSE</span>)
+<span class="kw">priors</span>(mod)</code></pre></div>
 <pre><code>## # A tibble: 8 × 2
-##   in_model                 prior                                 
-##   &lt;chr&gt;                    &lt;list&gt;                                
-## 1 eta                      &lt;constant (value=0.2)&gt;                
-## 2 lambda_algae             &lt;scaled_beta (alpha=4,beta=8,scale=5)&gt;
-## 3 lambda_daphnia           &lt;scaled_beta (alpha=4,beta=8,scale=5)&gt;
-## 4 lambda_NH4               &lt;scaled_beta (alpha=4,beta=8,scale=5)&gt;
-## 5 upsilon_algae_to_daphnia &lt;hcauchy (scale=0.1)&gt;                 
-## 6 upsilon_daphnia_to_NH4   &lt;hcauchy (scale=0.1)&gt;                 
-## 7 upsilon_NH4_to_algae     &lt;hcauchy (scale=0.1)&gt;                 
-## 8 zeta                     &lt;uniform (min=0,max=10)&gt;</code></pre>
+##   in_model                 prior                                
+##   &lt;chr&gt;                    &lt;list&gt;                               
+## 1 eta                      &lt;constant(value=0.2)&gt;                
+## 2 lambda_algae             &lt;scaled_beta(alpha=4,beta=8,scale=5)&gt;
+## 3 lambda_daphnia           &lt;scaled_beta(alpha=4,beta=8,scale=5)&gt;
+## 4 lambda_NH4               &lt;scaled_beta(alpha=4,beta=8,scale=5)&gt;
+## 5 upsilon_algae_to_daphnia &lt;NULL&gt;                               
+## 6 upsilon_daphnia_to_NH4   &lt;NULL&gt;                               
+## 7 upsilon_NH4_to_algae     &lt;NULL&gt;                               
+## 8 zeta                     &lt;uniform(min=0,max=10)&gt;</code></pre>
 <p>Notice in the last example how <code>eta</code> was affected while <code>zeta</code> was not.</p>
 <nav aria-label="Page navigation">
 <ul class="pagination justify-content-end">

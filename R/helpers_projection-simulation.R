@@ -113,7 +113,7 @@ project_row <- function(nm_row, dt = NULL, grid_size = NULL, at = NULL, end = NU
     dts <- ts$unique_dt
     ### * Get events
     if (is.null(cached_ee)) {
-        events <- encode_events(nmRow, end = end)
+        events <- encode_events(nmRow, end = end, dt = dt, grid_size = grid_size)
     } else {
         events <- cached_ee
     }
@@ -503,11 +503,11 @@ gather_flows <- function(topo, sizes, transfer_mat) {
 #' potential_steady_state <- isotracer:::potential_steady_state
 #' 
 #' m <- aquarium_mod
-#' m <- set_prior(m, constant(0), "lambda")
+#' m <- set_prior(m, constant_p(0), "lambda")
 #' m <- set_params(m, sample_params(m))
 #' potential_steady_state(m)
 #'
-#' m <- set_prior(m, hcauchy(1), "lambda_NH4")
+#' m <- set_prior(m, normal_p(0, 3), "lambda_NH4")
 #' m <- set_params(m, sample_params(m))
 #' potential_steady_state(m)
 #'
@@ -553,7 +553,7 @@ potential_steady_state <- function(x) {
 #' 
 #' # Simple model, no split compartments
 #' m <- aquarium_mod
-#' m <- set_prior(m, constant(0), "lambda")
+#' m <- set_prior(m, constant_p(0), "lambda")
 #' set.seed(4)
 #' m <- set_params(m, sample_params(m))
 #' proj <- project(m, end = 40)

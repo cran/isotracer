@@ -4,14 +4,17 @@
 \alias{prop_family}
 \title{Return the distribution family for observed proportions}
 \usage{
-prop_family(nm)
+prop_family(nm, quiet = FALSE)
 }
 \arguments{
 \item{nm}{A \code{networkModel} object.}
+
+\item{quiet}{Boolean for being quiet about explaining the role of eta
+(default is \code{FALSE}).}
 }
 \value{
 A character string describing the distribution family used to model
-    observed proportions
+    observed proportions.
 }
 \description{
 Return the distribution family for observed proportions

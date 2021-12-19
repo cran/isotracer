@@ -1,6 +1,6 @@
 ---
 title: "Defining pulse or drip events"
-date: "2021-09-24"
+date: "2021-12-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -151,10 +151,10 @@ m
 
 ```
 ## # A tibble: 2 × 6
-##   topology           initial          observations      parameters   group  events   
-##   <list>             <list>           <list>            <list>       <list> <list>   
-## 1 <topology [2 × 2]> <tibble [2 × 3]> <tibble [10 × 4]> <tibble [5 … <chr … <tibble …
-## 2 <topology [2 × 2]> <tibble [2 × 3]> <tibble [9 × 4]>  <tibble [5 … <chr … <tibble …
+##   topology           initial          observations      parameters       group events
+##   <list>             <list>           <list>            <list>           <lis> <list>
+## 1 <topology [2 × 2]> <tibble [2 × 3]> <tibble [10 × 4]> <tibble [5 × 2]> <chr… <tibb…
+## 2 <topology [2 × 2]> <tibble [2 × 3]> <tibble [9 × 4]>  <tibble [5 × 2]> <chr… <tibb…
 ```
 
 ```r
@@ -177,22 +177,23 @@ m$events
 
 ### Running the MCMC
 
-The rest of the model fitting works as usual. The parameters and their default priors are:
+The rest of the model fitting works as usual. We quickly set some reasonable priors for the particular model at hand:
 
 
 ```r
+m <- set_priors(m, normal_p(0, 4), "")
 priors(m)
 ```
 
 ```
 ## # A tibble: 5 × 2
-##   in_model             prior                
-##   <chr>                <list>               
-## 1 eta                  <hcauchy (scale=0.1)>
-## 2 lambda_algae         <hcauchy (scale=0.1)>
-## 3 lambda_NH4           <hcauchy (scale=0.1)>
-## 4 upsilon_NH4_to_algae <hcauchy (scale=0.1)>
-## 5 zeta                 <hcauchy (scale=0.1)>
+##   in_model             prior                     
+##   <chr>                <list>                    
+## 1 eta                  <trun_normal(mean=0,sd=4)>
+## 2 lambda_algae         <trun_normal(mean=0,sd=4)>
+## 3 lambda_NH4           <trun_normal(mean=0,sd=4)>
+## 4 upsilon_NH4_to_algae <trun_normal(mean=0,sd=4)>
+## 5 zeta                 <trun_normal(mean=0,sd=4)>
 ```
 
 We run the MCMC and check the traces:
@@ -417,13 +418,13 @@ priors(m)
 
 ```
 ## # A tibble: 5 × 2
-##   in_model                 prior                
-##   <chr>                    <list>               
-## 1 eta                      <hcauchy (scale=0.1)>
-## 2 lambda_epilithon         <hcauchy (scale=0.1)>
-## 3 lambda_NH4               <hcauchy (scale=0.1)>
-## 4 upsilon_NH4_to_epilithon <hcauchy (scale=0.1)>
-## 5 zeta                     <hcauchy (scale=0.1)>
+##   in_model                 prior 
+##   <chr>                    <list>
+## 1 eta                      <NULL>
+## 2 lambda_epilithon         <NULL>
+## 3 lambda_NH4               <NULL>
+## 4 upsilon_NH4_to_epilithon <NULL>
+## 5 zeta                     <NULL>
 ```
 
 We run the MCMC and check the traces:
@@ -435,6 +436,13 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
+
+```
+## Error in encode_priors(params_nm, priors_nm): One or several parameters are missing a prior.
+## You can list the current model priors with `priors(...)`.
+## You can list the missing model priors with `missing_priors(...)`.
+```
+
 <img src="figures/z-fig-040-unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" style="display: block; margin: auto;" />
 
 Let's have a quick look at the posterior predictive check:
@@ -443,6 +451,11 @@ Let's have a quick look at the posterior predictive check:
 ```r
 predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
+```
+
+
+```
+## Error in project(nm, at = at, dt = dt, grid_size = grid_size, end = end, : !any(is.na(params$value)) is not TRUE
 ```
 
 <img src="figures/z-fig-040-unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" />

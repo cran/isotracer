@@ -1,6 +1,6 @@
 ---
 title: "Units and priors"
-date: "2021-09-24"
+date: "2021-12-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -63,11 +63,23 @@ For $\eta$, several parameterizations are actually implemented in `isotracer` an
 
 Once we understand what the physical units of each parameter are, we can make sensible choices for priors.
 
-For **uptake and loss rates**, half-Cauchy priors are reasonable choices since they allow for any positive value but gives more weight to smaller values and can be scaled by their median. For example, if we consider a stream ecosystem for which the time data was given in days, allowing for 25% of a compartment biomass to be renewed every day is already pretty generous, so a half-Cauchy with scale 0.25 is a slightly informative but reasonable prior.
+For **uptake and loss rates**, normal priors centered at 0 are reasonable choices since they allow for any positive value but gives more weight to smaller values and can be scaled by their standard deviation. For example, if we consider a stream ecosystem for which the time data was given in days, allowing for 25% of a compartment biomass to be renewed every day is already pretty generous, so a normal prior with standard deviation 1 is a slightly informative but still very permissive prior.
+
+<div class="alert-primary" role="alert">
+
+For a normal prior centered at 0 (and given that priors are truncated at 0 for rates in `isotracer`), about 68% of the probability mass is located between 0 and one standard deviation, and about 95% of the probability mass is between 0 and two standard deviations.
+
+For example, for a prior `normal_p(0, 5)`:
+
+- 68% of the prior probability mass is within [0,5] (one sigma).
+- 95% of the prior probability mass is within [0,10] (two sigmas).
+- 99.7% of the prior probability mass is within [0,15] (three sigmas).
+
+</div>
 
 For **active portions**, beta priors can be used if the user has any preliminary knowledge about expected active portions, but since the interval is bounded on $\left[0;1\right]$ a uniform prior is proper and acceptable.
 
-For **coefficients of variation**, half-Cauchy priors are again a reasonable choice. For example, a half-Cauchy with median 0.5 is not very informative but gives more weight to coefficients of variation below 50%.
+For **coefficients of variation**, normal priors are again a reasonable choice. For example, a normal prior `normal_p(0, 2)` with standard deviation 2 is not very informative but gives more weight to coefficients of variation below 200%.
 
 ## Setting priors
 
@@ -88,131 +100,92 @@ params(mod)
 ```
 
 ```
-## [1] "eta"                      "lambda_algae"             "lambda_daphnia"          
-## [4] "lambda_NH4"               "upsilon_algae_to_daphnia" "upsilon_daphnia_to_NH4"  
-## [7] "upsilon_NH4_to_algae"     "zeta"
-```
-
-What are the default priors used?
-
-
-```r
-priors(mod)
-```
-
-```
 ## # A tibble: 8 × 2
-##   in_model                 prior                
-##   <chr>                    <list>               
-## 1 eta                      <hcauchy (scale=0.1)>
-## 2 lambda_algae             <hcauchy (scale=0.1)>
-## 3 lambda_daphnia           <hcauchy (scale=0.1)>
-## 4 lambda_NH4               <hcauchy (scale=0.1)>
-## 5 upsilon_algae_to_daphnia <hcauchy (scale=0.1)>
-## 6 upsilon_daphnia_to_NH4   <hcauchy (scale=0.1)>
-## 7 upsilon_NH4_to_algae     <hcauchy (scale=0.1)>
-## 8 zeta                     <hcauchy (scale=0.1)>
+##   in_model                 value
+##   <chr>                    <dbl>
+## 1 eta                         NA
+## 2 lambda_algae                NA
+## 3 lambda_daphnia              NA
+## 4 lambda_NH4                  NA
+## 5 upsilon_algae_to_daphnia    NA
+## 6 upsilon_daphnia_to_NH4      NA
+## 7 upsilon_NH4_to_algae        NA
+## 8 zeta                        NA
 ```
-
-By default, all parameters are given a half-Cauchy prior defined on $\left[0;+\infty\right[$, with a scale of 0.1 (for a positive half-Cauchy prior, the scale is the median).
 
 The priors available in **isotracer** are:
 
-- `constant(value)`: This is a special prior, where the parameter value is actually fixed to a constant value given by the user.
-- `hcauchy(scale)`: The half-Cauchy prior we mentioned earlier, with `hcauchy(0.1)` being the default prior.
-- `uniform(min, max)`: A uniform prior.
-- `scaled_beta(alpha, beta, scale)`: A scaled Beta prior. This prior is basically a regular Beta prior with parameters $\alpha$ and $\beta$, which is then stretched so that it is defined on $\left[0;\textrm{scale}\right]$. A `scaled_beta(alpha, beta, 1)` is thus a regular Beta prior defined on $\left[0;1\right]$. Another way to see it is that if a random variable $X$ follows a scaled Beta distribution with parameters `(alpha, beta, scale)` then $X$/`scale` follows a Beta distribution with parameters `(alpha, beta)`.
+- `constant_p(value)`: This is a special prior, where the parameter value is actually fixed to a constant value given by the user.
+- `uniform_p(min, max)`: A uniform prior.
+- `hcauchy_p(scale)`: The half-Cauchy prior we mentioned earlier, with `hcauchy_p(0.1)` being the default prior.
+- `scaled_beta_p(alpha, beta, scale)`: A scaled Beta prior. This prior is basically a regular Beta prior with parameters $\alpha$ and $\beta$, which is then stretched so that it is defined on $\left[0;\textrm{scale}\right]$. A `scaled_beta(alpha, beta, 1)` is thus a regular Beta prior defined on $\left[0;1\right]$. Another way to see it is that if a random variable $X$ follows a scaled Beta distribution with parameters `(alpha, beta, scale)` then $X$/`scale` follows a Beta distribution with parameters `(alpha, beta)`.
+- `exponential_p(lambda)`: An exponential prior with rate = `lambda`.
+- `gamma_p(alpha, beta)`: A gamma prior with shape = `alpha` and rate = `beta`.
 
-Priors of a network model are set using the `set_prior()` function:
+Priors of a network model are set using the `set_priors()` function:
 
-
-```r
-mod <- mod %>% set_prior(uniform(0, 10), "zeta")
-```
-
-```
-## Prior modified for parameter(s): 
-##   - zeta
-```
 
 ```r
+mod <- mod %>% set_priors(uniform_p(0, 10), "zeta")
 priors(mod)
 ```
 
 ```
 ## # A tibble: 8 × 2
-##   in_model                 prior                   
-##   <chr>                    <list>                  
-## 1 eta                      <hcauchy (scale=0.1)>   
-## 2 lambda_algae             <hcauchy (scale=0.1)>   
-## 3 lambda_daphnia           <hcauchy (scale=0.1)>   
-## 4 lambda_NH4               <hcauchy (scale=0.1)>   
-## 5 upsilon_algae_to_daphnia <hcauchy (scale=0.1)>   
-## 6 upsilon_daphnia_to_NH4   <hcauchy (scale=0.1)>   
-## 7 upsilon_NH4_to_algae     <hcauchy (scale=0.1)>   
-## 8 zeta                     <uniform (min=0,max=10)>
+##   in_model                 prior                  
+##   <chr>                    <list>                 
+## 1 eta                      <NULL>                 
+## 2 lambda_algae             <NULL>                 
+## 3 lambda_daphnia           <NULL>                 
+## 4 lambda_NH4               <NULL>                 
+## 5 upsilon_algae_to_daphnia <NULL>                 
+## 6 upsilon_daphnia_to_NH4   <NULL>                 
+## 7 upsilon_NH4_to_algae     <NULL>                 
+## 8 zeta                     <uniform(min=0,max=10)>
 ```
 
-Note that by default `set_prior()` assigns priors to all parameters that match the name provided:
+Note that by default `set_priors()` assigns priors to all parameters that match the name provided:
 
 
 ```r
-mod <- mod %>% set_prior(scaled_beta(4, 8, 5), "lambda")
-```
-
-```
-## Prior modified for parameter(s): 
-##   - lambda_algae
-##   - lambda_daphnia
-##   - lambda_NH4
-```
-
-```r
+mod <- mod %>% set_priors(scaled_beta_p(4, 8, 5), "lambda")
 priors(mod)
 ```
 
 ```
 ## # A tibble: 8 × 2
-##   in_model                 prior                                 
-##   <chr>                    <list>                                
-## 1 eta                      <hcauchy (scale=0.1)>                 
-## 2 lambda_algae             <scaled_beta (alpha=4,beta=8,scale=5)>
-## 3 lambda_daphnia           <scaled_beta (alpha=4,beta=8,scale=5)>
-## 4 lambda_NH4               <scaled_beta (alpha=4,beta=8,scale=5)>
-## 5 upsilon_algae_to_daphnia <hcauchy (scale=0.1)>                 
-## 6 upsilon_daphnia_to_NH4   <hcauchy (scale=0.1)>                 
-## 7 upsilon_NH4_to_algae     <hcauchy (scale=0.1)>                 
-## 8 zeta                     <uniform (min=0,max=10)>
+##   in_model                 prior                                
+##   <chr>                    <list>                               
+## 1 eta                      <NULL>                               
+## 2 lambda_algae             <scaled_beta(alpha=4,beta=8,scale=5)>
+## 3 lambda_daphnia           <scaled_beta(alpha=4,beta=8,scale=5)>
+## 4 lambda_NH4               <scaled_beta(alpha=4,beta=8,scale=5)>
+## 5 upsilon_algae_to_daphnia <NULL>                               
+## 6 upsilon_daphnia_to_NH4   <NULL>                               
+## 7 upsilon_NH4_to_algae     <NULL>                               
+## 8 zeta                     <uniform(min=0,max=10)>
 ```
 
 If you want to avoid using partial matching, you can use the argument `use_regexp = FALSE`:
 
 
 ```r
-mod <- mod %>% set_prior(constant(0.2), "eta", use_regexp = FALSE)
-```
-
-```
-## Prior modified for parameter(s): 
-##   - eta
-```
-
-```r
+mod <- mod %>% set_priors(constant_p(0.2), "eta", use_regexp = FALSE)
 priors(mod)
 ```
 
 ```
 ## # A tibble: 8 × 2
-##   in_model                 prior                                 
-##   <chr>                    <list>                                
-## 1 eta                      <constant (value=0.2)>                
-## 2 lambda_algae             <scaled_beta (alpha=4,beta=8,scale=5)>
-## 3 lambda_daphnia           <scaled_beta (alpha=4,beta=8,scale=5)>
-## 4 lambda_NH4               <scaled_beta (alpha=4,beta=8,scale=5)>
-## 5 upsilon_algae_to_daphnia <hcauchy (scale=0.1)>                 
-## 6 upsilon_daphnia_to_NH4   <hcauchy (scale=0.1)>                 
-## 7 upsilon_NH4_to_algae     <hcauchy (scale=0.1)>                 
-## 8 zeta                     <uniform (min=0,max=10)>
+##   in_model                 prior                                
+##   <chr>                    <list>                               
+## 1 eta                      <constant(value=0.2)>                
+## 2 lambda_algae             <scaled_beta(alpha=4,beta=8,scale=5)>
+## 3 lambda_daphnia           <scaled_beta(alpha=4,beta=8,scale=5)>
+## 4 lambda_NH4               <scaled_beta(alpha=4,beta=8,scale=5)>
+## 5 upsilon_algae_to_daphnia <NULL>                               
+## 6 upsilon_daphnia_to_NH4   <NULL>                               
+## 7 upsilon_NH4_to_algae     <NULL>                               
+## 8 zeta                     <uniform(min=0,max=10)>
 ```
 
 Notice in the last example how `eta` was affected while `zeta` was not.

@@ -19,7 +19,7 @@
 #' @keywords internal
 #' @noRd
 
-add_param_mapping <- function(nm) {
+add_param_mapping <- function(nm, use_default = FALSE) {
     # Build canonical mapping
     mapping <- lapply(seq_len(nrow(nm)), function(i) {
         params <- nm_base_params(nm[i, ])
@@ -31,11 +31,17 @@ add_param_mapping <- function(nm) {
     # TODO Check out https://vctrs.r-lib.org/articles/s3-vector.html to make
     # priors better displayed in tibbles.
     priors <- tibble::tibble(in_model = nm_base_params(nm))
-    priors$prior <- lapply(seq_len(nrow(priors)), function(i) {
-        hcauchy(scale = 0.1)
-    })
-    for (i in which(grepl("^portion[.]act_", priors$in_model))) {
-        priors$prior[[i]] <- uniform(0, 1)
+    if (use_default) {
+        priors$prior <- lapply(seq_len(nrow(priors)), function(i) {
+            hcauchy_p(scale = 0.1)
+        })
+        for (i in which(grepl("^portion[.]act_", priors$in_model))) {
+            priors$prior[[i]] <- uniform_p(0, 1)
+        }
+    } else {
+        priors$prior <- lapply(seq_len(nrow(priors)), function(i) {
+            NULL
+        })
     }
     attr(nm, "priors") <- priors
     # Return

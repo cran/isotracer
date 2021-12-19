@@ -19,7 +19,7 @@ sizes. Use it with caution!
 }
 \examples{
 m <- aquarium_mod
-m <- set_prior(m, constant(0), "lambda")
+m <- set_prior(m, constant_p(0), "lambda")
 m <- set_params(m, sample_params(m))
 proj <- project(m, end = 40)
 plot(proj)

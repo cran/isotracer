@@ -71,7 +71,8 @@ predict.networkModel <- function(object, fit, draws = NULL, error.draws = 5,
         rows_time_schemes[[i]] <- nm_row_get_time_scheme(nm_row = nmRow, dt = dt,
                                                          grid_size = grid_size,
                                                          end = end, at = at)
-        rows_encoded_events[[i]] <- encode_events(nmRow, end = end)
+        rows_encoded_events[[i]] <- encode_events(nmRow, dt = dt, grid_size = grid_size,
+                                                  end = end)
     }
     cache[["rows_time_schemes"]] <- rows_time_schemes
     cache[["rows_encoded_events"]] <- rows_encoded_events
@@ -511,7 +512,8 @@ tidy_trajectories <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 6
             rows_time_schemes[[i]] <- nm_row_get_time_scheme(nm_row = nmRow, dt = dt,
                                                              grid_size = grid_size,
                                                              end = end, at = at)
-            rows_encoded_events[[i]] <- encode_events(nmRow, end = end)
+            rows_encoded_events[[i]] <- encode_events(nmRow, end = end, dt = dt,
+                                                      grid_size = grid_size)
         }
         cache[["rows_time_schemes"]] <- rows_time_schemes
         cache[["rows_encoded_events"]] <- rows_encoded_events
@@ -635,7 +637,8 @@ tidy_flows <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 64,
             rows_time_schemes[[i]] <- nm_row_get_time_scheme(nm_row = nmRow, dt = dt,
                                                              grid_size = grid_size,
                                                              end = end, at = at)
-            rows_encoded_events[[i]] <- encode_events(nmRow, end = end)
+            rows_encoded_events[[i]] <- encode_events(nmRow, end = end, dt = dt,
+                                                      grid_size = grid_size)
         }
         cache[["rows_time_schemes"]] <- rows_time_schemes
         cache[["rows_encoded_events"]] <- rows_encoded_events

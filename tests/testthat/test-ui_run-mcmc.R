@@ -34,6 +34,7 @@ test_that("A basic run_mcmc() works", {
     y <- x %>%
         set_obs(z, comp = "species", size = "biomass", prop = "prop15N",
                 time = "time.day")
+    y <- set_priors(y, normal_p(0, 4), "", quiet = TRUE)
     capture_warnings(capture_output({ f <- run_mcmc(y, iter = 10) }))
     expect_is(f, c("networkModelStanfit"))
     capture_warnings(capture_output({ f <- run_mcmc(y, iter = 10,

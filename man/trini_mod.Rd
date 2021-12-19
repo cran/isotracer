@@ -33,7 +33,7 @@ covariates and priors.
 
 It is ready for an MCMC run as shown in the example. Note that it might be a
 good idea to relax the priors for uptake rates from seston to Leptonema
-(e.g. using hcauchy(10)), seston being a compartment that is flowing with
+(e.g. using hcauchy_p(10)), seston being a compartment that is flowing with
 the stream water and that can be replenished from upstream.
 }
 \examples{

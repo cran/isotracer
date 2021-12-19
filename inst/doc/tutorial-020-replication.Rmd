@@ -1,6 +1,6 @@
 ---
 title: "Handling replication"
-date: "2021-09-24"
+date: "2021-12-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -218,7 +218,7 @@ Perfect! Now the model is ready to be run with the MCMC sampler.
 
 ## Running the MCMC
 
-Let's have a look at the model parameters that are going to be estimated during the MCMC run and their default priors:
+Let's have a look at the model parameters that are going to be estimated during the MCMC run and set some reasonable priors:
 
 
 ```r
@@ -227,19 +227,69 @@ priors(m)
 
 ```
 ## # A tibble: 8 × 2
-##   in_model                 prior                
-##   <chr>                    <list>               
-## 1 eta                      <hcauchy (scale=0.1)>
-## 2 lambda_algae             <hcauchy (scale=0.1)>
-## 3 lambda_daphnia           <hcauchy (scale=0.1)>
-## 4 lambda_NH4               <hcauchy (scale=0.1)>
-## 5 upsilon_algae_to_daphnia <hcauchy (scale=0.1)>
-## 6 upsilon_daphnia_to_NH4   <hcauchy (scale=0.1)>
-## 7 upsilon_NH4_to_algae     <hcauchy (scale=0.1)>
-## 8 zeta                     <hcauchy (scale=0.1)>
+##   in_model                 prior 
+##   <chr>                    <list>
+## 1 eta                      <NULL>
+## 2 lambda_algae             <NULL>
+## 3 lambda_daphnia           <NULL>
+## 4 lambda_NH4               <NULL>
+## 5 upsilon_algae_to_daphnia <NULL>
+## 6 upsilon_daphnia_to_NH4   <NULL>
+## 7 upsilon_NH4_to_algae     <NULL>
+## 8 zeta                     <NULL>
 ```
 
-Those priors will be good enough for the tutorial. Note that even though we have two experimental replicates in our dataset, they share the same parameter values in our model. We will learn later how to specify some **covariates** for the parameter estimates (for example when we want to test if a parameter is different between two experimental treatments).
+Time values for the observations were in days, so the `lambda_*` and `upsilon_*` parameters will be rates per day. We wouldn't expect the whole compartments to be renewed within one day, so a normal prior centered at 0 and with a standard deviation of 1 or 2 is probably quite generous already:
+
+
+```r
+m <- set_priors(m, normal_p(0, 2), "lambda|upsilon")
+```
+
+```
+## Prior modified for parameter(s): 
+##   - lambda_algae
+##   - lambda_daphnia
+##   - lambda_NH4
+##   - upsilon_algae_to_daphnia
+##   - upsilon_daphnia_to_NH4
+##   - upsilon_NH4_to_algae
+```
+
+As for `eta` and `zeta`, they represent coefficients of variation for the observed proportions of marked material and compartment sizes, so again `normal_p(0, 2)` is probably fine:
+
+
+```r
+m <- set_priors(m, normal_p(0, 2), "eta")
+```
+
+```
+## Prior modified for parameter(s): 
+##   - eta
+##   - zeta
+```
+
+```r
+priors(m)
+```
+
+```
+## # A tibble: 8 × 2
+##   in_model                 prior                     
+##   <chr>                    <list>                    
+## 1 eta                      <trun_normal(mean=0,sd=2)>
+## 2 lambda_algae             <trun_normal(mean=0,sd=2)>
+## 3 lambda_daphnia           <trun_normal(mean=0,sd=2)>
+## 4 lambda_NH4               <trun_normal(mean=0,sd=2)>
+## 5 upsilon_algae_to_daphnia <trun_normal(mean=0,sd=2)>
+## 6 upsilon_daphnia_to_NH4   <trun_normal(mean=0,sd=2)>
+## 7 upsilon_NH4_to_algae     <trun_normal(mean=0,sd=2)>
+## 8 zeta                     <trun_normal(mean=0,sd=2)>
+```
+
+Those priors will be good enough for the tutorial.
+
+Note that even though we have two experimental replicates in our dataset, they share the same parameter values in our model. We will learn later how to specify some **covariates** for the parameter estimates (for example when we want to test if a parameter is different between two experimental treatments).
 
 Let's run the MCMC sampler:
 
@@ -250,7 +300,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-020-unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" style="display: block; margin: auto;" />
+<img src="figures/z-fig-020-unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
 
 The traces look nice. If we want to check numerically that the convergence is good, we can use the `coda::gelman.diag()` function:
 
@@ -263,14 +313,14 @@ coda::gelman.diag(run)
 ## Potential scale reduction factors:
 ## 
 ##                          Point est. Upper C.I.
-## eta                           1.016       1.04
-## lambda_algae                  1.002       1.01
-## lambda_daphnia                0.999       1.00
-## lambda_NH4                    1.003       1.02
-## upsilon_algae_to_daphnia      1.002       1.01
-## upsilon_daphnia_to_NH4        1.004       1.02
-## upsilon_NH4_to_algae          0.999       1.00
-## zeta                          1.003       1.00
+## eta                            1.01       1.03
+## lambda_algae                   1.00       1.00
+## lambda_daphnia                 1.00       1.00
+## lambda_NH4                     1.00       1.01
+## upsilon_algae_to_daphnia       1.00       1.00
+## upsilon_daphnia_to_NH4         1.00       1.01
+## upsilon_NH4_to_algae           1.00       1.01
+## zeta                           1.00       1.01
 ## 
 ## Multivariate psrf
 ## 
@@ -285,7 +335,7 @@ predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
 
-<img src="figures/z-fig-020-unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" style="display: block; margin: auto;" />
+<img src="figures/z-fig-020-unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" style="display: block; margin: auto;" />
 
 This looks nice! As far as we can tell, our model is compatible with the observed data.
 

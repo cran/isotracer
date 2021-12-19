@@ -11,7 +11,13 @@
 #' @return A list of the \code{networkModel} topologies or, if all topologies
 #'     are identical (or if there is only one) and \code{simplify} is TRUE, a
 #'     single topology (not wrapped into a single-element list).
-#' 
+#'
+#' @examples
+#' aquarium_mod
+#' topo(aquarium_mod)
+#'
+#' trini_mod
+#' topo(trini_mod)
 #' @export
 
 topo <- function(nm, simplify = TRUE) {
@@ -27,9 +33,11 @@ topo <- function(nm, simplify = TRUE) {
 #' Return the distribution family for observed proportions
 #'
 #' @param nm A \code{networkModel} object.
+#' @param quiet Boolean for being quiet about explaining the role of eta
+#'     (default is \code{FALSE}).
 #'
 #' @return A character string describing the distribution family used to model
-#'     observed proportions
+#'     observed proportions.
 #'
 #' @examples
 #' prop_family(aquarium_mod)
@@ -37,8 +45,37 @@ topo <- function(nm, simplify = TRUE) {
 #' 
 #' @export
 
-prop_family <- function(nm) {
-    attr(nm, "prop_family")
+prop_family <- function(nm, quiet = FALSE) {
+    z <- attr(nm, "prop_family")
+    if (!quiet) {
+        describe_z_eta("eta", z)
+    }
+    z
+}
+
+### * size_family()
+
+#' Return the distribution family for observed sizes
+#'
+#' @param nm A \code{networkModel} object.
+#' @param quiet Boolean for being quiet about explaining the role of zeta
+#'     (default is \code{FALSE}).
+#'
+#' @return A character string describing the distribution family used to model
+#'     observed sizes.
+#'
+#' @examples
+#' size_family(aquarium_mod)
+#' size_family(trini_mod)
+#' 
+#' @export
+
+size_family <- function(nm, quiet = FALSE) {
+    z <- attr(nm, "size_family")
+    if (!quiet) {
+        describe_z_eta("zeta", z)
+    }
+    z
 }
 
 ### * groups() method for networkModel
@@ -88,7 +125,7 @@ priors <- function(nm, fix_set_params = FALSE, quiet = FALSE) {
         set_params <- attr(nm, "parameterValues")
         if (!is.null(set_params)) {
             for (i in seq_len(nrow(set_params))) {
-                myPrior <- constant(value = set_params[["value"]][i])
+                myPrior <- constant_p(value = set_params[["value"]][i])
                 nm <- set_prior(nm, myPrior, param = set_params[["parameter"]][i],
                                 use_regexp = FALSE, quiet = quiet)
             }
@@ -98,52 +135,72 @@ priors <- function(nm, fix_set_params = FALSE, quiet = FALSE) {
     return(out)
 }
 
+### * missing_priors()
+
+#' Get a table with parameters which are missing priors
+#'
+#' @param nm A \code{networkModel} object.
+#'
+#' @return A tibble containing the parameters which are missing a prior. If no
+#'     priors are missing, the tibble contains zero row.
+#'
+#' @examples
+#'# Using a subset of the topology from the Trinidad case study
+#' m <- new_networkModel() %>%
+#'   set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph")
+#'
+#' # No prior is set by default
+#' priors(m)
+#'
+#' # Set some priors
+#' m <- set_priors(m, normal_p(0, 10), "lambda")
+#' priors(m)
+#'
+#' # Which parameters are missing a prior?
+#' missing_priors(m)
+#'
+#' @export
+
+missing_priors <- function(nm) {
+    p <- priors(nm)
+    p <- p[sapply(p$prior, is.null), ]
+    return(p)
+}
+
 ### * params()
 
 #' Return the parameters of a network model
 #'
 #' @param nm A \code{networkModel} object.
-#' @param tibble If TRUE, return a tidy tibble with the parameter mapping.
-#' @param expand If TRUE, return a detailed tibble. The "tibble" argument is
-#'     disregarded in this case.
+#' @param simplify If \code{TRUE}, return a vector containing the names of all
+#'     model parameters (default: \code{FALSE}).
 #'
-#' @return A sorted character vector containing the parameters names.
+#' @return A tibble containing the parameter names and their current value (if
+#'     set). If \code{simplify} is \code{TRUE}, only return a sorted character
+#'     vector containing the parameters names.
 #'
 #' @examples
 #' params(aquarium_mod)
 #' params(trini_mod)
+#' params(trini_mod, simplify = TRUE)
 #' 
 #' @export
 
-params <- function(nm, tibble = FALSE, expand = FALSE) {
+params <- function(nm, simplify = FALSE) {
     stopifnot("parameters" %in% colnames(nm))
     params <- dplyr::bind_rows(nm[["parameters"]])
-    if (expand) {
-        if (is.null(nm[["group"]])) {
-            stopifnot(nrow(nm) == 1)
-            return(nm[["parameters"]])
-        }
-        z <- nm[, c("group", "parameters")]
-        z <- tidyr::unnest(z, "parameters")
-        groups <- tibble::as_tibble(do.call(rbind, z[["group"]]))
-        # TODO Check if it would be ok to have a group column named "in_replicate",
-        # "in_model" or "value".
-        stopifnot(!(any(c("in_replicate", "in_model", "value") %in% colnames(groups))))
-        if ("value" %in% colnames(z)) {
-            params <- z[, c("in_replicate", "in_model", "value")]
-        } else {
-            params <- z[, c("in_replicate", "in_model")]
-        }
-        return(cbind(groups, params))
+    if (simplify) {
+        return(sort(unique(params[["in_model"]])))
     }
-    if (tibble) {
-        if (!is.null(nm[["group"]])) {
-            return(nm[, c("group", "parameters")])
-        } else {
-            return(nm[, "parameters"])
-        }
+    if (!"value" %in% colnames(params)) {
+        params[["value"]] <- as.numeric(rep(NA, nrow(params)))
     }
-    return(sort(unique(params[["in_model"]])))
+    params <- unique(params[, c("in_model", "value")])
+    params <- params[order(params[["in_model"]]), ]
+    if (!all(table(params[["in_model"]]) == 1)) {
+        stop("Some parameters have two different values assigned to them.")
+    }
+    return(params)
 }
 
 ### * comps()
@@ -159,7 +216,10 @@ params <- function(nm, tibble = FALSE, expand = FALSE) {
 #'     input network model.
 #'
 #' @examples
+#' aquarium_mod
 #' comps(aquarium_mod)
+#'
+#' trini_mod
 #' comps(trini_mod)
 #' 
 #' @export

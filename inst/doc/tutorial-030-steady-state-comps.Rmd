@@ -1,6 +1,6 @@
 ---
 title: "Setting steady-state compartments"
-date: "2021-09-24"
+date: "2021-12-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -280,15 +280,9 @@ topo(m)
 
 NH$_4^+$ is now marked with an asterisk, which indicates a steady state compartment. We are ready to run the MCMC.
 
-<div class="alert-primary" role="alert">
-
-<b>Note if you are curious about the implementation:</b> Behind the scenes, the model handles steady state compartments by regenerating at each step of the numerical solving of the system of differential equations their tracer quantities to the quantities they had at the previous step.
-
-</div>
-
 ## Running the MCMC
 
-As usual, let's have a look at the parameters which are going to be fit and at their priors:
+As usual, we need to specify the priors for the parameters we will be sampling during MCMC run:
 
 
 ```r
@@ -297,18 +291,68 @@ priors(m)
 
 ```
 ## # A tibble: 5 × 2
-##   in_model                 prior                
-##   <chr>                    <list>               
-## 1 eta                      <hcauchy (scale=0.1)>
-## 2 lambda_epilithon         <hcauchy (scale=0.1)>
-## 3 lambda_NH4               <hcauchy (scale=0.1)>
-## 4 upsilon_NH4_to_epilithon <hcauchy (scale=0.1)>
-## 5 zeta                     <hcauchy (scale=0.1)>
+##   in_model                 prior 
+##   <chr>                    <list>
+## 1 eta                      <NULL>
+## 2 lambda_epilithon         <NULL>
+## 3 lambda_NH4               <NULL>
+## 4 upsilon_NH4_to_epilithon <NULL>
+## 5 zeta                     <NULL>
 ```
 
-Note that since NH$_4^+$ is in a steady state in the model, the `lambda_NH4` parameter will not influence the likelihood of the model, and the posterior for this parameter will basically be its prior distribution.
+Since NH$_4^+$ is in a steady state in the model, the `lambda_NH4` parameter will not influence the likelihood of the model, so let's just set it to a constant so that the sampler does not waste efforts on it:
 
-We keep the default priros and run the model:
+
+```r
+m <- set_priors(m, constant_p(0), "lambda_NH4")
+```
+
+The observation times were in days, and it is unlikely than the loss rate for epilithon will be more than 1 per day, so `normal_p(0, 1)` is quite generous:
+
+
+```r
+m <- set_priors(m, normal_p(0, 1), "lambda_epilithon")
+```
+
+What about `upsilon_NH4_to_epilithon`? NH4 is a small compartment, but it is in steady state because it is constantly renewed by the stream flow. This means that the uptake rate from this compartment can be very large, without depleting it.
+
+To get an idea of how big it could be, how large would it need to be to renew all of epilithon compartment during a day? For an epilithon biomass of 100 and an NH4 biomass of 0.3, the rate would need to be about 333 per day. Let's set a prior which would allow it but with a lot more probability mass below 333:
+
+
+```r
+m <- set_prior(m, normal_p(0, 350), "upsilon_NH4_to_epilithon")
+```
+
+```
+## Prior modified for parameter(s): 
+##   - upsilon_NH4_to_epilithon
+```
+
+Finally, here `eta` and `zeta` represent coefficients of variation for the observations. A reasonable prior could be:
+
+
+```r
+# "eta" will match both `eta` and `zeta`
+m <- set_priors(m, normal_p(0, 5), "eta")
+```
+
+Let's have a look at all our priors and then run the model:
+
+
+```r
+priors(m)
+```
+
+```
+## # A tibble: 5 × 2
+##   in_model                 prior                       
+##   <chr>                    <list>                      
+## 1 eta                      <trun_normal(mean=0,sd=5)>  
+## 2 lambda_epilithon         <trun_normal(mean=0,sd=1)>  
+## 3 lambda_NH4               <constant(value=0)>         
+## 4 upsilon_NH4_to_epilithon <trun_normal(mean=0,sd=350)>
+## 5 zeta                     <trun_normal(mean=0,sd=5)>
+```
 
 
 ```r
@@ -317,7 +361,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
 
 The traces look good. Let's do a posterior predictive check to ensure that the model makes sense:
 
@@ -327,7 +371,7 @@ predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
 
 Let's use a log scale on the y axis to make visualization of the two compartments in the same plots easier:
 
@@ -336,7 +380,7 @@ Let's use a log scale on the y axis to make visualization of the two compartment
 plot(predictions, facet_row = "group", log = TRUE)
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
 
 The model looks ok.
 

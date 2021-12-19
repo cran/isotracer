@@ -1,7 +1,7 @@
 Package: isotracer
 Type: Package
 Title: Isotopic Tracer Analysis Using MCMC
-Version: 1.0.4
+Version: 1.1.0
 Authors@R: c(person("Andrés", "López-Sepulcre", email = "lopezsepulcre@gmail.com",
              role = c("aut"),
 	     comment = c(ORCID = "0000-0001-9708-0788")),
@@ -34,9 +34,9 @@ Biarch: true
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2021-09-24 19:57:51 UTC; matthieu
+Packaged: 2021-12-19 15:44:24 UTC; matthieu
 Author: Andrés López-Sepulcre [aut] (<https://orcid.org/0000-0001-9708-0788>),
   Matthieu Bruneaux [aut, cre] (<https://orcid.org/0000-0001-6997-192X>)
 Maintainer: Matthieu Bruneaux <matthieu.bruneaux@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-09-27 08:50:02 UTC
+Date/Publication: 2021-12-19 16:10:02 UTC

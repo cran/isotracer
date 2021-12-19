@@ -145,7 +145,7 @@ set_size_family <- function(nm, family, by_compartment, quiet = FALSE,
             nm <- add_param_mapping(nm)
             if (verbose_reset) {
                 message("Parameters priors and covariates were reset because `by_compartment` was specified.")
-                message("(This means that default priors and no covariates are used in the returned networkModel.)")
+                message("(This means that no priors are set and no covariates are used in the returned networkModel.)")
             }
         }
     }
@@ -171,8 +171,6 @@ set_size_family <- function(nm, family, by_compartment, quiet = FALSE,
 #' @return A \code{networkModel} object.
 #'
 #' @examples
-#' library(magrittr)
-#'
 #' # A single string can describe several links in one go.
 #' m <- new_networkModel() %>%
 #'   set_topo("NH4, NO3 -> epi -> pseph, tricor")
@@ -284,6 +282,9 @@ set_steady <- function(nm, comps = NULL, which = NULL) {
 
 #' Flag some network compartments as being split compartments
 #'
+#' This function automatically adds a default prior (uniform on [0,1]) for the
+#' active portion of split compartments.
+#' 
 #' @param nm A \code{networkModel} object.
 #' @param comps Vector of strings, the names of the compartments to set split.
 #' @param which Vector of integers giving the nm rows to update. Default is to
@@ -328,7 +329,7 @@ set_split <- function(nm, comps = NULL, which = NULL) {
         paramName <- paste0("portion.act_", comp)
         attr(nm, "priors") <- tibble::add_row(attr(nm, "priors"),
                                               in_model = paramName,
-                                              prior = list(uniform(0, 1)))
+                                              prior = list(uniform_p(0, 1)))
     }
     return(nm)
 }
@@ -508,6 +509,19 @@ add_pulse_event <- function(nm, time, comp = NULL, unmarked, marked,
 #'
 #' @return A \code{networkModel} object.
 #'
+#' @examples
+#' # Using the topology from the Trinidad case study
+#' m <- new_networkModel() %>%
+#'   set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph",
+#'            "FBOM -> tricor", "petro, tricor -> arg")
+#'
+#' # Taking initial condtions from the 'lalaja' dataset at t=0
+#' inits <- lalaja[lalaja[["time.days"]] == 0, ]
+#' inits
+#' m <- set_init(m, inits, comp = "compartment", size = "mgN.per.m2",
+#'               prop = "prop15N", group_by = "transect")
+#' m
+#' 
 #' @export
 
 set_init <- function(nm, data, comp, size, prop, group_by = NULL) {
@@ -533,6 +547,19 @@ set_init <- function(nm, data, comp, size, prop, group_by = NULL) {
                                          size = size,
                                          prop = prop,
                                          group_by = group_by)
+    # Check that each compartment gets exactly one initial condition
+    for (i in seq_len(nrow(out))) {
+        z <- out$initial[[i]]
+        if (nrow(z) != nrow(na.omit(z))) {
+            stop("Some NAs are present in the initial conditions.")
+        }
+        if (!all(table(z$compartment) == 1)) {
+            stop("Some compartments are present twice in the initial conditions data.")
+        }
+        if (!all(topo_comps %in% z[["compartment"]])) {
+            stop("Some compartments are present in the topology but do not have initial conditions.")
+        }
+    }
     return(out)
 }
 
@@ -556,6 +583,24 @@ set_init <- function(nm, data, comp, size, prop, group_by = NULL) {
 #'
 #' @return A \code{networkModel} object.
 #'
+#' @examples
+#' # Using the topology from the Trinidad case study
+#' m <- new_networkModel() %>%
+#'   set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph",
+#'            "FBOM -> tricor", "petro, tricor -> arg")
+#'
+#' # Taking initial condtions from the 'lalaja' dataset at t=0
+#' inits <- lalaja[lalaja[["time.days"]] == 0, ]
+#' inits
+#' m <- set_init(m, inits, comp = "compartment", size = "mgN.per.m2",
+#'               prop = "prop15N", group_by = "transect")
+#' m
+#'
+#' # Taking observations from 'lalaja'
+#' m <- set_obs(m, lalaja[lalaja[["time.days"]] > 0, ], time = "time.days")
+#' m
+#' plot(m)
+#' 
 #' @export
 
 set_obs <- function(nm, data, comp, size, prop, time, group_by) {
@@ -668,13 +713,21 @@ set_params <- function(nm, params, force = TRUE, quick = FALSE) {
     return(nm)
 }
 
-### * set_prior()
+### * set_prior() | set_priors()
 
 #' Set prior(s) for a network model
 #'
 #' @param x A \code{networkModel} object.
-#' @param prior A prior built with e.g. uniform() or hcauchy().
-#' @param param String, target parameter or regexp to target several parameters
+#' @param prior A prior built with e.g. uniform_p() or hcauchy_p(). Call
+#'     \code{available_priors()} to see a table of implemented
+#'     priors. Alternatively, if \code{prior} is a tibble, the function will
+#'     try to use it to set parameter priors. The format of such an argument is
+#'     the same as the format of the output of the getter function
+#'     \code{priors()} (see examples). Note that if `prior` is given as a
+#'     tibble, all other arguments (except `x`) are disregarded.
+#' @param param String, target parameter or regexp to target several
+#'     parameters. Default is the empty string \code{""}, which will match all
+#'     parameters.
 #' @param use_regexp Boolean, if \code{TRUE} (the default) then \code{param} is
 #'     used as a regular expression to match one or several parameter names.
 #' @param quiet Boolean, if \code{FALSE} print a message indicating which
@@ -682,14 +735,56 @@ set_params <- function(nm, params, force = TRUE, quick = FALSE) {
 #'
 #' @return A \code{networkModel} object.
 #'
+#' @examples
+#' # Copy `aquarium_mod`
+#' m <- aquarium_mod
+#' priors(m)
+#'
+#' # Modify the priors of `m`
+#' m <- set_priors(m, exponential_p(0.5), "lambda")
+#' priors(m)
+#'
+#' # Re-apply priors from the original `aquarium_mod`
+#' prev_priors <- priors(aquarium_mod)
+#' prev_priors
+#' m <- set_priors(m, prev_priors)
+#' priors(m)
+#' 
 #' @export
 
-set_prior <- function(x, prior, param, use_regexp = TRUE, quiet = FALSE) {
+set_prior <- function(x, prior, param = "", use_regexp = TRUE, quiet = FALSE) {
     verbose <- !quiet
-    params <- params(x)
+    params <- params(x, simplify = TRUE)
     priors <- priors(x)
     stopifnot(setequal(params, priors[["in_model"]]))
     params <- priors[["in_model"]]
+    # If `prior` is a tibble
+    if (is(prior, "tbl_df")) {
+        if (!valid_prior_tbl(prior)) {
+            stop("`prior` is not a valid prior tibble.")
+        }
+        prior <- prior[, c("in_model", "prior")]
+        extra_params <- which(!prior[["in_model"]] %in% params)
+        if (length(extra_params) > 0) {
+            message("Some parameter names in `prior` are not used in the network model and will be ignored.\n",
+                    paste0(paste0("\"", prior[["in_model"]][extra_params], "\""), collapse = ", "))
+        }
+        prior <- prior[which(prior[["in_model"]] %in% params), ]
+        param_indices <- match(prior[["in_model"]], params)
+        for (i in seq_along(param_indices)) {
+            priors[["prior"]][[param_indices[i]]] <- prior[["prior"]][[i]]
+        }
+        if (verbose) {
+            message("Prior modified for parameter(s): \n  - ",
+                    paste0(prior[["in_model"]], collapse = "\n  - "))
+        }
+        attr(x, "priors") <- priors
+        return(x)
+    }
+    # If `prior` is not a tibble
+    if (!is(prior, "prior")) {
+        stop("`prior` must be a valid prior. See `available_priors()`.")
+    }
     if (use_regexp) {
         param_indices <- which(grepl(pattern = param, x = params))
     } else {
@@ -711,11 +806,16 @@ set_prior <- function(x, prior, param, use_regexp = TRUE, quiet = FALSE) {
     return(x)
 }
 
+#' @rdname set_prior
+#' @export
+
+set_priors <- set_prior
+    
 ### * add_covariates()
 
 #' Add fixed effects of one or several covariates to some parameters.
 #'
-#' New global parameters are given a default prior of hcauchy(scale = 1)
+#' Note that new global parameters are not given any default prior.
 #'
 #' @param nm A \code{networkModel} object.
 #' @param ... One or several formulas defining the covariates.
@@ -723,6 +823,26 @@ set_prior <- function(x, prior, param, use_regexp = TRUE, quiet = FALSE) {
 #'     affected by the formulas?
 #' 
 #' @return A \code{networkModel} object.
+#'
+#' @examples
+#' # Using a subset of the topology from the Trinidad case study
+#' m <- new_networkModel() %>%
+#'   set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph")
+#'
+#' # Taking initial condtions from the 'lalaja' dataset at t=0
+#' # Grouping by transect id
+#' inits <- lalaja[lalaja[["time.days"]] == 0, ]
+#' inits
+#' m <- set_init(m, inits, comp = "compartment", size = "mgN.per.m2",
+#'               prop = "prop15N", group_by = "transect")
+#' m
+#'
+#' # Default model
+#' params(m, simplify = TRUE)
+#'
+#' # Adding an effect of the "transect" covariate on some parameters
+#' m <- add_covariates(m, upsilon_epi_to_pseph ~ transect)
+#' params(m, simplify = TRUE)
 #'
 #' @export
 
@@ -734,11 +854,9 @@ add_covariates <- function(nm, ..., use_regexpr = TRUE) {
     }
     # Refresh priors
     current_priors <- priors(nm)
-    global_params <- params(nm)
+    global_params <- params(nm, simplify = TRUE)
     default_priors <- tibble::tibble(in_model = global_params)
-    default_priors$prior <- lapply(seq_len(nrow(default_priors)), function(i) {
-        hcauchy(scale = 0.1)
-    })
+    default_priors$prior <- rep(list(NULL), nrow(default_priors))
     kept_priors <- current_priors[current_priors$in_model %in% global_params, ]
     new_priors <- default_priors[!default_priors$in_model %in%
                                  current_priors$in_model, ]

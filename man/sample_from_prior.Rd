@@ -18,11 +18,11 @@ A numeric vector of length \code{n}.
 Sample from a prior object
 }
 \examples{
-sample_from_prior(constant(1))
-sample_from_prior(constant(1), 10)
-sample_from_prior(hcauchy(0.5), 1)
-hist(sample_from_prior(hcauchy(0.5), 20))
-hist(sample_from_prior(uniform(0, 3), 1000))
-hist(sample_from_prior(scaled_beta(3, 7, 2), 1e4))
+sample_from_prior(constant_p(1))
+sample_from_prior(constant_p(1), 10)
+sample_from_prior(hcauchy_p(0.5), 1)
+hist(sample_from_prior(hcauchy_p(0.5), 20))
+hist(sample_from_prior(uniform_p(0, 3), 1000))
+hist(sample_from_prior(scaled_beta_p(3, 7, 2), 1e4))
 
 }

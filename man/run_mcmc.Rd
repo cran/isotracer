@@ -4,7 +4,16 @@
 \alias{run_mcmc}
 \title{Run a MCMC sampler on a network model using Stan}
 \usage{
-run_mcmc(model, iter = 2000, chains = 4, cores = NULL, stanfit = FALSE, ...)
+run_mcmc(
+  model,
+  iter = 2000,
+  chains = 4,
+  method = "matrix_exp",
+  euler_control = list(),
+  cores = NULL,
+  stanfit = FALSE,
+  ...
+)
 }
 \arguments{
 \item{model}{A \code{networkModel}.}
@@ -15,7 +24,26 @@ chain (including warmup). The default is 2000.}
 \item{chains}{A positive integer specifying the number of Markov chains.
 The default is 4.}
 
-\item{cores}{Number of cores to sue for parallel use. Default is
+\item{method}{A character string indicating the method to use to solve ODE
+in the Stan model; available methods are "matrix_exp" and "euler". The
+default is "matrix_exp", which uses matrix exponential and is reasonably
+fast for small networks. For large networks, the "euler" method can be
+used. It implements a simple forward Euler method to solve the ODE and
+can be faster than the matrix exponential approach, but extra caution
+must be taken to check for numerical accuracy (e.g. testing different
+\code{dt} time step values, ensuring that the product between \code{dt}
+and the largest transfer rates expected from the priors is always
+very small compared to 1).}
+
+\item{euler_control}{An optional list containing extra parameters when using
+\code{method = "euler"}. Allowed list elements are \code{"dt"} and
+\code{"grid_size"}, which are respectively the time step size for
+trajectory calculations (\code{"dt"}) or the number of points for the
+calculation (\code{"grid_size"}). Only one of "dt" or "grid_size" can be
+specified, not both. If none is provided, a default grid size of 256
+steps is used.}
+
+\item{cores}{Number of cores to use for parallel use. Default is
 \code{NULL}, which means to use the value stored in
 \code{options()[["mc.cores"]]} (or 1 if this value is not set).}
 
@@ -25,7 +53,10 @@ classical `mcmc.list` object.}
 \item{...}{Arguments passed to `rstan::sampling` (e.g. iter, chains).}
 }
 \value{
-An object of class `stanfit` returned by `rstan::sampling`.
+An object of class `stanfit` returned by `rstan::sampling` if
+    \code{stanfit = TRUE}, otherwise the result of converting this
+    \code{stanfit} object with \code{stanfit_to_named_mcmclist} (i.e. an
+    object of class \code{networkModelStanfit} and {mcmc.list}).
 }
 \description{
 Run a MCMC sampler on a network model using Stan

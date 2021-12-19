@@ -1,6 +1,6 @@
 ---
 title: "Case study: Trinidadian streams (Collins et al. 2016)"
-date: "2021-09-24"
+date: "2021-12-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -22,8 +22,6 @@ The goal is to quantify the nitrogen exchanges in the stream foodweb, from the d
 
 ## Experiment and data
 
-
-
 In brief, $^{15}N$-enriched ammonium was dripped in two streams in Trinidad, and samples of the different foodweb compartments were taken during the drip and after the drip in several transects in each stream. The transects were located at different locations downstream of each drip. The drip phase lasted 10 days, and the post-drip phase lasted 30 days. Here is a glimpse of the dataset (we will use only the data from one stream for simplicity, but for a real analysis one could keep both streams and use stream identity as a covariate to estimate the stream effect on flows - see the [case study about eelgrasses](https://matthieu-bruneaux.gitlab.io/isotracer/articles/case-study-mcroy-1970.html) for an example of treatments comparison):
 
 
@@ -32,20 +30,21 @@ lalaja
 ```
 
 ```
-## # A tibble: 223 × 6
-##    stream transect   compartment time.days mgN.per.m2  prop15N
-##    <chr>  <chr>      <chr>           <dbl>      <dbl>    <dbl>
-##  1 UL     transect.1 FBOM                1      5657. NA      
-##  2 UL     transect.1 FBOM                1        NA   0.00372
-##  3 UL     transect.1 FBOM                4        NA   0.00389
-##  4 UL     transect.1 FBOM                7        NA   0.00434
-##  5 UL     transect.1 FBOM               10        NA   0.00439
-##  6 UL     transect.1 FBOM               14        NA   0.00428
-##  7 UL     transect.1 FBOM               17        NA   0.00401
-##  8 UL     transect.1 FBOM               20        NA   0.00424
-##  9 UL     transect.1 FBOM               30        NA   0.00422
-## 10 UL     transect.1 FBOM               40        NA   0.00390
-## # … with 213 more rows
+## # A tibble: 247 × 6
+## # Groups:   stream, transect [3]
+##    stream transect   compartment mgN.per.m2 prop15N time.days
+##    <chr>  <chr>      <chr>            <dbl>   <dbl>     <dbl>
+##  1 UL     transect.1 NH4              0.300 0.0240          0
+##  2 UL     transect.1 NO3             31.5   0.00397         0
+##  3 UL     transect.2 NH4              0.300 0.0140          0
+##  4 UL     transect.2 NO3             31.5   0.00407         0
+##  5 UL     transect.3 NH4              0.300 0.00694         0
+##  6 UL     transect.3 NO3             31.5   0.00413         0
+##  7 UL     transect.1 arg              2.31  0.00366         0
+##  8 UL     transect.2 arg              2.31  0.00366         0
+##  9 UL     transect.3 arg              2.31  0.00366         0
+## 10 UL     transect.1 epi            329.    0.00366         0
+## # … with 237 more rows
 ```
 
 - `stream` could be one of two locations (`LL` or `UL`), but only data from `UL` is used here.
@@ -91,35 +90,18 @@ This is how our network look like at this stage:
 ggtopo(m, "sugiyama")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
 
 ### Initial conditions and observations
 
 The drip of $^{15}N$-enriched ammonium was started at the very beginning of the experiment, and the initial conditions reflect the enrichment observed for NH4 and NO3 (only ammonium is dripped, but it is converted to nitrate quite rapidly and the experimental setup is thus equivalent to a drip phase for both ions).
 
-The initial conditions are contained in a `tibble`:
+The initial conditions are obtained by taking the values when t=0:
 
 
 ```r
-inits
-```
-
-```
-## # A tibble: 24 × 5
-## # Groups:   stream, transect [3]
-##    stream transect   compartment mgN.per.m2 prop15N
-##    <chr>  <chr>      <chr>            <dbl>   <dbl>
-##  1 UL     transect.1 NH4              0.300 0.0240 
-##  2 UL     transect.1 NO3             31.5   0.00397
-##  3 UL     transect.2 NH4              0.300 0.0140 
-##  4 UL     transect.2 NO3             31.5   0.00407
-##  5 UL     transect.3 NH4              0.300 0.00694
-##  6 UL     transect.3 NO3             31.5   0.00413
-##  7 UL     transect.1 arg              2.31  0.00366
-##  8 UL     transect.2 arg              2.31  0.00366
-##  9 UL     transect.3 arg              2.31  0.00366
-## 10 UL     transect.1 epi            329.    0.00366
-## # … with 14 more rows
+library(tidyverse)
+inits <- lalaja %>% filter(time.days == 0)
 ```
 
 We add them to the model, specifying the grouping variable (`transect`, each transect being a different location downstream the drip station in the `UL` stream):
@@ -150,7 +132,8 @@ The next step is to add the observations made during the experiment:
 
 
 ```r
-m <- m %>% set_obs(trini, time = "time.days")
+obs <- lalaja %>% filter(time.days > 0)
+m <- m %>% set_obs(obs, time = "time.days")
 ```
 
 The enrichment data can be visualized with the `plot()` method:
@@ -163,7 +146,7 @@ plot(m, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("NH4", "NO3", "epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-12-1.png" title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
 
 Interestingly, we see that one of the consumer, `tricor`, is over-enriched compared to its resources (`epi` and `FBOM`). This is due to the "bulk" nature of the epilithon and FBOM compartments.
 
@@ -213,7 +196,7 @@ To illustrate this point, let's calculate the standard deviations and the corres
 
 
 ```r
-trini %>% select(compartment, mgN.per.m2) %>%
+obs %>% select(compartment, mgN.per.m2) %>%
   na.omit() %>%
   group_by(compartment) %>%
   summarize(mean = mean(mgN.per.m2),
@@ -251,67 +234,121 @@ Then, we provide constant priors for those parameters based on the values calcul
 
 
 ```r
-m <- set_prior(m, constant(0.1), "zeta_NH4") %>%  # Dummy values for the steady
-  set_prior(constant(0.1), "zeta_NO3") %>%        # state dissolved nutrients
-  set_prior(constant(115), "zeta_epi") %>%
-  set_prior(constant(2436), "zeta_FBOM") %>%
-  set_prior(constant(10.7), "zeta_pseph") %>%
-  set_prior(constant(2.88), "zeta_arg") %>%
-  set_prior(constant(13.3), "zeta_tricor") %>%
-  set_prior(constant(2.48), "zeta_petro")
+m <- set_prior(m, constant_p(0.1), "zeta_NH4") %>%  # Dummy values for the steady
+  set_prior(constant_p(0.1), "zeta_NO3") %>%        # state dissolved nutrients
+  set_prior(constant_p(115), "zeta_epi") %>%
+  set_prior(constant_p(2436), "zeta_FBOM") %>%
+  set_prior(constant_p(10.7), "zeta_pseph") %>%
+  set_prior(constant_p(2.88), "zeta_arg") %>%
+  set_prior(constant_p(13.3), "zeta_tricor") %>%
+  set_prior(constant_p(2.48), "zeta_petro")
 ```
 
 ## Running the model
 
 ### Setting priors
 
-Before we run the model, let's have a look at the default priors used for the other parameters:
+Before we run the model, let's see which priors we still have to set:
 
 
 ```r
-priors(m) %>% filter(!startsWith(in_model, "zeta"))
+missing_priors(m)
 ```
 
 ```
 ## # A tibble: 20 × 2
-##    in_model               prior                  
-##    <chr>                  <list>                 
-##  1 eta                    <hcauchy (scale=0.1)>  
-##  2 lambda_arg             <hcauchy (scale=0.1)>  
-##  3 lambda_epi             <hcauchy (scale=0.1)>  
-##  4 lambda_FBOM            <hcauchy (scale=0.1)>  
-##  5 lambda_NH4             <hcauchy (scale=0.1)>  
-##  6 lambda_NO3             <hcauchy (scale=0.1)>  
-##  7 lambda_petro           <hcauchy (scale=0.1)>  
-##  8 lambda_pseph           <hcauchy (scale=0.1)>  
-##  9 lambda_tricor          <hcauchy (scale=0.1)>  
-## 10 portion.act_epi        <uniform (min=0,max=1)>
-## 11 portion.act_FBOM       <uniform (min=0,max=1)>
-## 12 upsilon_epi_to_petro   <hcauchy (scale=0.1)>  
-## 13 upsilon_epi_to_pseph   <hcauchy (scale=0.1)>  
-## 14 upsilon_FBOM_to_tricor <hcauchy (scale=0.1)>  
-## 15 upsilon_NH4_to_epi     <hcauchy (scale=0.1)>  
-## 16 upsilon_NH4_to_FBOM    <hcauchy (scale=0.1)>  
-## 17 upsilon_NO3_to_epi     <hcauchy (scale=0.1)>  
-## 18 upsilon_NO3_to_FBOM    <hcauchy (scale=0.1)>  
-## 19 upsilon_petro_to_arg   <hcauchy (scale=0.1)>  
-## 20 upsilon_tricor_to_arg  <hcauchy (scale=0.1)>
+##    in_model               prior 
+##    <chr>                  <list>
+##  1 eta                    <NULL>
+##  2 lambda_arg             <NULL>
+##  3 lambda_epi             <NULL>
+##  4 lambda_FBOM            <NULL>
+##  5 lambda_NH4             <NULL>
+##  6 lambda_NO3             <NULL>
+##  7 lambda_petro           <NULL>
+##  8 lambda_pseph           <NULL>
+##  9 lambda_tricor          <NULL>
+## 10 portion.act_epi        <NULL>
+## 11 portion.act_FBOM       <NULL>
+## 12 upsilon_epi_to_petro   <NULL>
+## 13 upsilon_epi_to_pseph   <NULL>
+## 14 upsilon_FBOM_to_tricor <NULL>
+## 15 upsilon_NH4_to_epi     <NULL>
+## 16 upsilon_NH4_to_FBOM    <NULL>
+## 17 upsilon_NO3_to_epi     <NULL>
+## 18 upsilon_NO3_to_FBOM    <NULL>
+## 19 upsilon_petro_to_arg   <NULL>
+## 20 upsilon_tricor_to_arg  <NULL>
 ```
 
-Those default priors have to be adjusted to the data being modeled. Here, the time units are days, and so a half-Cauchy prior with a median of 0.1 means that the prior for the uptake rates and loss rates has a median equivalent to 10% of the N content of a given compartment being uptaken or lost in a day. This is reasonable for biological compartments, but it is too restrictive for dissolved nutrients: those are being constantly renewed by the stream flow, so we can expect much higher daily uptake rates from those.
+Here, the time units are days, and so a rate value of 0.5 would mean that about half the N content of a given compartment is being uptaken or lost in a day. This is a reasonable upper limit for biological compartments, but it is too restrictive for dissolved nutrients: those are being constantly renewed by the stream flow, so we can expect much higher daily uptake rates from those.
 
-Below we modify the priors for the uptakes from dissolved nutrients to allow for such higer daily uptake rates. In addtion, we also set their loss rate to a constant dummy value: since those compartments are in a steady state, we don't need the sampler to sample their loss rate.
+Let's first set some reasonable priors for rates globally:
+
+
+```r
+m <- set_priors(m, normal_p(0, 0.5), "upsilon|lambda")
+```
+
+Next, let's modify the priors for the uptakes from dissolved nutrients to allow for higher daily uptake rates. In addtion, we also set their loss rate to a constant dummy value: since those compartments are in a steady state, we don't need the sampler to sample their loss rate.
 
 
 ```r
 m <- m %>%
-  set_prior(hcauchy(5), "upsilon_N") %>%
-  set_prior(constant(0), "lambda_N")
+  set_prior(normal_p(0, 1000), "upsilon_N") %>%
+  set_prior(constant_p(0), "lambda_N")
 ```
+
+Which priors remain to be set?
+
+
+```r
+missing_priors(m)
+```
+
+```
+## # A tibble: 3 × 2
+##   in_model         prior 
+##   <chr>            <list>
+## 1 eta              <NULL>
+## 2 portion.act_epi  <NULL>
+## 3 portion.act_FBOM <NULL>
+```
+
+What is `eta` again?
+
+
+```r
+prop_family(m)
+```
+
+```
+##   (eta is the coefficient of variation of gamma distributions.)
+```
+
+```
+## [1] "gamma_cv"
+```
+
+For a coefficient of variation of the observed proportions, let's use the sligthly informative `normal_p(0, 3)`:
+
+
+```r
+m <- set_priors(m, normal_p(0, 3), "^eta")
+```
+
+Finally, for the $pi$ parameters defining the active portions of split compartments, let's just use a uniform prior on [0,1]:
+
+
+```r
+m <- set_priors(m, uniform_p(0, 1), "portion")
+```
+
+We are now ready to run the model.
 
 ### Running the model
 
-We are ready to run the model fit:
+We run the model fit:
 
 
 ```r
@@ -320,7 +357,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
 
 ### Posterior predictive fits
 
@@ -340,7 +377,7 @@ plot(pred, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" style="display: block; margin: auto;" />
 
 The quality of the fit looks quite good. We could use this fit to estimate flows between compartments and make quantitative conclusions from those results. We can also use this model as a base model to test for putative trophic link.
 
@@ -362,27 +399,45 @@ Changing the topology resets steady and split compartments and priors. Let's app
 ```r
 m2 <- m2 %>%
   set_steady(c("NH4", "NO3")) %>%
-  set_split(c("epi", "FBOM")) %>%
-  set_prior(constant(0.1), "zeta_NH4") %>%
-  set_prior(constant(0.1), "zeta_NO3") %>%   
-  set_prior(constant(115), "zeta_epi") %>%
-  set_prior(constant(2436), "zeta_FBOM") %>%
-  set_prior(constant(10.7), "zeta_pseph") %>%
-  set_prior(constant(2.88), "zeta_arg") %>%
-  set_prior(constant(13.3), "zeta_tricor") %>%
-  set_prior(constant(2.48), "zeta_petro") %>%
-  set_prior(hcauchy(5), "upsilon_N") %>%
-  set_prior(constant(0), "lambda_N")
+  set_split(c("epi", "FBOM"))
 ```
 
-The structure of this alternative model is:
+The structure of the alternative model is:
 
 
 ```r
 ggtopo(m2, "sugiyama")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" style="display: block; margin: auto;" />
+
+Let's apply the same priors as for the first model:
+
+
+```r
+m2 <- set_priors(m2, priors(m))
+```
+
+Do we have any new prior we have to set in `m2`?
+
+
+```r
+missing_priors(m2)
+```
+
+```
+## # A tibble: 1 × 2
+##   in_model             prior 
+##   <chr>                <list>
+## 1 upsilon_pseph_to_arg <NULL>
+```
+
+Let's use the same prior as for the other `upsilon_*` rates from biological compartments:
+
+
+```r
+m2 <- set_priors(m2, normal_p(0, 0.5), "upsilon_pseph_to_arg")
+```
 
 We run the model:
 
@@ -393,7 +448,7 @@ plot(run2)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" style="display: block; margin: auto;" />
 
 We check the model fit with a posterior predictive fit:
 
@@ -411,7 +466,7 @@ plot(pred2, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" style="display: block; margin: auto;" />
 
 When comparing with the first fit, this one looks equally good as before. Which model should we prefer?
 
@@ -419,7 +474,7 @@ When comparing with the first fit, this one looks equally good as before. Which 
 
 We compare the two models by calculating their DIC and choosing the model with the lowest DIC.
 
-Note that the use of DIC is not ideal here: DIC is valid when the posteriors have a multinormal distribution, which is not the case here givn that the parameters are bounded by zero and several exhibit skewness.
+Note that the use of DIC is not ideal here: DIC is valid when the posteriors have a multinormal distribution, which is not the case here given that the parameters are bounded by zero and several exhibit skewness.
 
 An alternative to DIC is to use LOO (leave-one-out validation). However, LOO requires independent data, and the data used here is a time series where data points are not independent. 
 
@@ -436,11 +491,11 @@ dic(run, run2)
 ## # A tibble: 2 × 6
 ##   fit     Dbar    pD    DIC delta_DIC weight
 ##   <chr>  <dbl> <dbl>  <dbl>     <dbl>  <dbl>
-## 1 run   -1822.  20.7 -1801.      0    0.928 
-## 2 run2  -1819.  23.4 -1796.      5.13 0.0716
+## 1 run   -1822.  20.2 -1802.      0    0.933 
+## 2 run2  -1819.  22.7 -1796.      5.26 0.0672
 ```
 
-`run` is from the model fit without the trophic link `pseph -> arg`. According to the DIC, this model is slightly more likely than the alternative model with the extra trophic link. The evidence is not very strong though, as evidenced by the small $\Delta$DIC value and the DIC weights.
+`run` is from the model fit without the trophic link `pseph -> arg`. According to the DIC, this model is more likely than the alternative model with the extra trophic link. The evidence is reasonable but not overwhelming, as evidenced by the $\Delta$DIC value and the DIC weights.
 
 ## Sankey plot
 
@@ -481,7 +536,7 @@ sankey(topo(m), nodes, f %>% select(from, to, flow) %>% rename(width = flow),
        edge_f = 0.2, layout = "left2right")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-38-1.png" title="plot of chunk unnamed-chunk-38" alt="plot of chunk unnamed-chunk-38" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-45-1.png" title="plot of chunk unnamed-chunk-45" alt="plot of chunk unnamed-chunk-45" style="display: block; margin: auto;" />
 
 ## To go further
 
@@ -492,4 +547,4 @@ A heatmap of the correlation between parameter estimates can be a good way to vi
 mcmc_heatmap(run)
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-39-1.png" title="plot of chunk unnamed-chunk-39" alt="plot of chunk unnamed-chunk-39" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-46-1.png" title="plot of chunk unnamed-chunk-46" alt="plot of chunk unnamed-chunk-46" style="display: block; margin: auto;" />

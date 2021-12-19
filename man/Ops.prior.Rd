@@ -16,12 +16,12 @@ Boolean (or throws an error for unsupported operators).
 Implementation of the '==' operator for priors
 }
 \examples{
-p <- constant(0)
-q <- constant(4)
+p <- constant_p(0)
+q <- constant_p(4)
 p == q
 
-p <- hcauchy(2)
-q <- hcauchy(2)
+p <- hcauchy_p(2)
+q <- hcauchy_p(2)
 p == q
 
 }

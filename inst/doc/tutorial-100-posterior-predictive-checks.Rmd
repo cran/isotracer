@@ -1,6 +1,6 @@
 ---
 title: "Posterior predictive checks"
-date: "2021-09-24"
+date: "2021-12-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -81,6 +81,23 @@ mod <- new_networkModel() %>%
 ##   comp = "species"
 ##   size = "biomass"
 ##   prop = "prop15N"
+```
+
+```r
+# Set reasonable but vague priors for this model
+mod <- set_priors(mod, normal_p(0, 5))
+```
+
+```
+## Prior modified for parameter(s): 
+##   - eta
+##   - lambda_algae
+##   - lambda_daphnia
+##   - lambda_NH4
+##   - upsilon_algae_to_daphnia
+##   - upsilon_daphnia_to_NH4
+##   - upsilon_NH4_to_algae
+##   - zeta
 ```
 
 We run the MCMC sampler to fit the model:

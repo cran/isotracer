@@ -18,5 +18,26 @@ affected by the formulas?}
 A \code{networkModel} object.
 }
 \description{
-New global parameters are given a default prior of hcauchy(scale = 1)
+Note that new global parameters are not given any default prior.
+}
+\examples{
+# Using a subset of the topology from the Trinidad case study
+m <- new_networkModel() \%>\%
+  set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph")
+
+# Taking initial condtions from the 'lalaja' dataset at t=0
+# Grouping by transect id
+inits <- lalaja[lalaja[["time.days"]] == 0, ]
+inits
+m <- set_init(m, inits, comp = "compartment", size = "mgN.per.m2",
+              prop = "prop15N", group_by = "transect")
+m
+
+# Default model
+params(m, simplify = TRUE)
+
+# Adding an effect of the "transect" covariate on some parameters
+m <- add_covariates(m, upsilon_epi_to_pseph ~ transect)
+params(m, simplify = TRUE)
+
 }

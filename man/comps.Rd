@@ -20,7 +20,10 @@ A list of character vectors, with one list element per row of the
 Return the compartments of a network model
 }
 \examples{
+aquarium_mod
 comps(aquarium_mod)
+
+trini_mod
 comps(trini_mod)
 
 }

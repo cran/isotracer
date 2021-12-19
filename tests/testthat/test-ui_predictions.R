@@ -24,7 +24,8 @@ test_that("Basic prediction works", {
                      "lambda_NH4" = 0, "upsilon_algae_to_daphnia" = 0.15, 
                      "upsilon_NH4_to_algae" = 0.25, "upsilon_daphnia_to_NH4" = 0.04,
                      "zeta" = 0.1)) %>%
-        project(end = 10)
+        project(end = 10) %>%
+        set_priors(normal_p(0, 4), "", quiet = TRUE)
     z <- sample_from(x, at = c(0, 1, 1.5, 2, 2.5, 3))
     for (c in c("size", "prop")) {
         z[[c]] <- signif(z[[c]], 3)

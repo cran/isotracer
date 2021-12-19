@@ -20,3 +20,10 @@ A list of the \code{networkModel} topologies or, if all topologies
 \description{
 Return the list of topologies, or a unique topology if all identical
 }
+\examples{
+aquarium_mod
+topo(aquarium_mod)
+
+trini_mod
+topo(trini_mod)
+}

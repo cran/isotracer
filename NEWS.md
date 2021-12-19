@@ -1,3 +1,29 @@
+# isotracer 1.1.0 (2021-12-19)
+
+## Major changes
+
+- Implement a Stan model using matrix exponentials instead of the forward Euler method to solve the ODEs involved in a network model.
+- Add a `method` argument to `run_mcmc()` to choose between `matrix_exp` (the default) and `euler` solvers.
+- Drop the use of default priors (users must now explicitly set the priors). The documentation was also updated to provide more guidance about prior choice.
+- Implement exponential and gamma priors.
+- Change all names for prior functions from `*()` to `*_p()` to avoid collision with other R functions.
+- Change the default output of `params()` to a tibble, for consistency with `priors()`.
+
+## Other improvements
+
+- Add a `euler_control` argument to `run_mcmc()` to be able to tune the fixed time step parameter of the Euler solver.
+- Add a function `stanfit_to_named_mcmclist()` for easier manipulation of the output of `run_mcmc()` when a stanfit object is returned with `stanfit = TRUE`.
+- Add `set_priors()` as a synonym for `set_prior()`.
+- `set_priors()` now also accepts a tibble an as input to make copying priors across models easier.
+- Add an `available_priors()` function to list all the priors implemented in
+  the package.
+- Improve `prop_family()` and add `size_family()` (to easily check the meaning of `eta` and `zeta` parameters).
+- Add a `lalaja` dataset to the package so that the Trinidadian case study based on Collins et al. (2016) can be reproduced more easily.
+
+## Bug fixes
+
+- Fix a bug occurring when non-default `dt` or `grid_size` arguments were used for the Euler method.
+
 # isotracer 1.0.4 (2021-09-24)
 
 ## Modifications for resubmission to CRAN

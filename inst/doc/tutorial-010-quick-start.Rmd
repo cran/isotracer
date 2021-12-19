@@ -1,6 +1,6 @@
 ---
 title: "Quick start"
-date: "2021-09-24"
+date: "2021-12-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -61,6 +61,8 @@ Let's load the package and get started!
 
 ```r
 library(isotracer)
+# We recommend to use several cores (if available) to speed-up calculations:
+options(mc.cores = parallel::detectCores())
 ```
 
 ### The data
@@ -305,9 +307,17 @@ params(m)
 ```
 
 ```
-## [1] "eta"                      "lambda_algae"             "lambda_daphnia"          
-## [4] "lambda_NH4"               "upsilon_algae_to_daphnia" "upsilon_daphnia_to_NH4"  
-## [7] "upsilon_NH4_to_algae"     "zeta"
+## # A tibble: 8 × 2
+##   in_model                 value
+##   <chr>                    <dbl>
+## 1 eta                         NA
+## 2 lambda_algae                NA
+## 3 lambda_daphnia              NA
+## 4 lambda_NH4                  NA
+## 5 upsilon_algae_to_daphnia    NA
+## 6 upsilon_daphnia_to_NH4      NA
+## 7 upsilon_NH4_to_algae        NA
+## 8 zeta                        NA
 ```
 
 Eight parameters are going to be estimated:
@@ -316,7 +326,19 @@ Eight parameters are going to be estimated:
 - The `lambda_<source>` parameters are the coefficients for the loss rates for each compartment, i.e. nutrient which is lost from the network and does not go into any other compartment. In our experiment, since the aquarium is a closed system, we would expect those values to be 0 (we will learn in later tutorials how to actually set those values to 0 so that the model doesn't try to estimate them). 
 - Finally, `eta` and `zeta` are the coefficients of variation for the predicted tracer proportions and biomasses, respectively. They allow for the "noise" of the observed values around the predicted values.
 
-Since we are using a Bayesian approach, each parameter has a prior associated with it. We will see later how to customize the priors, but for this example we will keep the defaults. The default priors are a half-Cauchy distribution with a scale of 0.1. The current priors can be accessed with the `priors()` function:
+Since we are using a Bayesian approach, each parameter must have a prior associated with it. 
+
+<div class="alert-primary" role="alert">
+
+While many packages implementing Bayesian methods provide default priors, we made the conscious decision to **not provide default priors** with `isotracer`.
+
+We think this is a good way to encourage users to make reasoned, explicit choices about their priors, rather than trusting blindly some default priors that might be woefully inappropriate to the system being modelled.
+
+The package loses a bit in user-friendliness, but this is outweighed by the greater benefit of choosing priors which are sensible for the particular modelling task at hand rather than obtaining wrong results from relying on poor prior defaults.
+
+</div>
+
+The current priors can be accessed with the `priors()` function, and for now they are al set to `NULL`:
 
 
 ```r
@@ -325,16 +347,40 @@ priors(m)
 
 ```
 ## # A tibble: 8 × 2
-##   in_model                 prior                
-##   <chr>                    <list>               
-## 1 eta                      <hcauchy (scale=0.1)>
-## 2 lambda_algae             <hcauchy (scale=0.1)>
-## 3 lambda_daphnia           <hcauchy (scale=0.1)>
-## 4 lambda_NH4               <hcauchy (scale=0.1)>
-## 5 upsilon_algae_to_daphnia <hcauchy (scale=0.1)>
-## 6 upsilon_daphnia_to_NH4   <hcauchy (scale=0.1)>
-## 7 upsilon_NH4_to_algae     <hcauchy (scale=0.1)>
-## 8 zeta                     <hcauchy (scale=0.1)>
+##   in_model                 prior 
+##   <chr>                    <list>
+## 1 eta                      <NULL>
+## 2 lambda_algae             <NULL>
+## 3 lambda_daphnia           <NULL>
+## 4 lambda_NH4               <NULL>
+## 5 upsilon_algae_to_daphnia <NULL>
+## 6 upsilon_daphnia_to_NH4   <NULL>
+## 7 upsilon_NH4_to_algae     <NULL>
+## 8 zeta                     <NULL>
+```
+
+We will learn in a [later tutorial](tutorial-060-units-priors.html) how to customize priors more in depth, and there will also be advices about how to set priors throughout the tutorials. Here we will just quickly set them to something reasonable for this particular model:
+
+
+```r
+m <- m %>%
+  set_priors(normal_p(0, 5), "lambda|upsilon") %>%
+  set_priors(normal_p(0, 2), "eta")
+priors(m)
+```
+
+```
+## # A tibble: 8 × 2
+##   in_model                 prior                     
+##   <chr>                    <list>                    
+## 1 eta                      <trun_normal(mean=0,sd=2)>
+## 2 lambda_algae             <trun_normal(mean=0,sd=5)>
+## 3 lambda_daphnia           <trun_normal(mean=0,sd=5)>
+## 4 lambda_NH4               <trun_normal(mean=0,sd=5)>
+## 5 upsilon_algae_to_daphnia <trun_normal(mean=0,sd=5)>
+## 6 upsilon_daphnia_to_NH4   <trun_normal(mean=0,sd=5)>
+## 7 upsilon_NH4_to_algae     <trun_normal(mean=0,sd=5)>
+## 8 zeta                     <trun_normal(mean=0,sd=2)>
 ```
 
 Good. At this stage, everything is ready to fit the model, or in other words to sample the parameter posteriors using MCMC. We run the MCMC with the `runMCMC()` function:
@@ -352,7 +398,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
 
 We can get some numerical estimates from those posteriors with the `summary()` function:
 
@@ -365,33 +411,33 @@ summary(run)
 ## 
 ## Iterations = 501:1000
 ## Thinning interval = 1 
-## Number of chains = 2 
+## Number of chains = 4 
 ## Sample size per chain = 500 
 ## 
 ## 1. Empirical mean and standard deviation for each variable,
 ##    plus standard error of the mean:
 ## 
 ##                             Mean       SD  Naive SE Time-series SE
-## eta                      0.11406 0.035547 0.0011241      0.0015571
-## lambda_algae             0.06508 0.041661 0.0013174      0.0015855
-## lambda_daphnia           0.01615 0.017135 0.0005418      0.0006609
-## lambda_NH4               0.04738 0.034692 0.0010971      0.0012590
-## upsilon_algae_to_daphnia 0.07751 0.020345 0.0006434      0.0008842
-## upsilon_daphnia_to_NH4   0.04938 0.005573 0.0001762      0.0001933
-## upsilon_NH4_to_algae     0.32981 0.037233 0.0011774      0.0016169
-## zeta                     0.27835 0.093675 0.0029622      0.0043836
+## eta                      0.12573 0.045522 0.0010179      0.0018643
+## lambda_algae             0.10878 0.070078 0.0015670      0.0030039
+## lambda_daphnia           0.04093 0.050510 0.0011294      0.0044198
+## lambda_NH4               0.10400 0.088347 0.0019755      0.0083902
+## upsilon_algae_to_daphnia 0.07696 0.023657 0.0005290      0.0009251
+## upsilon_daphnia_to_NH4   0.04791 0.007666 0.0001714      0.0004459
+## upsilon_NH4_to_algae     0.34840 0.052415 0.0011720      0.0043206
+## zeta                     0.49562 0.367272 0.0082125      0.0422681
 ## 
 ## 2. Quantiles for each variable:
 ## 
-##                               2.5%      25%     50%     75%   97.5%
-## eta                      0.0657811 0.089369 0.10718 0.13032 0.20284
-## lambda_algae             0.0050176 0.031595 0.06048 0.09120 0.15554
-## lambda_daphnia           0.0005427 0.004773 0.01107 0.02102 0.06422
-## lambda_NH4               0.0034780 0.019911 0.03963 0.06652 0.13103
-## upsilon_algae_to_daphnia 0.0478212 0.063323 0.07412 0.08671 0.12600
-## upsilon_daphnia_to_NH4   0.0390770 0.045554 0.04922 0.05298 0.06127
-## upsilon_NH4_to_algae     0.2520988 0.306209 0.32943 0.35404 0.40647
-## zeta                     0.1552088 0.216713 0.25943 0.31607 0.52576
+##                               2.5%      25%     50%     75%  97.5%
+## eta                      0.0667917 0.093090 0.11570 0.14716 0.2358
+## lambda_algae             0.0095706 0.057380 0.09819 0.14692 0.2739
+## lambda_daphnia           0.0008274 0.009586 0.02448 0.05098 0.2023
+## lambda_NH4               0.0032810 0.040996 0.08102 0.13886 0.3512
+## upsilon_algae_to_daphnia 0.0429389 0.061367 0.07276 0.08723 0.1380
+## upsilon_daphnia_to_NH4   0.0327853 0.042937 0.04791 0.05294 0.0631
+## upsilon_NH4_to_algae     0.2620082 0.314227 0.34358 0.37368 0.4886
+## zeta                     0.1920546 0.293008 0.38492 0.53885 1.7577
 ```
 
 Finally, doing a **posterior predictive check** where we compare the observations and the corresponding predicted 95% credible intervals is a good way to check that the chosen model makes sense for this dataset:
@@ -402,7 +448,7 @@ predictions <- predict(m, run, probs = 0.95)
 plot(predictions, ylab.size = "Biomass (mg N)", ylab.prop = "Proportion 15N")
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
 
 We would expect 95% of the observations to fall within the predicted 95% credible intervals if the model is appropriate to describe the dataset.
 

@@ -33,3 +33,22 @@ A \code{networkModel} object.
 \description{
 Set observations in a network model
 }
+\examples{
+# Using the topology from the Trinidad case study
+m <- new_networkModel() \%>\%
+  set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph",
+           "FBOM -> tricor", "petro, tricor -> arg")
+
+# Taking initial condtions from the 'lalaja' dataset at t=0
+inits <- lalaja[lalaja[["time.days"]] == 0, ]
+inits
+m <- set_init(m, inits, comp = "compartment", size = "mgN.per.m2",
+              prop = "prop15N", group_by = "transect")
+m
+
+# Taking observations from 'lalaja'
+m <- set_obs(m, lalaja[lalaja[["time.days"]] > 0, ], time = "time.days")
+m
+plot(m)
+
+}

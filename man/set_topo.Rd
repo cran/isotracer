@@ -27,8 +27,6 @@ A \code{networkModel} object.
 Set the topology in a network model.
 }
 \examples{
-library(magrittr)
-
 # A single string can describe several links in one go.
 m <- new_networkModel() \%>\%
   set_topo("NH4, NO3 -> epi -> pseph, tricor")

@@ -184,6 +184,8 @@ filter_by_group <- function(.data, ...) {
 #' # Define two different models
 #' m1 <- aquarium_mod
 #' m2 <- set_topo(m1, c("NH4 -> algae -> daphnia -> NH4", "algae -> NH4"))
+#' m2 <- set_priors(m2, priors(m1))
+#' m2 <- set_priors(m2, normal_p(0, 0.5), "upsilon_algae_to_NH4")
 #' # Run the models
 #' r1 <- run_mcmc(m1, chains = 2)
 #' r2 <- run_mcmc(m2, chains = 2)

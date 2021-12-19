@@ -4,18 +4,18 @@
 \alias{params}
 \title{Return the parameters of a network model}
 \usage{
-params(nm, tibble = FALSE, expand = FALSE)
+params(nm, simplify = FALSE)
 }
 \arguments{
 \item{nm}{A \code{networkModel} object.}
 
-\item{tibble}{If TRUE, return a tidy tibble with the parameter mapping.}
-
-\item{expand}{If TRUE, return a detailed tibble. The "tibble" argument is
-disregarded in this case.}
+\item{simplify}{If \code{TRUE}, return a vector containing the names of all
+model parameters (default: \code{FALSE}).}
 }
 \value{
-A sorted character vector containing the parameters names.
+A tibble containing the parameter names and their current value (if
+    set). If \code{simplify} is \code{TRUE}, only return a sorted character
+    vector containing the parameters names.
 }
 \description{
 Return the parameters of a network model
@@ -23,5 +23,6 @@ Return the parameters of a network model
 \examples{
 params(aquarium_mod)
 params(trini_mod)
+params(trini_mod, simplify = TRUE)
 
 }
