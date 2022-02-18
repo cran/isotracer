@@ -1,7 +1,7 @@
 Package: isotracer
 Type: Package
 Title: Isotopic Tracer Analysis Using MCMC
-Version: 1.1.0
+Version: 1.1.2
 Authors@R: c(person("Andrés", "López-Sepulcre", email = "lopezsepulcre@gmail.com",
              role = c("aut"),
 	     comment = c(ORCID = "0000-0001-9708-0788")),
@@ -20,8 +20,8 @@ Depends: R (>= 3.6.0)
 Imports: coda (>= 0.19-3), data.table, dplyr (>= 0.8.5), latex2exp (>=
         0.4.0), magrittr, methods (>= 3.6.0), pillar (>= 1.4.3), purrr
         (>= 0.3.3), Rcpp (>= 1.0.4), rlang (>= 0.4.5), rstan (>=
-        2.19.3), rstantools (>= 2.0.0), tibble (>= 3.0.0), tidyr (>=
-        1.0.2), tidyselect (>= 1.0.0)
+        2.19.3), tibble (>= 3.0.0), tidyr (>= 1.0.2), tidyselect (>=
+        1.0.0)
 Suggests: bayesplot, covr, ggdist, ggplot2, ggraph, gridBase,
         gridExtra, here, igraph, knitr, lattice, readxl, rmarkdown,
         testthat, tidygraph, tidyverse, viridisLite
@@ -34,9 +34,9 @@ Biarch: true
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2021-12-19 15:44:24 UTC; matthieu
+Packaged: 2022-02-16 16:54:57 UTC; matthieu
 Author: Andrés López-Sepulcre [aut] (<https://orcid.org/0000-0001-9708-0788>),
   Matthieu Bruneaux [aut, cre] (<https://orcid.org/0000-0001-6997-192X>)
 Maintainer: Matthieu Bruneaux <matthieu.bruneaux@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-12-19 16:10:02 UTC
+Date/Publication: 2022-02-18 09:50:02 UTC

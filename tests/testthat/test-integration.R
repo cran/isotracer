@@ -269,22 +269,38 @@ for (solver in c("euler", "matrix_exp")) {
 
 ### * Compare Euler and matrix exponential outputs
 
+# During 102 test runs without setting a random seed, overlap fractions were:
+# -  1 in (0.5, 0.6)
+# -  7 in (0.6, 0.7)
+# - 45 in (0.7, 0.8)
+# - 49 in (0.8, 0.9)
+
 test_that("Models using Euler and matrix exponential solvers give similar posteriors", {
     m <- aquarium_mod
     if (!covr::in_covr() | FORCE_STAN_COVR) {
         expect_error(
             capture_warnings(capture_output({f_euler <- run_mcmc(m, iter = 250,
                                                                  euler_control = list(grid_size = 128),
-                                                                 method = "euler")})),
+                                                                 method = "euler",
+                                                                 seed = 4)})),
             NA)
         expect_error(
             capture_warnings(capture_output({f_matrix_exp <- run_mcmc(m, iter = 1000,
-                                                                      method = "matrix_exp")})),
+                                                                      method = "matrix_exp",
+                                                                      seed = 4)})),
             NA)
     }
     # Check that the 95%CI overlaps generously between the two approaches
     overlaps <- ci_overlap(f_euler, f_matrix_exp)
-    expect_true(min(overlaps) > 0.70)
+    expect_true(min(overlaps) > 0.10)
+    expect_true(min(overlaps) > 0.20)
+    expect_true(min(overlaps) > 0.30)
+    expect_true(min(overlaps) > 0.40)
+    expect_true(min(overlaps) > 0.50)
+    ## expect_true(min(overlaps) > 0.60)
+    ## expect_true(min(overlaps) > 0.70)
+    ## expect_true(min(overlaps) > 0.80)
+    ## expect_true(min(overlaps) > 0.90)
 })
 
 ### * Test priors

@@ -1,3 +1,10 @@
+# isotracer 1.1.2 (2022-02-16)
+
+## Minor changes for resubmission to CRAN
+
+- Add a random seed before some stochastic tests to ensure that the tests do not fail randomly from time to time.
+- Drop dependency on rstantools for package users.
+
 # isotracer 1.1.0 (2021-12-19)
 
 ## Major changes
