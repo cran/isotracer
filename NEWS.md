@@ -1,3 +1,11 @@
+# isotracer 1.1.3 (2022-03-25)
+
+## Minor change for resubmission to CRAN
+
+- We were warned that one of the isotracer calls to a tidygraph function was triggering a fatal error when checking the isotracer package with the environmental variable "_R_CHECK_LENGTH_1_LOGIC2_" set to "abort,verbose". We modified one of isotracer's functions to avoid using the tidygraph code path that was triggering this error.
+
+(This error message was related to the NEWS for R-devel: "Calling && or || with either argument of length greater than one now gives a warning (which it is intended will become an error)".)
+
 # isotracer 1.1.2 (2022-02-16)
 
 ## Minor changes for resubmission to CRAN

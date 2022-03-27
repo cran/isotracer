@@ -1,6 +1,6 @@
 ---
 title: "Defining pulse or drip events"
-date: "2021-12-18"
+date: "2022-03-23"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -151,10 +151,10 @@ m
 
 ```
 ## # A tibble: 2 × 6
-##   topology           initial          observations      parameters       group events
-##   <list>             <list>           <list>            <list>           <lis> <list>
-## 1 <topology [2 × 2]> <tibble [2 × 3]> <tibble [10 × 4]> <tibble [5 × 2]> <chr… <tibb…
-## 2 <topology [2 × 2]> <tibble [2 × 3]> <tibble [9 × 4]>  <tibble [5 × 2]> <chr… <tibb…
+##   topology           initial          observations      parameters group     events  
+##   <list>             <list>           <list>            <list>     <list>    <list>  
+## 1 <topology [2 × 2]> <tibble [2 × 3]> <tibble [10 × 4]> <tibble>   <chr [1]> <tibble>
+## 2 <topology [2 × 2]> <tibble [2 × 3]> <tibble [9 × 4]>  <tibble>   <chr [1]> <tibble>
 ```
 
 ```r

@@ -372,6 +372,7 @@ sankey_calc_nodes_locations <- function(x, layout,
         if (exists(".Random.seed", .GlobalEnv)) {
             prev_seed <- .GlobalEnv[[".Random.seed"]]
         } else { prev_seed <- NULL }
+        x <- as_tbl_graph(x)
         nodes <- ggraph::create_layout(graph = x, layout = layout)
         if (exists(".Random.seed", .GlobalEnv)) {
             new_seed <- .GlobalEnv[[".Random.seed"]]

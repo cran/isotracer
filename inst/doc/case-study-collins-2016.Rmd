@@ -1,6 +1,6 @@
 ---
 title: "Case study: Trinidadian streams (Collins et al. 2016)"
-date: "2021-12-18"
+date: "2022-03-23"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -523,7 +523,8 @@ f <- flows %>%
 ```
 
 ```
-## `summarise()` has grouped output by 'from'. You can override using the `.groups` argument.
+## `summarise()` has grouped output by 'from'. You can override using the `.groups`
+## argument.
 ```
 
 ```r

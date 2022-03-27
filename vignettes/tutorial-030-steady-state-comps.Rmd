@@ -1,6 +1,6 @@
 ---
 title: "Setting steady-state compartments"
-date: "2021-12-18"
+date: "2022-03-23"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -116,7 +116,8 @@ init_bm <- exp %>%
 ```
 
 ```
-## `summarise()` has grouped output by 'species'. You can override using the `.groups` argument.
+## `summarise()` has grouped output by 'species'. You can override using the `.groups`
+## argument.
 ```
 
 ```r
@@ -145,7 +146,8 @@ init_prop_NH4 <- exp %>%
 ```
 
 ```
-## `summarise()` has grouped output by 'transect'. You can override using the `.groups` argument.
+## `summarise()` has grouped output by 'transect'. You can override using the `.groups`
+## argument.
 ```
 
 ```r
