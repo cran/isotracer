@@ -1,4 +1,6 @@
-citHeader("To cite isotracer in publications, please use:")
+citHeader("To cite 'isotracer' in publications, you can use the references ",
+          "below (the first one is the original methodological paper, the second ",
+          "one is the paper introducing the package implementation):")
 
 year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
@@ -18,11 +20,14 @@ bibentry(bibtype = "Article",
 	year = "2020",
 	pages = "964--985")
 
-bibentry(bibtype = "Unpublished",
-         title = "isotracer: an {R} package for the analysis of tracer addition experiments",
+bibentry(bibtype = "Article",
+         title = "isotracer: An R package for the analysis of tracer addition experiments",
+         volume = "13",
+         doi = "10.1111/2041-210X.13822",
+         number = "5",
+         journal = "Methods in Ecology and Evolution",
          author = c(person("Matthieu", "Bruneaux"),
                     person("Andrés", "López-Sepulcre")),
-         year = "2021",
-         doi = "10.1101/2021.08.09.455668",
-         note = "(Preprint uploaded to the bioRxiv server)",
-         journal = "bioRxiv")
+         year = "2022",
+         pages = "1119--1134")
+

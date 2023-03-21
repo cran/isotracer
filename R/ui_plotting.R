@@ -368,15 +368,7 @@ quick_sankey <- function(flows, ...) {
     flows <- dplyr::summarize(flows, width = mean(`!!`(rlang::sym("average_flow"))),
                               .groups = "drop")
     # Build topo from flows table
-    comps <- unique(c(flows$from, flows$to))
-    x <- matrix(0, ncol = length(comps), nrow = length(comps))
-    colnames(x) <- comps
-    rownames(x) <- comps
-    for (i in seq_len(nrow(flows))) {
-        from_i <- which(comps == flows$from[i])
-        to_i <- which(comps == flows$to[i])
-        x[to_i, from_i] <- 1
-    }
-    sankey(topo = x, nodes = nodes_from_topo(x), flows = flows, ...)
+    topo <- make_topology(flows, from = "from", to = "to")
+    sankey(topo = topo, nodes = nodes_from_topo(topo), flows = flows, ...)
 }
 

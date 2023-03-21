@@ -31,6 +31,7 @@
 #'     \code{derived.mcmc.list}).
 #'
 #' @examples
+#' \dontrun{
 #' # aquarium_run is a coda::mcmc.list object shipped with the isotracer package
 #' a <- aquarium_run
 #' plot(a)
@@ -49,6 +50,7 @@
 #' plot(10 + a[, "upsilon_algae_to_daphnia"])
 #' plot(10 * a[, "upsilon_algae_to_daphnia"])
 #' plot(10 / a[, "upsilon_algae_to_daphnia"])
+#' }
 #' 
 #' @method Ops mcmc.list
 #'

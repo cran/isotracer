@@ -1,3 +1,20 @@
+# isotracer 1.1.4 (2023-03-20)
+
+## Improved package compatibility with future versions of rstan
+
+- The package installation/configuration is now delegated to rstantools, thanks to a merge request from Andrew Johnson. This should make the package compatible with future versions of rstan.
+
+## Bug fixes
+
+- Fix bug in `sample_from()` (when `error.draws` was > 1, a mistake in the way sampled sizes and proportions were joined together resulted in too many rows in the returned table).
+- Fix bug in `stanfit_to_named_mcmclist()` which was causing problems when running MCMC sampling with thinning.
+- Fix bug in `quick_sankey()`.
+- Fix minor bug in the handling of colors by `traceplot()`.
+
+In the documentation:
+
+- Fix the vignette "How to simulate experiments" (priors for two models were missing, which prevented the vignette code from running).
+
 # isotracer 1.1.3 (2022-03-25)
 
 ## Minor change for resubmission to CRAN

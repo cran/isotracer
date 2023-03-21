@@ -21,5 +21,6 @@
 
 # Cf. https://r-pkgs.org/release.html#release-submission
 release_questions <- function() {
-    c("Have you rebuilt the precompiled vignettes manually recently?")
+  c("Have you rebuilt the precompiled vignettes manually recently?",
+    "Have you updated the CRAN badge by running `.download-cran-version-badge.R`?")
 }

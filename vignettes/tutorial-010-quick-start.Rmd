@@ -1,6 +1,6 @@
 ---
 title: "Quick start"
-date: "2022-03-23"
+date: "2023-03-20"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -112,7 +112,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, ncol = 2)
 ```
 
-<img src="figures/z-fig-010-plot-data-1.png" title="plot of chunk plot-data" alt="plot of chunk plot-data" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-plot-data-1.jpeg" alt="plot of chunk plot-data" style="display: block; margin: auto;" />
 
 As you can see, our simulated data is a time series over three days. For each species, we have measurements of total N biomass (left panel) and of the proportion of $^{15}$N in the N biomass (right panel).
 
@@ -214,7 +214,7 @@ If you have the [ggraph](https://cran.r-project.org/package=ggraph) package inst
 ggtopo(m)
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-8-1.jpeg" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
 
 </div>
 
@@ -398,7 +398,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-18-1.jpeg" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
 
 We can get some numerical estimates from those posteriors with the `summary()` function:
 
@@ -418,26 +418,26 @@ summary(run)
 ##    plus standard error of the mean:
 ## 
 ##                             Mean       SD  Naive SE Time-series SE
-## eta                      0.12573 0.045522 0.0010179      0.0018643
-## lambda_algae             0.10878 0.070078 0.0015670      0.0030039
-## lambda_daphnia           0.04093 0.050510 0.0011294      0.0044198
-## lambda_NH4               0.10400 0.088347 0.0019755      0.0083902
-## upsilon_algae_to_daphnia 0.07696 0.023657 0.0005290      0.0009251
-## upsilon_daphnia_to_NH4   0.04791 0.007666 0.0001714      0.0004459
-## upsilon_NH4_to_algae     0.34840 0.052415 0.0011720      0.0043206
-## zeta                     0.49562 0.367272 0.0082125      0.0422681
+## eta                      0.13077 0.049152 0.0010991      0.0020033
+## lambda_algae             0.10286 0.069802 0.0015608      0.0027276
+## lambda_daphnia           0.03406 0.044308 0.0009907      0.0021403
+## lambda_NH4               0.08789 0.075928 0.0016978      0.0037739
+## upsilon_algae_to_daphnia 0.08117 0.027279 0.0006100      0.0012027
+## upsilon_daphnia_to_NH4   0.04883 0.007193 0.0001609      0.0002655
+## upsilon_NH4_to_algae     0.33789 0.045259 0.0010120      0.0018630
+## zeta                     0.43033 0.274114 0.0061294      0.0151120
 ## 
 ## 2. Quantiles for each variable:
 ## 
-##                               2.5%      25%     50%     75%  97.5%
-## eta                      0.0667917 0.093090 0.11570 0.14716 0.2358
-## lambda_algae             0.0095706 0.057380 0.09819 0.14692 0.2739
-## lambda_daphnia           0.0008274 0.009586 0.02448 0.05098 0.2023
-## lambda_NH4               0.0032810 0.040996 0.08102 0.13886 0.3512
-## upsilon_algae_to_daphnia 0.0429389 0.061367 0.07276 0.08723 0.1380
-## upsilon_daphnia_to_NH4   0.0327853 0.042937 0.04791 0.05294 0.0631
-## upsilon_NH4_to_algae     0.2620082 0.314227 0.34358 0.37368 0.4886
-## zeta                     0.1920546 0.293008 0.38492 0.53885 1.7577
+##                               2.5%      25%     50%     75%   97.5%
+## eta                      0.0669153 0.097014 0.11911 0.15366 0.25784
+## lambda_algae             0.0073685 0.051767 0.09321 0.13848 0.27177
+## lambda_daphnia           0.0007514 0.008011 0.01924 0.04288 0.16813
+## lambda_NH4               0.0028592 0.032424 0.06857 0.12075 0.29253
+## upsilon_algae_to_daphnia 0.0455856 0.063812 0.07516 0.09189 0.15350
+## upsilon_daphnia_to_NH4   0.0351229 0.044070 0.04860 0.05341 0.06439
+## upsilon_NH4_to_algae     0.2544754 0.306396 0.33584 0.36630 0.43583
+## zeta                     0.1758005 0.272402 0.34691 0.49108 1.29881
 ```
 
 Finally, doing a **posterior predictive check** where we compare the observations and the corresponding predicted 95% credible intervals is a good way to check that the chosen model makes sense for this dataset:
@@ -448,7 +448,7 @@ predictions <- predict(m, run, probs = 0.95)
 plot(predictions, ylab.size = "Biomass (mg N)", ylab.prop = "Proportion 15N")
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-21-1.jpeg" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
 
 We would expect 95% of the observations to fall within the predicted 95% credible intervals if the model is appropriate to describe the dataset.
 

@@ -430,3 +430,19 @@ test_that("Model runs when eta and zeta have covariates", {
     expect_error({p <- predict(m, f, draws = DRAWS, cores = n_cores)}, NA)
     expect_error(plot(p), NA)
 })
+
+### * Test thinning
+
+test_that("Thinning does not crash the MCMC run", {
+  m <- aquarium_mod
+  expect_error(capture_warnings(capture_output({
+    r <- isotracer::run_mcmc(m, seed = 40, iter = 100, thin = 1, chains = 2,
+                             cores = n_cores)
+  })), NA)
+  expect_equal(nrow(as.matrix(r)), 100)
+  expect_error(capture_warnings(capture_output({
+    r <- isotracer::run_mcmc(m, seed = 40, iter = 100, thin = 7, chains = 2,
+                  cores = n_cores)
+  })), NA)
+  expect_equal(nrow(as.matrix(r)), 16)
+})

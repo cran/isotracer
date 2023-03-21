@@ -246,10 +246,10 @@ sample_from <- function(nm, at, dt = NULL, grid_size = NULL, end = NULL, error.d
         } else {
             stop("Unknown distribution family:", prop_family)
         }
-        obs[[i]] <- dplyr::left_join(sizes, props, by = c("time", "comp"))
-        obs[[i]]$meanSize <- NULL
-        obs[[i]]$meanProp <- NULL
-        
+        stopifnot(all(sizes[["time"]] == props[["time"]]))
+        stopifnot(all(sizes[["comp"]] == props[["comp"]]))
+        obs[[i]] <- dplyr::bind_cols(sizes[, c("time", "comp", "size")],
+                                     props[, c("prop")])
     }
     if (is.null(groups(nm))) {
         stopifnot(nrow(nm) == 1)

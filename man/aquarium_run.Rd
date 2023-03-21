@@ -12,12 +12,16 @@ aquarium_run
 }
 \description{
 This is an MCMC run on \code{\link{aquarium_mod}}. The code used to run the
-MCMC is: \code{aquarium_run <- run_mcmc(aquarium_mod)}. The code used to
-build the model itself is given in the help page for
-\code{\link{aquarium_mod}}.
+MCMC is: \code{aquarium_run <- run_mcmc(aquarium_mod, thin = 4)} (note that
+\code{thin = 4} was only used here to reduce the size of the data file
+shipped with the package, but for a real-life analysis keeping the default
+\code{thin = 1} is usually recommended). The code used to build the model
+itself is given in the help page for \code{\link{aquarium_mod}}.
 }
 \examples{
+\dontrun{
 plot(aquarium_run)
 summary(aquarium_run)
+}
 }
 \keyword{datasets}

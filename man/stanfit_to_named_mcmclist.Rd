@@ -10,7 +10,8 @@ stanfit_to_named_mcmclist(stanfit)
 \item{stanfit}{A stanfit object returned by \code{rstan::sampling}.}
 }
 \value{
-An \code{mcmc.list} object.
+An \code{mcmc.list} object. It also has the original stanfit object
+  stored as an attribute \code{"stanfit"}.
 }
 \description{
 When running \code{run_mcmc} with \code{stanfit = FALSE} (typically for

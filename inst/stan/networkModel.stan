@@ -533,12 +533,12 @@ transformed data {
 /// * Parameters
 
 parameters {
-  real<lower=0,upper=1> rawUniformParams[nPriorUniform_code1];
-  real<lower=0> rawHcauchyParams[nPriorHcauchy_code2];
-  real<lower=0,upper=1> rawBetaParams[nPriorBeta_code3];
-  real<lower=0> rawTrNormParams[nPriorTrNormal_code4];
-  real<lower=0> rawExponentialParams[nPriorExponential_code5];
-  real<lower=0> rawGammaParams[nPriorGamma_code6];
+  vector<lower=0,upper=1>[nPriorUniform_code1] rawUniformParams;
+  vector<lower=0>[nPriorHcauchy_code2] rawHcauchyParams;
+  vector<lower=0,upper=1>[nPriorBeta_code3] rawBetaParams;
+  vector<lower=0>[nPriorTrNormal_code4] rawTrNormParams;
+  vector<lower=0>[nPriorExponential_code5] rawExponentialParams;
+  vector<lower=0>[nPriorGamma_code6] rawGammaParams;
 }
 
 /// * Transformed parameters

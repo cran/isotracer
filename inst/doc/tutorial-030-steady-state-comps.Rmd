@@ -1,6 +1,6 @@
 ---
 title: "Setting steady-state compartments"
-date: "2022-03-23"
+date: "2023-03-20"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -79,7 +79,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-4-1.jpeg" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
 
 <div class="alert-primary" role="alert">
 
@@ -129,10 +129,10 @@ init_bm
 ## # Groups:   species [2]
 ##   species   transect   biomass
 ##   <chr>     <chr>        <dbl>
-## 1 epilithon transect_1  93.9  
-## 2 epilithon transect_2 101.   
-## 3 NH4       transect_1   0.33 
-## 4 NH4       transect_2   0.303
+## 1 NH4       transect_1   0.33 
+## 2 NH4       transect_2   0.303
+## 3 epilithon transect_1  93.9  
+## 4 epilithon transect_2 101.
 ```
 
 For the initial proportion of $^{15}$N in the dissolved ammonium, we will also use mean values since we expect ammonium to be in a steady state during the experiment (the drip is on during the whole experiment):
@@ -195,10 +195,10 @@ inits
 ## # Groups:   species [2]
 ##   species   transect   biomass prop15N
 ##   <chr>     <chr>        <dbl>   <dbl>
-## 1 epilithon transect_1  93.9    0.0022
-## 2 epilithon transect_2 101.     0.0029
-## 3 NH4       transect_1   0.33   0.024 
-## 4 NH4       transect_2   0.303  0.0255
+## 1 NH4       transect_1   0.33   0.024 
+## 2 NH4       transect_2   0.303  0.0255
+## 3 epilithon transect_1  93.9    0.0022
+## 4 epilithon transect_2 101.     0.0029
 ```
 
 We can use this table to specify the initial conditions of the model:
@@ -363,7 +363,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-23-1.jpeg" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
 
 The traces look good. Let's do a posterior predictive check to ensure that the model makes sense:
 
@@ -373,7 +373,7 @@ predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-25-1.png" title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-25-1.jpeg" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
 
 Let's use a log scale on the y axis to make visualization of the two compartments in the same plots easier:
 
@@ -382,7 +382,7 @@ Let's use a log scale on the y axis to make visualization of the two compartment
 plot(predictions, facet_row = "group", log = TRUE)
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-26-1.jpeg" alt="plot of chunk unnamed-chunk-26" style="display: block; margin: auto;" />
 
 The model looks ok.
 

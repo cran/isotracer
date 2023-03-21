@@ -1520,22 +1520,22 @@ public:
             param_ranges_i__.clear();
             current_statement_begin__ = 536;
             validate_non_negative_index("rawUniformParams", "nPriorUniform_code1", nPriorUniform_code1);
-            num_params_r__ += (1 * nPriorUniform_code1);
+            num_params_r__ += nPriorUniform_code1;
             current_statement_begin__ = 537;
             validate_non_negative_index("rawHcauchyParams", "nPriorHcauchy_code2", nPriorHcauchy_code2);
-            num_params_r__ += (1 * nPriorHcauchy_code2);
+            num_params_r__ += nPriorHcauchy_code2;
             current_statement_begin__ = 538;
             validate_non_negative_index("rawBetaParams", "nPriorBeta_code3", nPriorBeta_code3);
-            num_params_r__ += (1 * nPriorBeta_code3);
+            num_params_r__ += nPriorBeta_code3;
             current_statement_begin__ = 539;
             validate_non_negative_index("rawTrNormParams", "nPriorTrNormal_code4", nPriorTrNormal_code4);
-            num_params_r__ += (1 * nPriorTrNormal_code4);
+            num_params_r__ += nPriorTrNormal_code4;
             current_statement_begin__ = 540;
             validate_non_negative_index("rawExponentialParams", "nPriorExponential_code5", nPriorExponential_code5);
-            num_params_r__ += (1 * nPriorExponential_code5);
+            num_params_r__ += nPriorExponential_code5;
             current_statement_begin__ = 541;
             validate_non_negative_index("rawGammaParams", "nPriorGamma_code6", nPriorGamma_code6);
-            num_params_r__ += (1 * nPriorGamma_code6);
+            num_params_r__ += nPriorGamma_code6;
         } catch (const std::exception& e) {
             stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
             // Next line prevents compiler griping about no return
@@ -1559,19 +1559,16 @@ public:
         vals_r__ = context__.vals_r("rawUniformParams");
         pos__ = 0U;
         validate_non_negative_index("rawUniformParams", "nPriorUniform_code1", nPriorUniform_code1);
-        context__.validate_dims("parameter initialization", "rawUniformParams", "double", context__.to_vec(nPriorUniform_code1));
-        std::vector<double> rawUniformParams(nPriorUniform_code1, double(0));
-        size_t rawUniformParams_k_0_max__ = nPriorUniform_code1;
-        for (size_t k_0__ = 0; k_0__ < rawUniformParams_k_0_max__; ++k_0__) {
-            rawUniformParams[k_0__] = vals_r__[pos__++];
+        context__.validate_dims("parameter initialization", "rawUniformParams", "vector_d", context__.to_vec(nPriorUniform_code1));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawUniformParams(nPriorUniform_code1);
+        size_t rawUniformParams_j_1_max__ = nPriorUniform_code1;
+        for (size_t j_1__ = 0; j_1__ < rawUniformParams_j_1_max__; ++j_1__) {
+            rawUniformParams(j_1__) = vals_r__[pos__++];
         }
-        size_t rawUniformParams_i_0_max__ = nPriorUniform_code1;
-        for (size_t i_0__ = 0; i_0__ < rawUniformParams_i_0_max__; ++i_0__) {
-            try {
-                writer__.scalar_lub_unconstrain(0, 1, rawUniformParams[i_0__]);
-            } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawUniformParams: ") + e.what()), current_statement_begin__, prog_reader__());
-            }
+        try {
+            writer__.vector_lub_unconstrain(0, 1, rawUniformParams);
+        } catch (const std::exception& e) {
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawUniformParams: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         current_statement_begin__ = 537;
         if (!(context__.contains_r("rawHcauchyParams")))
@@ -1579,19 +1576,16 @@ public:
         vals_r__ = context__.vals_r("rawHcauchyParams");
         pos__ = 0U;
         validate_non_negative_index("rawHcauchyParams", "nPriorHcauchy_code2", nPriorHcauchy_code2);
-        context__.validate_dims("parameter initialization", "rawHcauchyParams", "double", context__.to_vec(nPriorHcauchy_code2));
-        std::vector<double> rawHcauchyParams(nPriorHcauchy_code2, double(0));
-        size_t rawHcauchyParams_k_0_max__ = nPriorHcauchy_code2;
-        for (size_t k_0__ = 0; k_0__ < rawHcauchyParams_k_0_max__; ++k_0__) {
-            rawHcauchyParams[k_0__] = vals_r__[pos__++];
+        context__.validate_dims("parameter initialization", "rawHcauchyParams", "vector_d", context__.to_vec(nPriorHcauchy_code2));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawHcauchyParams(nPriorHcauchy_code2);
+        size_t rawHcauchyParams_j_1_max__ = nPriorHcauchy_code2;
+        for (size_t j_1__ = 0; j_1__ < rawHcauchyParams_j_1_max__; ++j_1__) {
+            rawHcauchyParams(j_1__) = vals_r__[pos__++];
         }
-        size_t rawHcauchyParams_i_0_max__ = nPriorHcauchy_code2;
-        for (size_t i_0__ = 0; i_0__ < rawHcauchyParams_i_0_max__; ++i_0__) {
-            try {
-                writer__.scalar_lb_unconstrain(0, rawHcauchyParams[i_0__]);
-            } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawHcauchyParams: ") + e.what()), current_statement_begin__, prog_reader__());
-            }
+        try {
+            writer__.vector_lb_unconstrain(0, rawHcauchyParams);
+        } catch (const std::exception& e) {
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawHcauchyParams: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         current_statement_begin__ = 538;
         if (!(context__.contains_r("rawBetaParams")))
@@ -1599,19 +1593,16 @@ public:
         vals_r__ = context__.vals_r("rawBetaParams");
         pos__ = 0U;
         validate_non_negative_index("rawBetaParams", "nPriorBeta_code3", nPriorBeta_code3);
-        context__.validate_dims("parameter initialization", "rawBetaParams", "double", context__.to_vec(nPriorBeta_code3));
-        std::vector<double> rawBetaParams(nPriorBeta_code3, double(0));
-        size_t rawBetaParams_k_0_max__ = nPriorBeta_code3;
-        for (size_t k_0__ = 0; k_0__ < rawBetaParams_k_0_max__; ++k_0__) {
-            rawBetaParams[k_0__] = vals_r__[pos__++];
+        context__.validate_dims("parameter initialization", "rawBetaParams", "vector_d", context__.to_vec(nPriorBeta_code3));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawBetaParams(nPriorBeta_code3);
+        size_t rawBetaParams_j_1_max__ = nPriorBeta_code3;
+        for (size_t j_1__ = 0; j_1__ < rawBetaParams_j_1_max__; ++j_1__) {
+            rawBetaParams(j_1__) = vals_r__[pos__++];
         }
-        size_t rawBetaParams_i_0_max__ = nPriorBeta_code3;
-        for (size_t i_0__ = 0; i_0__ < rawBetaParams_i_0_max__; ++i_0__) {
-            try {
-                writer__.scalar_lub_unconstrain(0, 1, rawBetaParams[i_0__]);
-            } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawBetaParams: ") + e.what()), current_statement_begin__, prog_reader__());
-            }
+        try {
+            writer__.vector_lub_unconstrain(0, 1, rawBetaParams);
+        } catch (const std::exception& e) {
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawBetaParams: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         current_statement_begin__ = 539;
         if (!(context__.contains_r("rawTrNormParams")))
@@ -1619,19 +1610,16 @@ public:
         vals_r__ = context__.vals_r("rawTrNormParams");
         pos__ = 0U;
         validate_non_negative_index("rawTrNormParams", "nPriorTrNormal_code4", nPriorTrNormal_code4);
-        context__.validate_dims("parameter initialization", "rawTrNormParams", "double", context__.to_vec(nPriorTrNormal_code4));
-        std::vector<double> rawTrNormParams(nPriorTrNormal_code4, double(0));
-        size_t rawTrNormParams_k_0_max__ = nPriorTrNormal_code4;
-        for (size_t k_0__ = 0; k_0__ < rawTrNormParams_k_0_max__; ++k_0__) {
-            rawTrNormParams[k_0__] = vals_r__[pos__++];
+        context__.validate_dims("parameter initialization", "rawTrNormParams", "vector_d", context__.to_vec(nPriorTrNormal_code4));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawTrNormParams(nPriorTrNormal_code4);
+        size_t rawTrNormParams_j_1_max__ = nPriorTrNormal_code4;
+        for (size_t j_1__ = 0; j_1__ < rawTrNormParams_j_1_max__; ++j_1__) {
+            rawTrNormParams(j_1__) = vals_r__[pos__++];
         }
-        size_t rawTrNormParams_i_0_max__ = nPriorTrNormal_code4;
-        for (size_t i_0__ = 0; i_0__ < rawTrNormParams_i_0_max__; ++i_0__) {
-            try {
-                writer__.scalar_lb_unconstrain(0, rawTrNormParams[i_0__]);
-            } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawTrNormParams: ") + e.what()), current_statement_begin__, prog_reader__());
-            }
+        try {
+            writer__.vector_lb_unconstrain(0, rawTrNormParams);
+        } catch (const std::exception& e) {
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawTrNormParams: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         current_statement_begin__ = 540;
         if (!(context__.contains_r("rawExponentialParams")))
@@ -1639,19 +1627,16 @@ public:
         vals_r__ = context__.vals_r("rawExponentialParams");
         pos__ = 0U;
         validate_non_negative_index("rawExponentialParams", "nPriorExponential_code5", nPriorExponential_code5);
-        context__.validate_dims("parameter initialization", "rawExponentialParams", "double", context__.to_vec(nPriorExponential_code5));
-        std::vector<double> rawExponentialParams(nPriorExponential_code5, double(0));
-        size_t rawExponentialParams_k_0_max__ = nPriorExponential_code5;
-        for (size_t k_0__ = 0; k_0__ < rawExponentialParams_k_0_max__; ++k_0__) {
-            rawExponentialParams[k_0__] = vals_r__[pos__++];
+        context__.validate_dims("parameter initialization", "rawExponentialParams", "vector_d", context__.to_vec(nPriorExponential_code5));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawExponentialParams(nPriorExponential_code5);
+        size_t rawExponentialParams_j_1_max__ = nPriorExponential_code5;
+        for (size_t j_1__ = 0; j_1__ < rawExponentialParams_j_1_max__; ++j_1__) {
+            rawExponentialParams(j_1__) = vals_r__[pos__++];
         }
-        size_t rawExponentialParams_i_0_max__ = nPriorExponential_code5;
-        for (size_t i_0__ = 0; i_0__ < rawExponentialParams_i_0_max__; ++i_0__) {
-            try {
-                writer__.scalar_lb_unconstrain(0, rawExponentialParams[i_0__]);
-            } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawExponentialParams: ") + e.what()), current_statement_begin__, prog_reader__());
-            }
+        try {
+            writer__.vector_lb_unconstrain(0, rawExponentialParams);
+        } catch (const std::exception& e) {
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawExponentialParams: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         current_statement_begin__ = 541;
         if (!(context__.contains_r("rawGammaParams")))
@@ -1659,19 +1644,16 @@ public:
         vals_r__ = context__.vals_r("rawGammaParams");
         pos__ = 0U;
         validate_non_negative_index("rawGammaParams", "nPriorGamma_code6", nPriorGamma_code6);
-        context__.validate_dims("parameter initialization", "rawGammaParams", "double", context__.to_vec(nPriorGamma_code6));
-        std::vector<double> rawGammaParams(nPriorGamma_code6, double(0));
-        size_t rawGammaParams_k_0_max__ = nPriorGamma_code6;
-        for (size_t k_0__ = 0; k_0__ < rawGammaParams_k_0_max__; ++k_0__) {
-            rawGammaParams[k_0__] = vals_r__[pos__++];
+        context__.validate_dims("parameter initialization", "rawGammaParams", "vector_d", context__.to_vec(nPriorGamma_code6));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawGammaParams(nPriorGamma_code6);
+        size_t rawGammaParams_j_1_max__ = nPriorGamma_code6;
+        for (size_t j_1__ = 0; j_1__ < rawGammaParams_j_1_max__; ++j_1__) {
+            rawGammaParams(j_1__) = vals_r__[pos__++];
         }
-        size_t rawGammaParams_i_0_max__ = nPriorGamma_code6;
-        for (size_t i_0__ = 0; i_0__ < rawGammaParams_i_0_max__; ++i_0__) {
-            try {
-                writer__.scalar_lb_unconstrain(0, rawGammaParams[i_0__]);
-            } catch (const std::exception& e) {
-                stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawGammaParams: ") + e.what()), current_statement_begin__, prog_reader__());
-            }
+        try {
+            writer__.vector_lb_unconstrain(0, rawGammaParams);
+        } catch (const std::exception& e) {
+            stan::lang::rethrow_located(std::runtime_error(std::string("Error transforming variable rawGammaParams: ") + e.what()), current_statement_begin__, prog_reader__());
         }
         params_r__ = writer__.data_r();
         params_i__ = writer__.data_i();
@@ -1699,65 +1681,47 @@ public:
             stan::io::reader<local_scalar_t__> in__(params_r__, params_i__);
             // model parameters
             current_statement_begin__ = 536;
-            std::vector<local_scalar_t__> rawUniformParams;
-            size_t rawUniformParams_d_0_max__ = nPriorUniform_code1;
-            rawUniformParams.reserve(rawUniformParams_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < rawUniformParams_d_0_max__; ++d_0__) {
-                if (jacobian__)
-                    rawUniformParams.push_back(in__.scalar_lub_constrain(0, 1, lp__));
-                else
-                    rawUniformParams.push_back(in__.scalar_lub_constrain(0, 1));
-            }
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> rawUniformParams;
+            (void) rawUniformParams;  // dummy to suppress unused var warning
+            if (jacobian__)
+                rawUniformParams = in__.vector_lub_constrain(0, 1, nPriorUniform_code1, lp__);
+            else
+                rawUniformParams = in__.vector_lub_constrain(0, 1, nPriorUniform_code1);
             current_statement_begin__ = 537;
-            std::vector<local_scalar_t__> rawHcauchyParams;
-            size_t rawHcauchyParams_d_0_max__ = nPriorHcauchy_code2;
-            rawHcauchyParams.reserve(rawHcauchyParams_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < rawHcauchyParams_d_0_max__; ++d_0__) {
-                if (jacobian__)
-                    rawHcauchyParams.push_back(in__.scalar_lb_constrain(0, lp__));
-                else
-                    rawHcauchyParams.push_back(in__.scalar_lb_constrain(0));
-            }
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> rawHcauchyParams;
+            (void) rawHcauchyParams;  // dummy to suppress unused var warning
+            if (jacobian__)
+                rawHcauchyParams = in__.vector_lb_constrain(0, nPriorHcauchy_code2, lp__);
+            else
+                rawHcauchyParams = in__.vector_lb_constrain(0, nPriorHcauchy_code2);
             current_statement_begin__ = 538;
-            std::vector<local_scalar_t__> rawBetaParams;
-            size_t rawBetaParams_d_0_max__ = nPriorBeta_code3;
-            rawBetaParams.reserve(rawBetaParams_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < rawBetaParams_d_0_max__; ++d_0__) {
-                if (jacobian__)
-                    rawBetaParams.push_back(in__.scalar_lub_constrain(0, 1, lp__));
-                else
-                    rawBetaParams.push_back(in__.scalar_lub_constrain(0, 1));
-            }
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> rawBetaParams;
+            (void) rawBetaParams;  // dummy to suppress unused var warning
+            if (jacobian__)
+                rawBetaParams = in__.vector_lub_constrain(0, 1, nPriorBeta_code3, lp__);
+            else
+                rawBetaParams = in__.vector_lub_constrain(0, 1, nPriorBeta_code3);
             current_statement_begin__ = 539;
-            std::vector<local_scalar_t__> rawTrNormParams;
-            size_t rawTrNormParams_d_0_max__ = nPriorTrNormal_code4;
-            rawTrNormParams.reserve(rawTrNormParams_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < rawTrNormParams_d_0_max__; ++d_0__) {
-                if (jacobian__)
-                    rawTrNormParams.push_back(in__.scalar_lb_constrain(0, lp__));
-                else
-                    rawTrNormParams.push_back(in__.scalar_lb_constrain(0));
-            }
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> rawTrNormParams;
+            (void) rawTrNormParams;  // dummy to suppress unused var warning
+            if (jacobian__)
+                rawTrNormParams = in__.vector_lb_constrain(0, nPriorTrNormal_code4, lp__);
+            else
+                rawTrNormParams = in__.vector_lb_constrain(0, nPriorTrNormal_code4);
             current_statement_begin__ = 540;
-            std::vector<local_scalar_t__> rawExponentialParams;
-            size_t rawExponentialParams_d_0_max__ = nPriorExponential_code5;
-            rawExponentialParams.reserve(rawExponentialParams_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < rawExponentialParams_d_0_max__; ++d_0__) {
-                if (jacobian__)
-                    rawExponentialParams.push_back(in__.scalar_lb_constrain(0, lp__));
-                else
-                    rawExponentialParams.push_back(in__.scalar_lb_constrain(0));
-            }
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> rawExponentialParams;
+            (void) rawExponentialParams;  // dummy to suppress unused var warning
+            if (jacobian__)
+                rawExponentialParams = in__.vector_lb_constrain(0, nPriorExponential_code5, lp__);
+            else
+                rawExponentialParams = in__.vector_lb_constrain(0, nPriorExponential_code5);
             current_statement_begin__ = 541;
-            std::vector<local_scalar_t__> rawGammaParams;
-            size_t rawGammaParams_d_0_max__ = nPriorGamma_code6;
-            rawGammaParams.reserve(rawGammaParams_d_0_max__);
-            for (size_t d_0__ = 0; d_0__ < rawGammaParams_d_0_max__; ++d_0__) {
-                if (jacobian__)
-                    rawGammaParams.push_back(in__.scalar_lb_constrain(0, lp__));
-                else
-                    rawGammaParams.push_back(in__.scalar_lb_constrain(0));
-            }
+            Eigen::Matrix<local_scalar_t__, Eigen::Dynamic, 1> rawGammaParams;
+            (void) rawGammaParams;  // dummy to suppress unused var warning
+            if (jacobian__)
+                rawGammaParams = in__.vector_lb_constrain(0, nPriorGamma_code6, lp__);
+            else
+                rawGammaParams = in__.vector_lb_constrain(0, nPriorGamma_code6);
             // transformed parameters
             current_statement_begin__ = 553;
             validate_non_negative_index("params", "nParams", nParams);
@@ -2872,65 +2836,35 @@ public:
         static const char* function__ = "model_networkModel_namespace::write_array";
         (void) function__;  // dummy to suppress unused var warning
         // read-transform, write parameters
-        std::vector<double> rawUniformParams;
-        size_t rawUniformParams_d_0_max__ = nPriorUniform_code1;
-        rawUniformParams.reserve(rawUniformParams_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < rawUniformParams_d_0_max__; ++d_0__) {
-            rawUniformParams.push_back(in__.scalar_lub_constrain(0, 1));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawUniformParams = in__.vector_lub_constrain(0, 1, nPriorUniform_code1);
+        size_t rawUniformParams_j_1_max__ = nPriorUniform_code1;
+        for (size_t j_1__ = 0; j_1__ < rawUniformParams_j_1_max__; ++j_1__) {
+            vars__.push_back(rawUniformParams(j_1__));
         }
-        size_t rawUniformParams_k_0_max__ = nPriorUniform_code1;
-        for (size_t k_0__ = 0; k_0__ < rawUniformParams_k_0_max__; ++k_0__) {
-            vars__.push_back(rawUniformParams[k_0__]);
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawHcauchyParams = in__.vector_lb_constrain(0, nPriorHcauchy_code2);
+        size_t rawHcauchyParams_j_1_max__ = nPriorHcauchy_code2;
+        for (size_t j_1__ = 0; j_1__ < rawHcauchyParams_j_1_max__; ++j_1__) {
+            vars__.push_back(rawHcauchyParams(j_1__));
         }
-        std::vector<double> rawHcauchyParams;
-        size_t rawHcauchyParams_d_0_max__ = nPriorHcauchy_code2;
-        rawHcauchyParams.reserve(rawHcauchyParams_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < rawHcauchyParams_d_0_max__; ++d_0__) {
-            rawHcauchyParams.push_back(in__.scalar_lb_constrain(0));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawBetaParams = in__.vector_lub_constrain(0, 1, nPriorBeta_code3);
+        size_t rawBetaParams_j_1_max__ = nPriorBeta_code3;
+        for (size_t j_1__ = 0; j_1__ < rawBetaParams_j_1_max__; ++j_1__) {
+            vars__.push_back(rawBetaParams(j_1__));
         }
-        size_t rawHcauchyParams_k_0_max__ = nPriorHcauchy_code2;
-        for (size_t k_0__ = 0; k_0__ < rawHcauchyParams_k_0_max__; ++k_0__) {
-            vars__.push_back(rawHcauchyParams[k_0__]);
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawTrNormParams = in__.vector_lb_constrain(0, nPriorTrNormal_code4);
+        size_t rawTrNormParams_j_1_max__ = nPriorTrNormal_code4;
+        for (size_t j_1__ = 0; j_1__ < rawTrNormParams_j_1_max__; ++j_1__) {
+            vars__.push_back(rawTrNormParams(j_1__));
         }
-        std::vector<double> rawBetaParams;
-        size_t rawBetaParams_d_0_max__ = nPriorBeta_code3;
-        rawBetaParams.reserve(rawBetaParams_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < rawBetaParams_d_0_max__; ++d_0__) {
-            rawBetaParams.push_back(in__.scalar_lub_constrain(0, 1));
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawExponentialParams = in__.vector_lb_constrain(0, nPriorExponential_code5);
+        size_t rawExponentialParams_j_1_max__ = nPriorExponential_code5;
+        for (size_t j_1__ = 0; j_1__ < rawExponentialParams_j_1_max__; ++j_1__) {
+            vars__.push_back(rawExponentialParams(j_1__));
         }
-        size_t rawBetaParams_k_0_max__ = nPriorBeta_code3;
-        for (size_t k_0__ = 0; k_0__ < rawBetaParams_k_0_max__; ++k_0__) {
-            vars__.push_back(rawBetaParams[k_0__]);
-        }
-        std::vector<double> rawTrNormParams;
-        size_t rawTrNormParams_d_0_max__ = nPriorTrNormal_code4;
-        rawTrNormParams.reserve(rawTrNormParams_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < rawTrNormParams_d_0_max__; ++d_0__) {
-            rawTrNormParams.push_back(in__.scalar_lb_constrain(0));
-        }
-        size_t rawTrNormParams_k_0_max__ = nPriorTrNormal_code4;
-        for (size_t k_0__ = 0; k_0__ < rawTrNormParams_k_0_max__; ++k_0__) {
-            vars__.push_back(rawTrNormParams[k_0__]);
-        }
-        std::vector<double> rawExponentialParams;
-        size_t rawExponentialParams_d_0_max__ = nPriorExponential_code5;
-        rawExponentialParams.reserve(rawExponentialParams_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < rawExponentialParams_d_0_max__; ++d_0__) {
-            rawExponentialParams.push_back(in__.scalar_lb_constrain(0));
-        }
-        size_t rawExponentialParams_k_0_max__ = nPriorExponential_code5;
-        for (size_t k_0__ = 0; k_0__ < rawExponentialParams_k_0_max__; ++k_0__) {
-            vars__.push_back(rawExponentialParams[k_0__]);
-        }
-        std::vector<double> rawGammaParams;
-        size_t rawGammaParams_d_0_max__ = nPriorGamma_code6;
-        rawGammaParams.reserve(rawGammaParams_d_0_max__);
-        for (size_t d_0__ = 0; d_0__ < rawGammaParams_d_0_max__; ++d_0__) {
-            rawGammaParams.push_back(in__.scalar_lb_constrain(0));
-        }
-        size_t rawGammaParams_k_0_max__ = nPriorGamma_code6;
-        for (size_t k_0__ = 0; k_0__ < rawGammaParams_k_0_max__; ++k_0__) {
-            vars__.push_back(rawGammaParams[k_0__]);
+        Eigen::Matrix<double, Eigen::Dynamic, 1> rawGammaParams = in__.vector_lb_constrain(0, nPriorGamma_code6);
+        size_t rawGammaParams_j_1_max__ = nPriorGamma_code6;
+        for (size_t j_1__ = 0; j_1__ < rawGammaParams_j_1_max__; ++j_1__) {
+            vars__.push_back(rawGammaParams(j_1__));
         }
         double lp__ = 0.0;
         (void) lp__;  // dummy to suppress unused var warning
@@ -3866,40 +3800,40 @@ public:
                                  bool include_tparams__ = true,
                                  bool include_gqs__ = true) const {
         std::stringstream param_name_stream__;
-        size_t rawUniformParams_k_0_max__ = nPriorUniform_code1;
-        for (size_t k_0__ = 0; k_0__ < rawUniformParams_k_0_max__; ++k_0__) {
+        size_t rawUniformParams_j_1_max__ = nPriorUniform_code1;
+        for (size_t j_1__ = 0; j_1__ < rawUniformParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawUniformParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawUniformParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawHcauchyParams_k_0_max__ = nPriorHcauchy_code2;
-        for (size_t k_0__ = 0; k_0__ < rawHcauchyParams_k_0_max__; ++k_0__) {
+        size_t rawHcauchyParams_j_1_max__ = nPriorHcauchy_code2;
+        for (size_t j_1__ = 0; j_1__ < rawHcauchyParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawHcauchyParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawHcauchyParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawBetaParams_k_0_max__ = nPriorBeta_code3;
-        for (size_t k_0__ = 0; k_0__ < rawBetaParams_k_0_max__; ++k_0__) {
+        size_t rawBetaParams_j_1_max__ = nPriorBeta_code3;
+        for (size_t j_1__ = 0; j_1__ < rawBetaParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawBetaParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawBetaParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawTrNormParams_k_0_max__ = nPriorTrNormal_code4;
-        for (size_t k_0__ = 0; k_0__ < rawTrNormParams_k_0_max__; ++k_0__) {
+        size_t rawTrNormParams_j_1_max__ = nPriorTrNormal_code4;
+        for (size_t j_1__ = 0; j_1__ < rawTrNormParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawTrNormParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawTrNormParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawExponentialParams_k_0_max__ = nPriorExponential_code5;
-        for (size_t k_0__ = 0; k_0__ < rawExponentialParams_k_0_max__; ++k_0__) {
+        size_t rawExponentialParams_j_1_max__ = nPriorExponential_code5;
+        for (size_t j_1__ = 0; j_1__ < rawExponentialParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawExponentialParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawExponentialParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawGammaParams_k_0_max__ = nPriorGamma_code6;
-        for (size_t k_0__ = 0; k_0__ < rawGammaParams_k_0_max__; ++k_0__) {
+        size_t rawGammaParams_j_1_max__ = nPriorGamma_code6;
+        for (size_t j_1__ = 0; j_1__ < rawGammaParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawGammaParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawGammaParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
         if (!include_gqs__ && !include_tparams__) return;
@@ -4121,40 +4055,40 @@ public:
                                    bool include_tparams__ = true,
                                    bool include_gqs__ = true) const {
         std::stringstream param_name_stream__;
-        size_t rawUniformParams_k_0_max__ = nPriorUniform_code1;
-        for (size_t k_0__ = 0; k_0__ < rawUniformParams_k_0_max__; ++k_0__) {
+        size_t rawUniformParams_j_1_max__ = nPriorUniform_code1;
+        for (size_t j_1__ = 0; j_1__ < rawUniformParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawUniformParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawUniformParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawHcauchyParams_k_0_max__ = nPriorHcauchy_code2;
-        for (size_t k_0__ = 0; k_0__ < rawHcauchyParams_k_0_max__; ++k_0__) {
+        size_t rawHcauchyParams_j_1_max__ = nPriorHcauchy_code2;
+        for (size_t j_1__ = 0; j_1__ < rawHcauchyParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawHcauchyParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawHcauchyParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawBetaParams_k_0_max__ = nPriorBeta_code3;
-        for (size_t k_0__ = 0; k_0__ < rawBetaParams_k_0_max__; ++k_0__) {
+        size_t rawBetaParams_j_1_max__ = nPriorBeta_code3;
+        for (size_t j_1__ = 0; j_1__ < rawBetaParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawBetaParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawBetaParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawTrNormParams_k_0_max__ = nPriorTrNormal_code4;
-        for (size_t k_0__ = 0; k_0__ < rawTrNormParams_k_0_max__; ++k_0__) {
+        size_t rawTrNormParams_j_1_max__ = nPriorTrNormal_code4;
+        for (size_t j_1__ = 0; j_1__ < rawTrNormParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawTrNormParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawTrNormParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawExponentialParams_k_0_max__ = nPriorExponential_code5;
-        for (size_t k_0__ = 0; k_0__ < rawExponentialParams_k_0_max__; ++k_0__) {
+        size_t rawExponentialParams_j_1_max__ = nPriorExponential_code5;
+        for (size_t j_1__ = 0; j_1__ < rawExponentialParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawExponentialParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawExponentialParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
-        size_t rawGammaParams_k_0_max__ = nPriorGamma_code6;
-        for (size_t k_0__ = 0; k_0__ < rawGammaParams_k_0_max__; ++k_0__) {
+        size_t rawGammaParams_j_1_max__ = nPriorGamma_code6;
+        for (size_t j_1__ = 0; j_1__ < rawGammaParams_j_1_max__; ++j_1__) {
             param_name_stream__.str(std::string());
-            param_name_stream__ << "rawGammaParams" << '.' << k_0__ + 1;
+            param_name_stream__ << "rawGammaParams" << '.' << j_1__ + 1;
             param_names__.push_back(param_name_stream__.str());
         }
         if (!include_gqs__ && !include_tparams__) return;

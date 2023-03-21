@@ -28,36 +28,58 @@ The default is 4.}
 in the Stan model; available methods are "matrix_exp" and "euler". The
 default is "matrix_exp", which uses matrix exponential and is reasonably
 fast for small networks. For large networks, the "euler" method can be
-used. It implements a simple forward Euler method to solve the ODE and
-can be faster than the matrix exponential approach, but extra caution
-must be taken to check for numerical accuracy (e.g. testing different
-\code{dt} time step values, ensuring that the product between \code{dt}
-and the largest transfer rates expected from the priors is always
-very small compared to 1).}
+used. It implements a simple forward Euler method to solve the ODE and can
+be faster than the matrix exponential approach, but extra caution must be
+taken to check for numerical accuracy (e.g. testing different \code{dt}
+time step values, ensuring that the product between \code{dt} and the
+largest transfer rates expected from the priors is always very small
+compared to 1).}
 
 \item{euler_control}{An optional list containing extra parameters when using
 \code{method = "euler"}. Allowed list elements are \code{"dt"} and
 \code{"grid_size"}, which are respectively the time step size for
 trajectory calculations (\code{"dt"}) or the number of points for the
 calculation (\code{"grid_size"}). Only one of "dt" or "grid_size" can be
-specified, not both. If none is provided, a default grid size of 256
-steps is used.}
+specified, not both. If none is provided, a default grid size of 256 steps
+is used.}
 
 \item{cores}{Number of cores to use for parallel use. Default is
 \code{NULL}, which means to use the value stored in
 \code{options()[["mc.cores"]]} (or 1 if this value is not set).}
 
 \item{stanfit}{If TRUE, returns a `stanfit` object instead of the more
-classical `mcmc.list` object.}
+classical `mcmc.list` object. Note that when an `mcmc.list` object is
+returned, the original `stanfit` object is still accessible as an
+attribute of that object (see Examples).}
 
 \item{...}{Arguments passed to `rstan::sampling` (e.g. iter, chains).}
 }
 \value{
 An object of class `stanfit` returned by `rstan::sampling` if
-    \code{stanfit = TRUE}, otherwise the result of converting this
-    \code{stanfit} object with \code{stanfit_to_named_mcmclist} (i.e. an
-    object of class \code{networkModelStanfit} and {mcmc.list}).
+  \code{stanfit = TRUE}, otherwise the result of converting this
+  \code{stanfit} object with \code{stanfit_to_named_mcmclist} (i.e. an
+  object of class \code{networkModelStanfit} and {mcmc.list}, which still
+  carries the original `stanfit` object stored as an attribute).
 }
 \description{
 Run a MCMC sampler on a network model using Stan
+}
+\examples{
+aquarium_mod
+\dontrun{
+  # The 'aquarium_run' object is shipped with the package, so you don't
+  # actually need to run the line below to obtain it
+  aquarium_run <- run_mcmc(aquarium_mod)
+
+  plot(aquarium_run)
+  summary(aquarium_run)
+
+  # The original stanfit object returned by Stan
+  sfit <- attr(aquarium_run, "stanfit")
+  sfit
+
+  # The stanfit object can be used for diagnostics, LOO cross-validation, etc.
+  rstan::loo(sfit)
+}
+
 }

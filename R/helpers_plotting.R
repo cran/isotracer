@@ -374,7 +374,7 @@ split_to_unit_plot <- function(x, transform = NULL) {
         stop("x should have at least one of \"observations\", \"prediction\", or \"trajectory\" columns.")
     }
     y <- x[, c("initial", "group", target_cols)]
-    y <- tidyr::pivot_longer(y, cols = target_cols,
+    y <- tidyr::pivot_longer(y, cols = tidyselect::all_of(target_cols),
                              names_to = "type",
                              values_to = "data")
     # Drop rows with NULL data
@@ -390,7 +390,11 @@ split_to_unit_plot <- function(x, transform = NULL) {
         z$data[[i]]$data <- as.list(z$data[[i]]$data)
     }
     y <- dplyr::select(z, - "data")
-    y <- dplyr::full_join(y, dplyr::bind_rows(z$data), by = "row_id")
+    # Note: in the call, I add `multiple = "all"` because of a new warning
+    # in dplyr 1.1.0 (and because in this case rows in `y` can match multiple
+    # rows in `dplyr::bind_rows(z$data)`).
+    y <- dplyr::full_join(y, dplyr::bind_rows(z$data), by = "row_id",
+                          multiple = "all")
     y <- dplyr::select(y, - "row_id")
     # Separate size and proportion data
     y$size <- as.list(rep(NA, nrow(y)))
@@ -788,7 +792,7 @@ drawTraces = function(mcmc.list, drawXAxis = FALSE, variables = NULL,
         varsToPlot = variables
     }
     colors = c("deeppink", "green3", "darkmagenta", "dodgerblue")
-    colors = rep(colors, nvars)
+    colors = rep(colors, nchains)
     mfrow = n2mfrowByRatio(nvars, ratio = ratio)
     # New page
     if (newpage) grid::grid.newpage()

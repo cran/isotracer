@@ -19,6 +19,7 @@ A \code{mcmc.list} object (with the added class
 Ops generics for \code{\link[coda]{mcmc.list}} objects
 }
 \examples{
+\dontrun{
 # aquarium_run is a coda::mcmc.list object shipped with the isotracer package
 a <- aquarium_run
 plot(a)
@@ -37,5 +38,6 @@ plot(10 - a[, "upsilon_algae_to_daphnia"])
 plot(10 + a[, "upsilon_algae_to_daphnia"])
 plot(10 * a[, "upsilon_algae_to_daphnia"])
 plot(10 / a[, "upsilon_algae_to_daphnia"])
+}
 
 }

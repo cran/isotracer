@@ -56,7 +56,9 @@ test_that("sample_from() does not crash with different families", {
     # gamma_cv
     x <- set_prop_family(x, "gamma_cv")
     at <- 1:10
-    expect_error(sample_from(x, at = at, error.draws = 5), NA)
+    expect_error({ z <- sample_from(x, at = at, error.draws = 5)}, NA)
+    expect_equal(nrow(z), 150)
+    expect_equal(ncol(z), 4)
     # normal_cv
     x <- set_prop_family(x, "normal_cv")
     at <- 1:10

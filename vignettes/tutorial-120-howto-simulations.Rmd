@@ -1,6 +1,6 @@
 ---
 title: "How to simulate experiments"
-date: "2022-03-23"
+date: "2023-03-20"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -208,7 +208,7 @@ proj <- mod %>% project(end = 10)
 plot(proj, facet_row = "type", facet_col = "group")
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-11-1.jpeg" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
 
 Real-life data will incorporate some variability around those trajectories. To simulate data with variability around expected compartment size (coefficient of variation `"zeta"`) and around expected proportion of tracer (c.v. `"eta"`), one can use the `sample_from()` function:
 
@@ -245,7 +245,7 @@ proj <- proj %>%
 plot(proj, facet_row = "type", facet_col = "group")
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-13-1.jpeg" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
 
 ## Fitting a model on the simulated data
 
@@ -256,7 +256,7 @@ We can use the simulated data in `spl` to fit parameters using MCMC. By using di
 spl_reduced <- spl %>% filter(time %in% c(4, 7, 10))
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-15-1.jpeg" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
 
 ### Run with ten time points
 
@@ -269,25 +269,41 @@ mod_full <- mod %>%
           group = "treatment")
 ```
 
+We have to define the priors for our model:
+
+```r
+mod_full <- mod_full %>%
+  set_priors(normal_p(0, 5), "lambda|upsilon") %>%
+  set_priors(normal_p(0, 2), "eta")
+```
+
+```
+## Prior modified for parameter(s): 
+##   - lambda_algae
+##   - lambda_daphnia
+##   - lambda_NH4
+##   - upsilon_algae_to_daphnia
+##   - upsilon_daphnia_to_NH4
+##   - upsilon_NH4_to_algae|dark
+##   - upsilon_NH4_to_algae|light
+```
+
+```
+## Prior modified for parameter(s): 
+##   - eta
+##   - zeta
+```
+
 We run the MCMC:
 
 
 ```r
-run_full <- run_mcmc(mod_full, iter = 1000)
+run_full <- run_mcmc(mod_full, iter = 2000)
 plot(run_full)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-
-```
-## Error in encode_priors(params_nm, priors_nm): One or several parameters are missing a prior.
-## You can list the current model priors with `priors(...)`.
-## You can list the missing model priors with `missing_priors(...)`.
-```
-
-```
-## Error in plot(run_full[, 1:2]): object 'run_full' not found
-```
+<img src="figures/z-fig-120-unnamed-chunk-19-1.jpeg" alt="plot of chunk unnamed-chunk-19" style="display: block; margin: auto;" />
 
 and we do a posterior predictive check:
 
@@ -299,14 +315,7 @@ plot(pred_full, facet_row = c("group", "type"),
      scale = "all")
 ```
 
-
-```
-## Error in nrow(fit[[1]]): object 'run_full' not found
-```
-
-```
-## Error in plot(pred_full, facet_row = c("group", "type"), facet_col = "compartment", : object 'pred_full' not found
-```
+<img src="figures/z-fig-120-unnamed-chunk-21-1.jpeg" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
 
 ### Run with three time points
 
@@ -319,25 +328,42 @@ mod_red <- mod %>%
           time = "time", group = "treatment")
 ```
 
+We set the priors:
+
+
+```r
+mod_red <- mod_red %>%
+  set_priors(normal_p(0, 5), "lambda|upsilon") %>%
+  set_priors(normal_p(0, 2), "eta")
+```
+
+```
+## Prior modified for parameter(s): 
+##   - lambda_algae
+##   - lambda_daphnia
+##   - lambda_NH4
+##   - upsilon_algae_to_daphnia
+##   - upsilon_daphnia_to_NH4
+##   - upsilon_NH4_to_algae|dark
+##   - upsilon_NH4_to_algae|light
+```
+
+```
+## Prior modified for parameter(s): 
+##   - eta
+##   - zeta
+```
+
 We run the MCMC:
 
 
 ```r
-run_red <- run_mcmc(mod_red, iter = 1000)
+run_red <- run_mcmc(mod_red, iter = 2000)
 plot(run_red)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-
-```
-## Error in encode_priors(params_nm, priors_nm): One or several parameters are missing a prior.
-## You can list the current model priors with `priors(...)`.
-## You can list the missing model priors with `missing_priors(...)`.
-```
-
-```
-## Error in plot(run_red[, 1:2]): object 'run_red' not found
-```
+<img src="figures/z-fig-120-unnamed-chunk-25-1.jpeg" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
 
 and we do a posterior predictive check:
 
@@ -349,14 +375,7 @@ plot(pred_red, facet_row = c("group", "type"),
      scale = "all")
 ```
 
-
-```
-## Error in nrow(fit[[1]]): object 'run_red' not found
-```
-
-```
-## Error in plot(pred_red, facet_row = c("group", "type"), facet_col = "compartment", : object 'pred_red' not found
-```
+<img src="figures/z-fig-120-unnamed-chunk-27-1.jpeg" alt="plot of chunk unnamed-chunk-27" style="display: block; margin: auto;" />
 
 ### Comparison
 
@@ -368,7 +387,16 @@ signif(summary(run_full)$quantiles, 2)
 ```
 
 ```
-## Error in summary(run_full): object 'run_full' not found
+##                                2.5%     25%    50%    75%  97.5%
+## eta                        0.170000 0.20000 0.2100 0.2200 0.2600
+## lambda_algae               0.000230 0.00200 0.0042 0.0072 0.0150
+## lambda_daphnia             0.000058 0.00059 0.0014 0.0027 0.0061
+## lambda_NH4                 0.000140 0.00170 0.0039 0.0068 0.0140
+## upsilon_algae_to_daphnia   0.120000 0.12000 0.1300 0.1300 0.1400
+## upsilon_daphnia_to_NH4     0.048000 0.05000 0.0510 0.0530 0.0550
+## upsilon_NH4_to_algae|dark  0.087000 0.09400 0.0970 0.1000 0.1100
+## upsilon_NH4_to_algae|light 0.280000 0.30000 0.3100 0.3200 0.3400
+## zeta                       0.071000 0.07900 0.0840 0.0890 0.1000
 ```
 
 ```r
@@ -376,10 +404,44 @@ signif(summary(run_red)$quantiles, 2)
 ```
 
 ```
-## Error in summary(run_red): object 'run_red' not found
+##                               2.5%    25%    50%    75% 97.5%
+## eta                        0.17000 0.2100 0.2400 0.2700 0.350
+## lambda_algae               0.00022 0.0028 0.0065 0.0120 0.029
+## lambda_daphnia             0.00012 0.0010 0.0023 0.0044 0.011
+## lambda_NH4                 0.00029 0.0028 0.0064 0.0120 0.026
+## upsilon_algae_to_daphnia   0.11000 0.1200 0.1300 0.1400 0.150
+## upsilon_daphnia_to_NH4     0.04400 0.0480 0.0510 0.0530 0.059
+## upsilon_NH4_to_algae|dark  0.07600 0.0880 0.0950 0.1000 0.120
+## upsilon_NH4_to_algae|light 0.23000 0.2700 0.2800 0.3000 0.340
+## zeta                       0.07100 0.0880 0.1000 0.1200 0.170
 ```
 
-For most parameters, it didn't change things much. **Maybe in this case an experiment with three time points would be sufficient.**
+
+```r
+library(bayesplot)
+library(cowplot)
+plot_grid(nrow = 2, 
+  mcmc_intervals(run_full %>% select("lambda")) + xlim(0, 0.025) +
+    ggtitle("10 time points"),
+  mcmc_intervals(run_red %>% select("lambda")) + xlim(0, 0.025) +
+    ggtitle("3 time points")
+  )
+```
+
+<img src="figures/z-fig-120-unnamed-chunk-29-1.jpeg" alt="plot of chunk unnamed-chunk-29" style="display: block; margin: auto;" />
+
+```r
+plot_grid(nrow = 2, 
+  mcmc_intervals(run_full %>% select("upsilon")) + xlim(0, 0.35) +
+    ggtitle("10 time points"),
+  mcmc_intervals(run_red %>% select("upsilon")) + xlim(0, 0.35) + 
+    ggtitle("3 time points")
+)
+```
+
+<img src="figures/z-fig-120-unnamed-chunk-29-2.jpeg" alt="plot of chunk unnamed-chunk-29" style="display: block; margin: auto;" />
+
+The experiment with three time points seems quite good at estimating parameters despite the low number of observations, but the uncertainties are definitely reduced when 10 time points are used.
 
 ## To go further
 
