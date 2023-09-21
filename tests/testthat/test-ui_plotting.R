@@ -11,6 +11,10 @@ new_networkModel <- function() {
     isotracer::new_networkModel(quiet = TRUE)
 }
 
+no_w <- function(exp) {
+    capture_warnings(capture_output(exp))
+}
+
 ### * plot() methods
 
 test_that("Basic plotting does not crash", {
@@ -49,9 +53,12 @@ test_that("Basic plotting does not crash", {
 ### * ggtopo()
 
 test_that("ggtopo() does not crash", {
-    if (requireNamespace("ggraph")) {
-        expect_error(print(ggtopo(aquarium_mod, edge = "line")), NA)
-        expect_error(print(ggtopo(trini_mod)), NA)
-        expect_error(print(ggtopo(trini_mod, layout = "sugiyama")), NA)
+  if (requireNamespace("ggraph")) {
+    # The tests below use a warning catcher at the moment (2023-09-20) because
+    # of a warning due to a deprecated ggplot feature used by ggraph. They can
+    # be used with the warning handler once ggraph is updated.
+    expect_error(no_w(print(ggtopo(aquarium_mod, edge = "line"))), NA)
+    expect_error(no_w(print(ggtopo(trini_mod))), NA)
+    expect_error(no_w(print(ggtopo(trini_mod, layout = "sugiyama"))), NA)
     }
 })

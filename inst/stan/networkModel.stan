@@ -65,9 +65,9 @@ functions {
 
   /// *** Code
   
-  matrix buildTransferMatrix(int nComps, int nSteady, int[] steadyIndices,
-                             int nUpsilons, int[,] mappingU,
-                             int nLambdas, int[,] mappingL, real[] params) {
+  matrix buildTransferMatrix(int nComps, int nSteady, array[] int steadyIndices,
+                             int nUpsilons, array[,] int mappingU,
+                             int nLambdas, array[,] int mappingL, array[] real params) {
     matrix[nComps, nComps] transfer = rep_matrix(0, nComps, nComps);
     vector[nComps] lossRates = rep_vector(0, nComps);
     for (k in 1:nUpsilons) {
@@ -166,9 +166,9 @@ functions {
   /// *** Code
   
   matrix buildTransitionMatrix(int nComps,
-                               int nUpsilons, int[,] mappingU,
-                               int nLambdas, int[,] mappingL, 
-                               real dt, real[] params) {
+                               int nUpsilons, array[,] int mappingU,
+                               int nLambdas, array[,] int mappingL, 
+                               real dt, array[] real params) {
     matrix[nComps, nComps] transition = rep_matrix(0, nComps, nComps);
     vector[nComps] lossRates = rep_vector(0, nComps);
     for (k in 1:nUpsilons) {
@@ -261,11 +261,11 @@ functions {
   
   */
   
-  real[] buildSizePredictions(int nObs, int currentGroup, int maxNobs,
-                              vector[] unmarked, vector[] marked,
-                              int[,] indices, int splitPresent,
-                              int[] splitComps, real[,] initRefr) {
-    real pred[maxNobs] = rep_array(0.0, maxNobs); 
+  array[] real buildSizePredictions(int nObs, int currentGroup, int maxNobs,
+                              array[] vector unmarked, array[] vector marked,
+                              array[,] int indices, int splitPresent,
+                              array[] int splitComps, array[,] real initRefr) {
+    array[maxNobs] real pred = rep_array(0.0, maxNobs); 
     real unmarkedQ;
     real markedQ;
     if (splitPresent > 0) {
@@ -330,11 +330,11 @@ functions {
   
   */
   
-  real[] buildPropPredictions(int nObs, int currentGroup, int maxNobs,
-                              vector[] unmarked, vector[] marked,
-                              int[,] indices, int splitPresent,
-                              int[] splitComps, real[,] initRefr) {
-    real pred[maxNobs] = rep_array(0.0, maxNobs); 
+  array[] real buildPropPredictions(int nObs, int currentGroup, int maxNobs,
+                              array[] vector unmarked, array[] vector marked,
+                              array[,] int indices, int splitPresent,
+                              array[] int splitComps, array[,] real initRefr) {
+    array[maxNobs] real pred = rep_array(0.0, maxNobs); 
     real unmarkedQ;
     real markedQ;
     if (splitPresent > 0) {
@@ -387,34 +387,34 @@ data {
   /// ** Parameter priors
 
   // Constant
-  real constantParams[nParams]; // Fixed values (for constant parameters)
+  array[nParams] real constantParams; // Fixed values (for constant parameters)
   
   // Uniform
-  real lowerParams[nParams]; // Lower boundaries (for uniform)
-  real upperParams[nParams]; // Upper boundaries (for uniform)
+  array[nParams] real lowerParams; // Lower boundaries (for uniform)
+  array[nParams] real upperParams; // Upper boundaries (for uniform)
 
   // Half-Cauchy
-  real hcauchyScaleParams[nParams]; // Scale parameter (for half-Cauchy)
+  array[nParams] real hcauchyScaleParams; // Scale parameter (for half-Cauchy)
 
   // Scaled Beta
-  real<lower=0> rawBetaAlpha[nParams]; // Alpha parameter (for scaled beta)
-  real<lower=0> rawBetaBeta[nParams]; // Beta parameter (for scaled beta)
-  real<lower=0> betaScaleParams[nParams]; // Scale parameter (for scaled beta)
+  array[nParams] real<lower=0> rawBetaAlpha; // Alpha parameter (for scaled beta)
+  array[nParams] real<lower=0> rawBetaBeta; // Beta parameter (for scaled beta)
+  array[nParams] real<lower=0> betaScaleParams; // Scale parameter (for scaled beta)
 
   // Truncated normal
-  real trNormMeanParams[nParams]; // Mean of the untruncated normal
-  real trNormSdParams[nParams]; // Sd of the untruncated normal
+  array[nParams] real trNormMeanParams; // Mean of the untruncated normal
+  array[nParams] real trNormSdParams; // Sd of the untruncated normal
 
   // Exponential
-  real exponentialRateParams[nParams]; // Rate of the exponential
+  array[nParams] real exponentialRateParams; // Rate of the exponential
 
   // Gamma
-  real gammaAlphaParams[nParams]; // Shape of the gamma
-  real gammaBetaParams[nParams]; // Rate of the gamma
+  array[nParams] real gammaAlphaParams; // Shape of the gamma
+  array[nParams] real gammaBetaParams; // Rate of the gamma
   
   /// ** Mapping between unscaled and scaled parameters
-  int<lower=0> mappingParamPriorType[nParams]; // Prior type for each parameter (numeric code)
-  int<lower=0> mappingParamPriorID[nParams]; // Param ID within each prior typeID (1:nParams)
+  array[nParams] int<lower=0> mappingParamPriorType; // Prior type for each parameter (numeric code)
+  array[nParams] int<lower=0> mappingParamPriorID; // Param ID within each prior typeID (1:nParams)
 
   /// ** Distribution family for observed proportions
   int<lower=1,upper=4> propFamily;
@@ -431,32 +431,32 @@ data {
   // 2 for normal parameterized on mean and sd (zeta = sd)
   
   /// ** Initial conditions
-  real<lower=0> initialQuantities[nComps,2,nGroups]; // Columns are (unmarked, marked)
+  array[nComps,2,nGroups] real<lower=0> initialQuantities; // Columns are (unmarked, marked)
 
   /// ** Steady-state compartments
   int<lower=0> maxNsteady; // Maximum number of steady state comps across groups
-  int<lower=0> nSteady[nGroups+1]; // Padded
-  int<lower=0> steadyIndices[maxNsteady,nGroups];
+  array[nGroups+1] int<lower=0> nSteady; // Padded
+  array[maxNsteady,nGroups] int<lower=0> steadyIndices;
 
   /// ** Split compartments
   int<lower=0,upper=1> splitPresent; // Boolean
-  int<lower=0,upper=1> splitComps[nComps,nGroups]; // Booleans
+  array[nComps,nGroups] int<lower=0,upper=1> splitComps; // Booleans
 
   /// ** Parameter mapping for pis (portions of active compartments)
-  int<lower=0> piMapping[nComps, nGroups]; // Mapping to params[x]
+  array[nComps, nGroups] int<lower=0> piMapping; // Mapping to params[x]
 
   /// ** Lambda due to decay
   real<lower=0> lambda_decay; // 0 is equivalent to stable isotopes (no decay)
 
   /// ** Mapping for upsilons
   int<lower=0> maxNupsilons;
-  int<lower=0> nUpsilons[nGroups+1]; // Number of upsilon parameters per group, padded
-  int<lower=0> upsilonMapping[maxNupsilons,3,nGroups];
+  array[nGroups+1] int<lower=0> nUpsilons; // Number of upsilon parameters per group, padded
+  array[maxNupsilons,3,nGroups] int<lower=0> upsilonMapping;
   
   /// ** Mapping for lambdas
   int<lower=0> maxNlambdas;
-  int<lower=0> nLambdas[nGroups+1]; // Number of lambda parameters per group, padded
-  int<lower=0> lambdaMapping[maxNlambdas,2,nGroups];
+  array[nGroups+1] int<lower=0> nLambdas; // Number of lambda parameters per group, padded
+  array[maxNlambdas,2,nGroups] int<lower=0> lambdaMapping;
 
 
   /// * common to both approaches, but with different values
@@ -464,43 +464,43 @@ data {
   /// ** Pulse events
 
   int<lower=0> maxNpulseEvents; // Maximum number of pulse events across groups
-  int<lower=0> nPulseEvents[nGroups+1]; // Padded
-  int<lower=0> pulseEventsIndices[maxNpulseEvents,2,nGroups]; // Indices mapping events to the interval at the beginning of which they happen
-  real pulseEventsQuantities[maxNpulseEvents,2,nGroups];
+  array[nGroups+1] int<lower=0> nPulseEvents; // Padded
+  array[maxNpulseEvents,2,nGroups] int<lower=0> pulseEventsIndices; // Indices mapping events to the interval at the beginning of which they happen
+  array[maxNpulseEvents,2,nGroups] real pulseEventsQuantities;
   
   // ** Individual observations
   int<lower=0> maxNsizesObs;
   int<lower=0> maxNpropsObs;
-  int<lower=0> nSizesObs[nGroups+1]; // Padded
-  int<lower=0> nPropsObs[nGroups+1]; // Padded
-  int<lower=0> sizesObsIndices[maxNsizesObs,3,nGroups]; // Columns are compartment, timepoint, zeta param index
-  int<lower=0> propsObsIndices[maxNpropsObs,3,nGroups]; // Columns are compartment, timepoint, eta param index
-  real<lower=0> sizesObs[maxNsizesObs, nGroups];
-  real<lower=0> propsObs[maxNpropsObs, nGroups];
+  array[nGroups+1] int<lower=0> nSizesObs; // Padded
+  array[nGroups+1] int<lower=0> nPropsObs; // Padded
+  array[maxNsizesObs,3,nGroups] int<lower=0> sizesObsIndices; // Columns are compartment, timepoint, zeta param index
+  array[maxNpropsObs,3,nGroups] int<lower=0> propsObsIndices; // Columns are compartment, timepoint, eta param index
+  array[maxNsizesObs, nGroups] real<lower=0> sizesObs;
+  array[maxNpropsObs, nGroups] real<lower=0> propsObs;
   
   /// * Specific to matrix exponential approach
   
   /// ** Time intervals
   int<lower=0> maxNtimeIntervals; // Maximum number of intervals across groups
-  int<lower=0> nTimeIntervals[nGroups+1]; // Number of intervals separated by events, per group (padded)
-  real<lower=0> intervalsLengths[maxNtimeIntervals,nGroups]; // Duration of time intervals
+  array[nGroups+1] int<lower=0> nTimeIntervals; // Number of intervals separated by events, per group (padded)
+  array[maxNtimeIntervals,nGroups] real<lower=0> intervalsLengths; // Duration of time intervals
   
   /// ** Unique observation times per group
   
   int<lower=0> maxNobsTimes; // Maximum number of unique obs times per group, across groups
-  int<lower=0> nObsTimes[nGroups+1]; // Number of unique obs times per group, padded
-  real<lower=0> elapsedTimeSinceEvent[nGroups,maxNobsTimes]; // Elapsed duration between observation times and the previous event (or t0)
-  int<lower=0> obsIntervalsIndices[nGroups,maxNobsTimes]; // Indices of the intervals corresponding to each observation time
+  array[nGroups+1] int<lower=0> nObsTimes; // Number of unique obs times per group, padded
+  array[nGroups,maxNobsTimes] real<lower=0> elapsedTimeSinceEvent; // Elapsed duration between observation times and the previous event (or t0)
+  array[nGroups,maxNobsTimes] int<lower=0> obsIntervalsIndices; // Indices of the intervals corresponding to each observation time
   
   /// * Specific to forward Euler approach
 
   /// ** Timepoints for Euler approach
   int<lower=2> maxNtimesteps; // Maximum number of timesteps across groups
-  int<lower=0> nTimesteps[nGroups+1]; // Number of timesteps per group (padded)
+  array[nGroups+1] int<lower=0> nTimesteps; // Number of timesteps per group (padded)
   int<lower=1> maxNuniqueDts; // Maximum number of unique values for dt per group
-  int<lower=0> nUniqueDts[nGroups+1]; // Number of unique values for dt per group (padded)
-  real<lower=0> unique_dts[maxNuniqueDts,nGroups]; // Unique dt values (padded)
-  int<lower=0> timesteps[maxNtimesteps,nGroups]; // Indices for the Sequence of delta t between successive timesteps, to be used with unique_dts[]
+  array[nGroups+1] int<lower=0> nUniqueDts; // Number of unique values for dt per group (padded)
+  array[maxNuniqueDts,nGroups] real<lower=0> unique_dts; // Unique dt values (padded)
+  array[maxNtimesteps,nGroups] int<lower=0> timesteps; // Indices for the Sequence of delta t between successive timesteps, to be used with unique_dts[]
 
 }
 
@@ -550,34 +550,34 @@ transformed parameters {
   /// ** Common to matrix exp and Euler
 
   // Parameters on usable scale (converted from raw parameters)
-  real<lower=0> params[nParams];
+  array[nParams] real<lower=0> params;
 
   // Initialize the array to store initial quantities for refractory portions
-  real<lower=0> initRefr[nComps, 2, nGroups] = rep_array(0.0, nComps, 2, nGroups); // Columns are unmarked, marked
+  array[nComps, 2, nGroups] real<lower=0> initRefr = rep_array(0.0, nComps, 2, nGroups); // Columns are unmarked, marked
   
   // Initialize the [nGroups x nSteps] array for unmarked tracer
-  vector[nComps] unmarked[nGroups, n_quantity_records];
+  array[nGroups, n_quantity_records] vector[nComps] unmarked;
   // Initialize the [nGroups x nSteps] array for marked tracer
-  vector[nComps] marked[nGroups, n_quantity_records];
+  array[nGroups, n_quantity_records] vector[nComps] marked;
 
   // Predicted values (to compare with observations)
-  real<lower=0> sizesPred[maxNsizesObs, nGroups];
-  real<lower=0> propsPred[maxNpropsObs, nGroups];
+  array[maxNsizesObs, nGroups] real<lower=0> sizesPred;
+  array[maxNpropsObs, nGroups] real<lower=0> propsPred;
 
   // Variables for likelihood calculations
-  real<lower=0> sizesPred_zeta[maxNsizesObs, nGroups] = rep_array(0.0, maxNsizesObs, nGroups);
-  real<lower=0> sizesPred_alpha[maxNsizesObs, nGroups] = rep_array(0.0, maxNsizesObs, nGroups);
-  real<lower=0> sizesPred_beta[maxNsizesObs, nGroups] = rep_array(0.0, maxNsizesObs, nGroups);
-  real<lower=0> propsPred_eta[maxNpropsObs, nGroups] = rep_array(0.0, maxNpropsObs, nGroups);
-  real<lower=0> propsPred_alpha[maxNpropsObs, nGroups] = rep_array(0.0, maxNpropsObs, nGroups);
-  real<lower=0> propsPred_beta[maxNpropsObs, nGroups] = rep_array(0.0, maxNpropsObs, nGroups);
+  array[maxNsizesObs, nGroups] real<lower=0> sizesPred_zeta = rep_array(0.0, maxNsizesObs, nGroups);
+  array[maxNsizesObs, nGroups] real<lower=0> sizesPred_alpha = rep_array(0.0, maxNsizesObs, nGroups);
+  array[maxNsizesObs, nGroups] real<lower=0> sizesPred_beta = rep_array(0.0, maxNsizesObs, nGroups);
+  array[maxNpropsObs, nGroups] real<lower=0> propsPred_eta = rep_array(0.0, maxNpropsObs, nGroups);
+  array[maxNpropsObs, nGroups] real<lower=0> propsPred_alpha = rep_array(0.0, maxNpropsObs, nGroups);
+  array[maxNpropsObs, nGroups] real<lower=0> propsPred_beta = rep_array(0.0, maxNpropsObs, nGroups);
 
   /// ** Specific to Euler
   
   // Initialize the array containing the transition matrices associated with
   // each unique dt value (updated from group to group)
-  matrix[nComps,nComps] transitions[maxNuniqueDts];
-  matrix[nComps,nComps] transitionsDecay[maxNuniqueDts];
+  array[maxNuniqueDts] matrix[nComps,nComps] transitions;
+  array[maxNuniqueDts] matrix[nComps,nComps] transitionsDecay;
 
   /// ** Specific to matrix exp
   
@@ -589,8 +589,8 @@ transformed parameters {
 
   // Initialize the arrays containing the initial states of each timeline
   // interval (updated/reused from group to group)
-  vector[nComps] intervals_init_states_marked[maxNtimeIntervals];
-  vector[nComps] intervals_init_states_unmarked[maxNtimeIntervals];
+  array[maxNtimeIntervals] vector[nComps] intervals_init_states_marked;
+  array[maxNtimeIntervals] vector[nComps] intervals_init_states_unmarked;
   
   // Start block to use int counter
   // Cf. https://discourse.mc-stan.org/t/integer-loop-index-in-transformed-parameters-block/9264/3

@@ -1,6 +1,6 @@
 ---
 title: "How to simulate experiments"
-date: "2023-03-20"
+date: "2023-09-21"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -208,7 +208,7 @@ proj <- mod %>% project(end = 10)
 plot(proj, facet_row = "type", facet_col = "group")
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-11-1.jpeg" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-11-1.jpeg" style="display: block; margin: auto;" />
 
 Real-life data will incorporate some variability around those trajectories. To simulate data with variability around expected compartment size (coefficient of variation `"zeta"`) and around expected proportion of tracer (c.v. `"eta"`), one can use the `sample_from()` function:
 
@@ -232,7 +232,7 @@ spl
 ##  8     8 algae 0.750 0.0935 light    
 ##  9     9 algae 0.904 0.0775 light    
 ## 10    10 algae 0.888 0.0968 light    
-## # … with 50 more rows
+## # ℹ 50 more rows
 ```
 
 To visualize the simulated data, we can add it to the projected trajectories:
@@ -245,7 +245,7 @@ proj <- proj %>%
 plot(proj, facet_row = "type", facet_col = "group")
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-13-1.jpeg" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
 
 ## Fitting a model on the simulated data
 
@@ -256,7 +256,7 @@ We can use the simulated data in `spl` to fit parameters using MCMC. By using di
 spl_reduced <- spl %>% filter(time %in% c(4, 7, 10))
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-15-1.jpeg" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-15-1.jpeg" style="display: block; margin: auto;" />
 
 ### Run with ten time points
 
@@ -303,7 +303,7 @@ plot(run_full)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-19-1.jpeg" alt="plot of chunk unnamed-chunk-19" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-19-1.jpeg" style="display: block; margin: auto;" />
 
 and we do a posterior predictive check:
 
@@ -315,7 +315,7 @@ plot(pred_full, facet_row = c("group", "type"),
      scale = "all")
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-21-1.jpeg" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-21-1.jpeg" style="display: block; margin: auto;" />
 
 ### Run with three time points
 
@@ -363,7 +363,7 @@ plot(run_red)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-25-1.jpeg" alt="plot of chunk unnamed-chunk-25" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-25-1.jpeg" style="display: block; margin: auto;" />
 
 and we do a posterior predictive check:
 
@@ -375,7 +375,7 @@ plot(pred_red, facet_row = c("group", "type"),
      scale = "all")
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-27-1.jpeg" alt="plot of chunk unnamed-chunk-27" style="display: block; margin: auto;" />
+<img src="figures/z-fig-120-unnamed-chunk-27-1.jpeg" style="display: block; margin: auto;" />
 
 ### Comparison
 
@@ -387,16 +387,16 @@ signif(summary(run_full)$quantiles, 2)
 ```
 
 ```
-##                                2.5%     25%    50%    75%  97.5%
-## eta                        0.170000 0.20000 0.2100 0.2200 0.2600
-## lambda_algae               0.000230 0.00200 0.0042 0.0072 0.0150
-## lambda_daphnia             0.000058 0.00059 0.0014 0.0027 0.0061
-## lambda_NH4                 0.000140 0.00170 0.0039 0.0068 0.0140
-## upsilon_algae_to_daphnia   0.120000 0.12000 0.1300 0.1300 0.1400
-## upsilon_daphnia_to_NH4     0.048000 0.05000 0.0510 0.0530 0.0550
-## upsilon_NH4_to_algae|dark  0.087000 0.09400 0.0970 0.1000 0.1100
-## upsilon_NH4_to_algae|light 0.280000 0.30000 0.3100 0.3200 0.3400
-## zeta                       0.071000 0.07900 0.0840 0.0890 0.1000
+##                               2.5%     25%    50%    75%  97.5%
+## eta                        0.17000 0.20000 0.2100 0.2200 0.2500
+## lambda_algae               0.00023 0.00190 0.0040 0.0069 0.0140
+## lambda_daphnia             0.00005 0.00061 0.0015 0.0027 0.0058
+## lambda_NH4                 0.00013 0.00160 0.0036 0.0065 0.0140
+## upsilon_algae_to_daphnia   0.12000 0.12000 0.1300 0.1300 0.1400
+## upsilon_daphnia_to_NH4     0.04800 0.05000 0.0510 0.0520 0.0550
+## upsilon_NH4_to_algae|dark  0.08800 0.09400 0.0970 0.1000 0.1100
+## upsilon_NH4_to_algae|light 0.28000 0.30000 0.3100 0.3200 0.3400
+## zeta                       0.07000 0.07800 0.0830 0.0890 0.1000
 ```
 
 ```r
@@ -404,16 +404,16 @@ signif(summary(run_red)$quantiles, 2)
 ```
 
 ```
-##                               2.5%    25%    50%    75% 97.5%
-## eta                        0.17000 0.2100 0.2400 0.2700 0.350
-## lambda_algae               0.00022 0.0028 0.0065 0.0120 0.029
-## lambda_daphnia             0.00012 0.0010 0.0023 0.0044 0.011
-## lambda_NH4                 0.00029 0.0028 0.0064 0.0120 0.026
-## upsilon_algae_to_daphnia   0.11000 0.1200 0.1300 0.1400 0.150
-## upsilon_daphnia_to_NH4     0.04400 0.0480 0.0510 0.0530 0.059
-## upsilon_NH4_to_algae|dark  0.07600 0.0880 0.0950 0.1000 0.120
-## upsilon_NH4_to_algae|light 0.23000 0.2700 0.2800 0.3000 0.340
-## zeta                       0.07100 0.0880 0.1000 0.1200 0.170
+##                                2.5%    25%    50%    75%  97.5%
+## eta                        0.180000 0.2400 0.5800 0.9300  1.200
+## lambda_algae               0.000270 0.0028 0.0066 0.0130  0.031
+## lambda_daphnia             0.000099 0.0011 0.0025 0.0051  0.013
+## lambda_NH4                 0.000390 0.0039 0.0088 0.0170  0.046
+## upsilon_algae_to_daphnia   0.110000 0.1300 0.5000 3.1000  5.400
+## upsilon_daphnia_to_NH4     0.045000 0.0510 0.2200 1.3000  2.300
+## upsilon_NH4_to_algae|dark  0.078000 0.0950 0.5200 3.3000  5.900
+## upsilon_NH4_to_algae|light 0.240000 0.2900 1.2000 7.6000 13.000
+## zeta                       0.072000 0.0980 0.1200 0.1400  0.210
 ```
 
 
@@ -428,7 +428,11 @@ plot_grid(nrow = 2,
   )
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-29-1.jpeg" alt="plot of chunk unnamed-chunk-29" style="display: block; margin: auto;" />
+```
+## Warning: Removed 2 rows containing missing values (`geom_segment()`).
+```
+
+<img src="figures/z-fig-120-unnamed-chunk-29-1.jpeg" style="display: block; margin: auto;" />
 
 ```r
 plot_grid(nrow = 2, 
@@ -439,7 +443,19 @@ plot_grid(nrow = 2,
 )
 ```
 
-<img src="figures/z-fig-120-unnamed-chunk-29-2.jpeg" alt="plot of chunk unnamed-chunk-29" style="display: block; margin: auto;" />
+```
+## Warning: Removed 4 rows containing missing values (`geom_segment()`).
+```
+
+```
+## Warning: Removed 4 rows containing missing values (`geom_segment()`).
+```
+
+```
+## Warning: Removed 3 rows containing missing values (`geom_point()`).
+```
+
+<img src="figures/z-fig-120-unnamed-chunk-29-2.jpeg" style="display: block; margin: auto;" />
 
 The experiment with three time points seems quite good at estimating parameters despite the low number of observations, but the uncertainties are definitely reduced when 10 time points are used.
 

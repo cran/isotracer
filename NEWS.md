@@ -1,3 +1,9 @@
+# isotracer 1.1.5 (2023-09-21)
+
+## Ensure package compatibility with future versions of rstan
+
+- The array syntax used until now in the Stan models shipped with isotracer has been deprecated with the release of rstan 2.26 on CRAN. The Stan code included in isotracer now uses the new array syntax for compatibility with future versions of rstan, thanks to a merge request from Andrew Johnson.
+
 # isotracer 1.1.4 (2023-03-20)
 
 ## Improved package compatibility with future versions of rstan
@@ -5,6 +11,8 @@
 - The package installation/configuration is now delegated to rstantools, thanks to a merge request from Andrew Johnson. This should make the package compatible with future versions of rstan.
 
 ## Bug fixes
+
+In the code:
 
 - Fix bug in `sample_from()` (when `error.draws` was > 1, a mistake in the way sampled sizes and proportions were joined together resulted in too many rows in the returned table).
 - Fix bug in `stanfit_to_named_mcmclist()` which was causing problems when running MCMC sampling with thinning.

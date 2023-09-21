@@ -1,6 +1,6 @@
 ---
 title: "Testing parameter identifiability"
-date: "2023-03-20"
+date: "2023-09-21"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -140,7 +140,7 @@ proj <- mod %>% project(end = 10)
 plot(proj)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-10-1.jpeg" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-10-1.jpeg" style="display: block; margin: auto;" />
 
 Looks good! Now let's simulate some observed data from this system:
 
@@ -164,7 +164,7 @@ spl
 ##  8     6 algae.sp2 0.806 0.0659
 ##  9     8 algae.sp2 0.960 0.112 
 ## 10    10 algae.sp2 0.944 0.0944
-## # … with 15 more rows
+## # ℹ 15 more rows
 ```
 
 Let's add this data to the model:
@@ -176,7 +176,7 @@ mod <- mod %>% set_obs(spl, comp = "comp", size = "size", prop = "prop",
 plot(mod)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-12-1.jpeg" alt="plot of chunk unnamed-chunk-12" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
 
 We are ready to set some reasonable vague priors and run the MCMC fit:
 
@@ -192,18 +192,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-
-```
-## Warning: There were 1 divergent transitions after warmup. See
-## https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-## to find out why this is a problem and how to eliminate them.
-```
-
-```
-## Warning: Examine the pairs() plot to diagnose sampling problems
-```
-
-<img src="figures/z-fig-130-unnamed-chunk-15-1.jpeg" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-15-1.jpeg" style="display: block; margin: auto;" />
 
 Notice how spread the posteriors for some parameters are. For example,  compare the shape of the histograms for $\eta$ and for $\upsilon_{\textrm{daphnia} \leftarrow \textrm{algae.sp1}}$: the shape of the first one is quite concentrated around its median, while the second one is more spread over the posterior range (we are considering here the relative histogram shapes, not the numerical ranges of the posteriors).
 
@@ -214,7 +203,7 @@ In addition, the chains for the uptake rates from nutrients to the algae species
 mcmc_heatmap(run)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-16-1.jpeg" alt="plot of chunk unnamed-chunk-16" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-16-1.jpeg" style="display: block; margin: auto;" />
 
 We have low identifiability for those parameters: many combinations of their values are plausible, but the model does not have enough information to decide which between them. In this particular example, one way to break those chain correlations is to have an experimental design where the nutrient sources are marked in different proportions.
 
@@ -242,7 +231,7 @@ proj <- mod_impr %>% set_obs(NULL) %>% project(end = 10)
 plot(proj)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-18-1.jpeg" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-18-1.jpeg" style="display: block; margin: auto;" />
 
 Nice! Notice how the trajectories for the proportions of marked tracer differ between algae species with those improved initial conditions, compared to what we had before.
 
@@ -262,7 +251,7 @@ mod_impr <- mod_impr %>% set_obs(spl, comp = "comp", size = "size", prop = "prop
 plot(mod_impr)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-20-1.jpeg" alt="plot of chunk unnamed-chunk-20" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-20-1.jpeg" style="display: block; margin: auto;" />
 
 We are ready to run the MCMC fit:
 
@@ -273,7 +262,7 @@ plot(run_impr)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-22-1.jpeg" alt="plot of chunk unnamed-chunk-22" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-22-1.jpeg" style="display: block; margin: auto;" />
 
 The uncertainty in the posteriors of the uptake rates seem to have decreased a lot. Let's double-check with a heatmap:
 
@@ -282,7 +271,7 @@ The uncertainty in the posteriors of the uptake rates seem to have decreased a l
 mcmc_heatmap(run_impr)
 ```
 
-<img src="figures/z-fig-130-unnamed-chunk-23-1.jpeg" alt="plot of chunk unnamed-chunk-23" style="display: block; margin: auto;" />
+<img src="figures/z-fig-130-unnamed-chunk-23-1.jpeg" style="display: block; margin: auto;" />
 
 This is much better than before: now we can identify most of the parameters without problem.
 

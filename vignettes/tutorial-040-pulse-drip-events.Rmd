@@ -1,6 +1,6 @@
 ---
 title: "Defining pulse or drip events"
-date: "2023-03-20"
+date: "2023-09-21"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -78,7 +78,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-4-1.jpeg" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-4-1.jpeg" style="display: block; margin: auto;" />
 
 ### Building the network model
 
@@ -205,7 +205,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-13-1.jpeg" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
 
 Let's have a quick look at the posterior predictive check:
 
@@ -215,7 +215,7 @@ predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-15-1.jpeg" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-15-1.jpeg" style="display: block; margin: auto;" />
 
 The effect of the pulse is clearly visible in the proportion of marked tracer, both for ammonium and for algae (right panel). The pulse is also visible as an increase in the predicted ammonium compartment size (left panel)).
 
@@ -278,7 +278,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-17-1.jpeg" alt="plot of chunk unnamed-chunk-17" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-17-1.jpeg" style="display: block; margin: auto;" />
 
 ### Building the model
 
@@ -443,7 +443,7 @@ plot(run)
 ## You can list the missing model priors with `missing_priors(...)`.
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-28-1.jpeg" alt="plot of chunk unnamed-chunk-28" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-28-1.jpeg" style="display: block; margin: auto;" />
 
 Let's have a quick look at the posterior predictive check:
 
@@ -461,7 +461,7 @@ plot(predictions, facet_row = "group")
 ## ! !any(is.na(params$value)) is not TRUE
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-30-1.jpeg" alt="plot of chunk unnamed-chunk-30" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-30-1.jpeg" style="display: block; margin: auto;" />
 
 Nice! The drip phase is clearly visible in the NH$_4^+$ enrichment profile.
 

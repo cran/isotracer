@@ -1,6 +1,6 @@
 ---
 title: "Calculating derived parameters"
-date: "2023-03-20"
+date: "2023-09-21"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -84,7 +84,7 @@ plot(fit)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-4-1.jpeg" alt="plot of chunk unnamed-chunk-4" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-4-1.jpeg" style="display: block; margin: auto;" />
 
 ## Selecting primary parameters
 
@@ -108,7 +108,7 @@ We can select parameters using the `select()` function. For example:
 plot(fit %>% select(zeta))
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-6-1.jpeg" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-6-1.jpeg" style="display: block; margin: auto;" />
 
 Note that selecting parameters in a MCMC output uses partial matching:
 
@@ -117,7 +117,7 @@ Note that selecting parameters in a MCMC output uses partial matching:
 plot(fit %>% select(upsilon))
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-7-1.jpeg" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-7-1.jpeg" style="display: block; margin: auto;" />
 
 Selecting chains with `select()` is mostly useful in interactive mode, when exploring the results of an MCMC run. You can select individual parameters without any partial matching using the unambiguous`[, ""]` notation:
 
@@ -137,12 +137,12 @@ summary(fit[, "eta"])
 ##    plus standard error of the mean:
 ## 
 ##           Mean             SD       Naive SE Time-series SE 
-##       0.128850       0.051161       0.001144       0.002025 
+##       0.128092       0.048760       0.001090       0.002154 
 ## 
 ## 2. Quantiles for each variable:
 ## 
 ##    2.5%     25%     50%     75%   97.5% 
-## 0.06441 0.09592 0.11770 0.14876 0.25673
+## 0.06913 0.09611 0.11773 0.14780 0.25169
 ```
 
 The `[, ""]` notation is the one to use when you want to combine primary parameters into derived parameters through calculation.
@@ -165,13 +165,13 @@ str(trate_algae)
 
 ```
 ## List of 4
-##  $ : 'mcmc' num [1:500] 0.271 0.265 0.177 0.177 0.152 ...
+##  $ : 'mcmc' num [1:500] 0.157 0.17 0.228 0.154 0.155 ...
 ##   ..- attr(*, "mcpar")= num [1:3] 501 1000 1
-##  $ : 'mcmc' num [1:500] 0.2518 0.1066 0.0988 0.1106 0.1411 ...
+##  $ : 'mcmc' num [1:500] 0.147 0.298 0.185 0.185 0.282 ...
 ##   ..- attr(*, "mcpar")= num [1:3] 501 1000 1
-##  $ : 'mcmc' num [1:500] 0.333 0.298 0.207 0.157 0.141 ...
+##  $ : 'mcmc' num [1:500] 0.316 0.265 0.203 0.222 0.18 ...
 ##   ..- attr(*, "mcpar")= num [1:3] 501 1000 1
-##  $ : 'mcmc' num [1:500] 0.334 0.172 0.202 0.276 0.238 ...
+##  $ : 'mcmc' num [1:500] 0.1061 0.1665 0.0586 0.1107 0.0907 ...
 ##   ..- attr(*, "mcpar")= num [1:3] 501 1000 1
 ##  - attr(*, "class")= chr [1:3] "derived.mcmc.list" "networkModelStanfit" "mcmc.list"
 ```
@@ -183,7 +183,7 @@ All the usual operations done on `mcmc.list` objects can be used with it, such a
 plot(trate_algae)
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-11-1.jpeg" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-11-1.jpeg" style="display: block; margin: auto;" />
 
 or calculating summaries:
 
@@ -203,12 +203,12 @@ summary(trate_algae)
 ##    plus standard error of the mean:
 ## 
 ##           Mean             SD       Naive SE Time-series SE 
-##       0.197463       0.088175       0.001972       0.006187 
+##       0.184105       0.078273       0.001750       0.003107 
 ## 
 ## 2. Quantiles for each variable:
 ## 
 ##    2.5%     25%     50%     75%   97.5% 
-## 0.07635 0.13946 0.18190 0.23626 0.40874
+## 0.06559 0.12895 0.17545 0.22587 0.37926
 ```
 
 A derived parameter can itself be used in subsequent calculations! For example, if we want to calculate the turnover time for the nutrient in algae, we can take the inverse of the turnover rate:
@@ -219,7 +219,7 @@ ttime_algae <- 1 / trate_algae
 plot(ttime_algae)
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-13-1.jpeg" alt="plot of chunk unnamed-chunk-13" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
 
 <nav aria-label="Page navigation">
  <ul class="pagination justify-content-end">

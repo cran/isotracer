@@ -1,6 +1,6 @@
 ---
 title: "Post-run diagnostics and analyses"
-date: "2023-03-20"
+date: "2023-09-21"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -89,7 +89,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-090-unnamed-chunk-6-1.jpeg" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
+<img src="figures/z-fig-090-unnamed-chunk-6-1.jpeg" style="display: block; margin: auto;" />
 
 In this case, the chains have converged towards the same region, and the mixing
 looks good for all of them. There is no obvious problem visible in those traces.
@@ -113,18 +113,18 @@ run %>% gelman.diag()
 ## Potential scale reduction factors:
 ## 
 ##                          Point est. Upper C.I.
-## eta                            1.01       1.03
-## lambda_algae                   1.02       1.04
-## lambda_daphnia                 1.07       1.12
-## lambda_NH4                     1.03       1.05
-## upsilon_algae_to_daphnia       1.01       1.02
-## upsilon_daphnia_to_NH4         1.00       1.01
-## upsilon_NH4_to_algae           1.00       1.01
-## zeta                           1.07       1.12
+## eta                            1.02       1.04
+## lambda_algae                   1.00       1.01
+## lambda_daphnia                 1.00       1.01
+## lambda_NH4                     1.02       1.03
+## upsilon_algae_to_daphnia       1.02       1.04
+## upsilon_daphnia_to_NH4         1.01       1.01
+## upsilon_NH4_to_algae           1.01       1.04
+## zeta                           1.02       1.04
 ## 
 ## Multivariate psrf
 ## 
-## 1.02
+## 1.01
 ```
 
 The diagnostic values should be very, very close to 1: it looks good in this
@@ -155,7 +155,7 @@ We can then visualize the predictions along with the observations with the `plot
 plot(predictions)
 ```
 
-<img src="figures/z-fig-090-unnamed-chunk-10-1.jpeg" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
+<img src="figures/z-fig-090-unnamed-chunk-10-1.jpeg" style="display: block; margin: auto;" />
 
 This plot enables to compare both the **size** and the **proportion** observations with the predictions.
 
@@ -182,26 +182,26 @@ run %>% summary()
 ##    plus standard error of the mean:
 ## 
 ##                             Mean       SD  Naive SE Time-series SE
-## eta                      0.13077 0.049152 0.0010991      0.0020033
-## lambda_algae             0.10286 0.069802 0.0015608      0.0027276
-## lambda_daphnia           0.03406 0.044308 0.0009907      0.0021403
-## lambda_NH4               0.08789 0.075928 0.0016978      0.0037739
-## upsilon_algae_to_daphnia 0.08117 0.027279 0.0006100      0.0012027
-## upsilon_daphnia_to_NH4   0.04883 0.007193 0.0001609      0.0002655
-## upsilon_NH4_to_algae     0.33789 0.045259 0.0010120      0.0018630
-## zeta                     0.43033 0.274114 0.0061294      0.0151120
+## eta                      0.12975 0.048193 0.0010776       0.001750
+## lambda_algae             0.10520 0.067634 0.0015123       0.002626
+## lambda_daphnia           0.03635 0.040243 0.0008999       0.001548
+## lambda_NH4               0.09119 0.068627 0.0015345       0.003257
+## upsilon_algae_to_daphnia 0.08106 0.027435 0.0006135       0.001107
+## upsilon_daphnia_to_NH4   0.04888 0.007384 0.0001651       0.000215
+## upsilon_NH4_to_algae     0.33815 0.045176 0.0010102       0.001498
+## zeta                     0.43263 0.230978 0.0051648       0.012713
 ## 
 ## 2. Quantiles for each variable:
 ## 
 ##                               2.5%      25%     50%     75%   97.5%
-## eta                      0.0669153 0.097014 0.11911 0.15366 0.25784
-## lambda_algae             0.0073685 0.051767 0.09321 0.13848 0.27177
-## lambda_daphnia           0.0007514 0.008011 0.01924 0.04288 0.16813
-## lambda_NH4               0.0028592 0.032424 0.06857 0.12075 0.29253
-## upsilon_algae_to_daphnia 0.0455856 0.063812 0.07516 0.09189 0.15350
-## upsilon_daphnia_to_NH4   0.0351229 0.044070 0.04860 0.05341 0.06439
-## upsilon_NH4_to_algae     0.2544754 0.306396 0.33584 0.36630 0.43583
-## zeta                     0.1758005 0.272402 0.34691 0.49108 1.29881
+## eta                      0.0675638 0.095417 0.11923 0.15317 0.24470
+## lambda_algae             0.0077299 0.055452 0.09633 0.14164 0.27581
+## lambda_daphnia           0.0007531 0.008797 0.02344 0.04996 0.14831
+## lambda_NH4               0.0051504 0.039730 0.07901 0.12577 0.26845
+## upsilon_algae_to_daphnia 0.0456967 0.062317 0.07572 0.09238 0.15529
+## upsilon_daphnia_to_NH4   0.0349468 0.044055 0.04866 0.05343 0.06414
+## upsilon_NH4_to_algae     0.2518269 0.307402 0.33694 0.36788 0.43057
+## zeta                     0.1771018 0.280644 0.36964 0.50929 1.07641
 ```
 
 If you need to store those values, for example to plot them, you can assign the
@@ -225,15 +225,15 @@ estimates$statistics
 ```
 
 ```
-##                                Mean         SD     Naive SE Time-series SE
-## eta                      0.13076730 0.04915221 0.0010990768   0.0020033250
-## lambda_algae             0.10285856 0.06980185 0.0015608169   0.0027275957
-## lambda_daphnia           0.03405795 0.04430761 0.0009907483   0.0021403053
-## lambda_NH4               0.08789154 0.07592796 0.0016978007   0.0037738956
-## upsilon_algae_to_daphnia 0.08117372 0.02727880 0.0006099724   0.0012027451
-## upsilon_daphnia_to_NH4   0.04882637 0.00719345 0.0001608504   0.0002655128
-## upsilon_NH4_to_algae     0.33789436 0.04525925 0.0010120277   0.0018629760
-## zeta                     0.43033052 0.27411355 0.0061293654   0.0151119895
+##                                Mean          SD     Naive SE Time-series SE
+## eta                      0.12975071 0.048192894 0.0010776259   0.0017497862
+## lambda_algae             0.10519705 0.067633765 0.0015123370   0.0026261674
+## lambda_daphnia           0.03635458 0.040242625 0.0008998525   0.0015480504
+## lambda_NH4               0.09119099 0.068626747 0.0015345407   0.0032572174
+## upsilon_algae_to_daphnia 0.08106393 0.027434670 0.0006134579   0.0011067159
+## upsilon_daphnia_to_NH4   0.04888479 0.007383861 0.0001651082   0.0002149579
+## upsilon_NH4_to_algae     0.33814672 0.045175612 0.0010101574   0.0014976810
+## zeta                     0.43262806 0.230978132 0.0051648280   0.0127129401
 ```
 
 and the quantiles are in `$quantiles`:
@@ -245,14 +245,14 @@ estimates$quantiles
 
 ```
 ##                                  2.5%         25%        50%        75%      97.5%
-## eta                      0.0669153483 0.097013751 0.11910898 0.15366350 0.25783681
-## lambda_algae             0.0073685350 0.051766703 0.09320946 0.13848273 0.27177321
-## lambda_daphnia           0.0007514397 0.008010983 0.01924270 0.04288098 0.16813339
-## lambda_NH4               0.0028591606 0.032424471 0.06857086 0.12075160 0.29253240
-## upsilon_algae_to_daphnia 0.0455856417 0.063811924 0.07516373 0.09188825 0.15350357
-## upsilon_daphnia_to_NH4   0.0351229456 0.044070018 0.04859819 0.05340884 0.06439157
-## upsilon_NH4_to_algae     0.2544754362 0.306395594 0.33583893 0.36630030 0.43583051
-## zeta                     0.1758004997 0.272401669 0.34691419 0.49107997 1.29881092
+## eta                      0.0675637722 0.095416804 0.11922521 0.15317186 0.24470337
+## lambda_algae             0.0077299114 0.055452469 0.09633200 0.14163937 0.27581349
+## lambda_daphnia           0.0007530601 0.008797266 0.02343532 0.04996465 0.14830752
+## lambda_NH4               0.0051504088 0.039730484 0.07901059 0.12576583 0.26845212
+## upsilon_algae_to_daphnia 0.0456966776 0.062317193 0.07572093 0.09237905 0.15528894
+## upsilon_daphnia_to_NH4   0.0349468460 0.044055236 0.04865711 0.05342772 0.06414298
+## upsilon_NH4_to_algae     0.2518268578 0.307401798 0.33693611 0.36788243 0.43056673
+## zeta                     0.1771018376 0.280644193 0.36964304 0.50928816 1.07640560
 ```
 
 ### Parameter correlations
@@ -270,7 +270,7 @@ draw the strength of parameter correlations:
 mcmc_heatmap(run)
 ```
 
-<img src="figures/z-fig-090-unnamed-chunk-15-1.jpeg" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+<img src="figures/z-fig-090-unnamed-chunk-15-1.jpeg" style="display: block; margin: auto;" />
 
 But of course you could use other functions provided by other packages, such as:
 
@@ -303,7 +303,7 @@ tidy_mcmc(run)
 ##  8          1              8 <dbl [8]>      
 ##  9          1              9 <dbl [8]>      
 ## 10          1             10 <dbl [8]>      
-## # … with 1,990 more rows
+## # ℹ 1,990 more rows
 ```
 
 By default the parameter values are nested into a list column, but you can also get a flat table with `spread = TRUE`:
@@ -315,21 +315,21 @@ tidy_mcmc(run, spread = TRUE)
 
 ```
 ## # A tibble: 2,000 × 10
-##    mcmc.chain mcmc.ite…¹    eta lambd…² lambd…³ lambd…⁴ upsil…⁵ upsil…⁶ upsil…⁷  zeta
-##         <int>      <int>  <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl> <dbl>
-##  1          1          1 0.144   0.0677 0.0108  6.52e-4  0.103   0.0508   0.282 0.192
-##  2          1          2 0.122   0.0995 0.0455  5.27e-4  0.0809  0.0504   0.262 0.264
-##  3          1          3 0.137   0.186  0.0408  2.01e-3  0.0708  0.0526   0.269 0.422
-##  4          1          4 0.0974  0.0853 0.00865 6.47e-3  0.0442  0.0496   0.375 0.203
-##  5          1          5 0.119   0.0343 0.0365  1.64e-2  0.0750  0.0597   0.381 0.307
-##  6          1          6 0.169   0.0676 0.00201 5.91e-2  0.109   0.0382   0.248 0.314
-##  7          1          7 0.106   0.120  0.111   5.93e-2  0.0330  0.0605   0.403 0.952
-##  8          1          8 0.117   0.0979 0.128   4.15e-2  0.0433  0.0594   0.381 0.864
-##  9          1          9 0.0683  0.117  0.265   1.16e-1  0.0513  0.0575   0.357 1.34 
-## 10          1         10 0.0709  0.130  0.216   1.03e-1  0.0469  0.0577   0.352 1.35 
-## # … with 1,990 more rows, and abbreviated variable names ¹​mcmc.iteration,
-## #   ²​lambda_algae, ³​lambda_daphnia, ⁴​lambda_NH4, ⁵​upsilon_algae_to_daphnia,
-## #   ⁶​upsilon_daphnia_to_NH4, ⁷​upsilon_NH4_to_algae
+##    mcmc.chain mcmc.iteration    eta lambda_algae lambda_daphnia lambda_NH4
+##         <int>          <int>  <dbl>        <dbl>          <dbl>      <dbl>
+##  1          1              1 0.137        0.122         0.0396     0.00669
+##  2          1              2 0.0837       0.0303        0.00587    0.0204 
+##  3          1              3 0.0904       0.109         0.00203    0.0354 
+##  4          1              4 0.102        0.0123        0.0428     0.0880 
+##  5          1              5 0.114        0.132         0.00369    0.0202 
+##  6          1              6 0.112        0.0533        0.00707    0.00243
+##  7          1              7 0.132        0.170         0.0119     0.0799 
+##  8          1              8 0.180        0.0772        0.0273     0.0486 
+##  9          1              9 0.201        0.0881        0.0571     0.0472 
+## 10          1             10 0.145        0.0579        0.00255    0.0689 
+## # ℹ 1,990 more rows
+## # ℹ 4 more variables: upsilon_algae_to_daphnia <dbl>, upsilon_daphnia_to_NH4 <dbl>,
+## #   upsilon_NH4_to_algae <dbl>, zeta <dbl>
 ```
 
 The above table only contains the primary parameters. If you are interested in getting the predicted trajectories for individual MCMC samples, you can use the `tidy_trajectories()` function:
@@ -356,7 +356,7 @@ tt
 ##  8          2            257 <dbl [8]>       <tibble [1 × 5]>
 ##  9          2            198 <dbl [8]>       <tibble [1 × 5]>
 ## 10          1            307 <dbl [8]>       <tibble [1 × 5]>
-## # … with 190 more rows
+## # ℹ 190 more rows
 ```
 
 As you can see, the `tt` object is a tidy table which contains the parameter values and the corresponding trajectories calculated for 200 randomly selected MCMC samples. The calculated trajectories are stored in the `trajectories` column and provide the quantities of unmarked and marked tracer (e.g. light and heavy isotope) for each compartment at each time step:
@@ -394,7 +394,7 @@ invisible(sapply(seq_len(nrow(algae)), function(i) {
 }))
 ```
 
-<img src="figures/z-fig-090-unnamed-chunk-21-1.jpeg" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
+<img src="figures/z-fig-090-unnamed-chunk-21-1.jpeg" style="display: block; margin: auto;" />
 
 Finally, if what you are interested in are not the trajectories per se but the actual flows of nutrient during the experiment, you can use the `tidy_flows()` function to extract flows in a similar way:
 
@@ -420,7 +420,7 @@ tf
 ##  8          2            205 <dbl [8]>       <gropd_df [6 × 3]>
 ##  9          2             34 <dbl [8]>       <gropd_df [6 × 3]>
 ## 10          2            110 <dbl [8]>       <gropd_df [6 × 3]>
-## # … with 190 more rows
+## # ℹ 190 more rows
 ```
 
 The returned object is very similar to the output of `tidy_trajectories()`, except that the `trajectories` column is replaced by a `flows` column:
@@ -435,12 +435,12 @@ tf$flows[[1]]
 ## # Groups:   from [3]
 ##   from    to      average_flow
 ##   <chr>   <chr>          <dbl>
-## 1 NH4     algae         0.0730
-## 2 NH4     <NA>          0.0233
-## 3 algae   daphnia       0.0705
-## 4 algae   <NA>          0.0568
-## 5 daphnia NH4           0.101 
-## 6 daphnia <NA>          0.0579
+## 1 NH4     algae         0.0709
+## 2 NH4     <NA>          0.0120
+## 3 algae   daphnia       0.0775
+## 4 algae   <NA>          0.0911
+## 5 daphnia NH4           0.103 
+## 6 daphnia <NA>          0.0266
 ```
 
 The average flow values are given in flow per unit of time. See `?tidy_flows()` for more details, including the possibility of calculating steady state flows for network systems that admits a steady state equilibrium.

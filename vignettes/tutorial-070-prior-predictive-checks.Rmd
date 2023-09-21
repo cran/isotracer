@@ -1,6 +1,6 @@
 ---
 title: "Prior predictive checks"
-date: "2023-03-20"
+date: "2023-09-21"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}

@@ -1,6 +1,6 @@
 ---
 title: "Quick start"
-date: "2023-03-20"
+date: "2023-09-21"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -112,7 +112,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, ncol = 2)
 ```
 
-<img src="figures/z-fig-010-plot-data-1.jpeg" alt="plot of chunk plot-data" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-plot-data-1.jpeg" style="display: block; margin: auto;" />
 
 As you can see, our simulated data is a time series over three days. For each species, we have measurements of total N biomass (left panel) and of the proportion of $^{15}$N in the N biomass (right panel).
 
@@ -160,7 +160,7 @@ m
 
 ```
 ## # A tibble: 0 × 3
-## # … with 3 variables: topology <list>, initial <list>, observations <list>
+## # ℹ 3 variables: topology <list>, initial <list>, observations <list>
 ```
  
 At this stage, our model `m` is quite boring: it is completely empty! It is just a tibble with three columns but zero rows. The three columns are the minimum information we have to provide a network model before we can run it: a topology, initial conditions, and observations.
@@ -214,7 +214,7 @@ If you have the [ggraph](https://cran.r-project.org/package=ggraph) package inst
 ggtopo(m)
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-8-1.jpeg" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-8-1.jpeg" style="display: block; margin: auto;" />
 
 </div>
 
@@ -398,7 +398,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-18-1.jpeg" alt="plot of chunk unnamed-chunk-18" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-18-1.jpeg" style="display: block; margin: auto;" />
 
 We can get some numerical estimates from those posteriors with the `summary()` function:
 
@@ -418,26 +418,26 @@ summary(run)
 ##    plus standard error of the mean:
 ## 
 ##                             Mean       SD  Naive SE Time-series SE
-## eta                      0.13077 0.049152 0.0010991      0.0020033
-## lambda_algae             0.10286 0.069802 0.0015608      0.0027276
-## lambda_daphnia           0.03406 0.044308 0.0009907      0.0021403
-## lambda_NH4               0.08789 0.075928 0.0016978      0.0037739
-## upsilon_algae_to_daphnia 0.08117 0.027279 0.0006100      0.0012027
-## upsilon_daphnia_to_NH4   0.04883 0.007193 0.0001609      0.0002655
-## upsilon_NH4_to_algae     0.33789 0.045259 0.0010120      0.0018630
-## zeta                     0.43033 0.274114 0.0061294      0.0151120
+## eta                      0.12975 0.048193 0.0010776       0.001750
+## lambda_algae             0.10520 0.067634 0.0015123       0.002626
+## lambda_daphnia           0.03635 0.040243 0.0008999       0.001548
+## lambda_NH4               0.09119 0.068627 0.0015345       0.003257
+## upsilon_algae_to_daphnia 0.08106 0.027435 0.0006135       0.001107
+## upsilon_daphnia_to_NH4   0.04888 0.007384 0.0001651       0.000215
+## upsilon_NH4_to_algae     0.33815 0.045176 0.0010102       0.001498
+## zeta                     0.43263 0.230978 0.0051648       0.012713
 ## 
 ## 2. Quantiles for each variable:
 ## 
 ##                               2.5%      25%     50%     75%   97.5%
-## eta                      0.0669153 0.097014 0.11911 0.15366 0.25784
-## lambda_algae             0.0073685 0.051767 0.09321 0.13848 0.27177
-## lambda_daphnia           0.0007514 0.008011 0.01924 0.04288 0.16813
-## lambda_NH4               0.0028592 0.032424 0.06857 0.12075 0.29253
-## upsilon_algae_to_daphnia 0.0455856 0.063812 0.07516 0.09189 0.15350
-## upsilon_daphnia_to_NH4   0.0351229 0.044070 0.04860 0.05341 0.06439
-## upsilon_NH4_to_algae     0.2544754 0.306396 0.33584 0.36630 0.43583
-## zeta                     0.1758005 0.272402 0.34691 0.49108 1.29881
+## eta                      0.0675638 0.095417 0.11923 0.15317 0.24470
+## lambda_algae             0.0077299 0.055452 0.09633 0.14164 0.27581
+## lambda_daphnia           0.0007531 0.008797 0.02344 0.04996 0.14831
+## lambda_NH4               0.0051504 0.039730 0.07901 0.12577 0.26845
+## upsilon_algae_to_daphnia 0.0456967 0.062317 0.07572 0.09238 0.15529
+## upsilon_daphnia_to_NH4   0.0349468 0.044055 0.04866 0.05343 0.06414
+## upsilon_NH4_to_algae     0.2518269 0.307402 0.33694 0.36788 0.43057
+## zeta                     0.1771018 0.280644 0.36964 0.50929 1.07641
 ```
 
 Finally, doing a **posterior predictive check** where we compare the observations and the corresponding predicted 95% credible intervals is a good way to check that the chosen model makes sense for this dataset:
@@ -448,7 +448,7 @@ predictions <- predict(m, run, probs = 0.95)
 plot(predictions, ylab.size = "Biomass (mg N)", ylab.prop = "Proportion 15N")
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-21-1.jpeg" alt="plot of chunk unnamed-chunk-21" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-21-1.jpeg" style="display: block; margin: auto;" />
 
 We would expect 95% of the observations to fall within the predicted 95% credible intervals if the model is appropriate to describe the dataset.
 
