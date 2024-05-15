@@ -1,6 +1,6 @@
 ---
 title: "Case study: Trinidadian streams (Collins et al. 2016)"
-date: "2023-09-21"
+date: "2024-05-14"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -19,6 +19,15 @@ The goal is to quantify the nitrogen exchanges in the stream foodweb, from the d
 
 - estimate those fluxes and the associated uncertainties
 - test for the existence of suspected trophic links between some species of interest.
+
+
+```r
+# Setup
+library(isotracer)
+library(tidyverse)
+```
+
+
 
 ## Experiment and data
 
@@ -90,7 +99,7 @@ This is how our network look like at this stage:
 ggtopo(m, "sugiyama")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-6-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-8-1.jpeg" style="display: block; margin: auto;" />
 
 ### Initial conditions and observations
 
@@ -100,7 +109,6 @@ The initial conditions are obtained by taking the values when t=0:
 
 
 ```r
-library(tidyverse)
 inits <- lalaja %>% filter(time.days == 0)
 ```
 
@@ -146,7 +154,7 @@ plot(m, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("NH4", "NO3", "epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-11-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
 
 Interestingly, we see that one of the consumer, `tricor`, is over-enriched compared to its resources (`epi` and `FBOM`). This is due to the "bulk" nature of the epilithon and FBOM compartments.
 
@@ -357,7 +365,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-26-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-28-1.jpeg" style="display: block; margin: auto;" />
 
 ### Posterior predictive fits
 
@@ -377,7 +385,7 @@ plot(pred, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-29-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-31-1.jpeg" style="display: block; margin: auto;" />
 
 The quality of the fit looks quite good. We could use this fit to estimate flows between compartments and make quantitative conclusions from those results. We can also use this model as a base model to test for putative trophic link.
 
@@ -409,7 +417,7 @@ The structure of the alternative model is:
 ggtopo(m2, "sugiyama")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-32-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-34-1.jpeg" style="display: block; margin: auto;" />
 
 Let's apply the same priors as for the first model:
 
@@ -448,7 +456,7 @@ plot(run2)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-37-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-39-1.jpeg" style="display: block; margin: auto;" />
 
 We check the model fit with a posterior predictive fit:
 
@@ -466,7 +474,7 @@ plot(pred2, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-40-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-42-1.jpeg" style="display: block; margin: auto;" />
 
 When comparing with the first fit, this one looks equally good as before. Which model should we prefer?
 
@@ -491,11 +499,11 @@ dic(run, run2)
 ## # A tibble: 2 × 6
 ##   fit     Dbar    pD    DIC delta_DIC weight
 ##   <chr>  <dbl> <dbl>  <dbl>     <dbl>  <dbl>
-## 1 run   -1822.  21.7 -1800.      0     0.838
-## 2 run2  -1819.  22.6 -1797.      3.29  0.162
+## 1 run   -1821.  23.1 -1798.      0     0.815
+## 2 run2  -1819.  23.5 -1795.      2.96  0.185
 ```
 
-`run` is from the model fit without the trophic link `pseph -> arg`. According to the DIC, this model is more likely than the alternative model with the extra trophic link. The evidence is reasonable but not overwhelming, as evidenced by the $\Delta$DIC value and the DIC weights.
+`run` is from the model fit without the trophic link `pseph -> arg`. According to the DIC, this model is slightly more likely than the alternative model with the extra trophic link. The evidence is not overwhelming though, as evidenced by the $\Delta$DIC value and the DIC weights.
 
 ## Sankey plot
 
@@ -537,7 +545,7 @@ sankey(topo(m), nodes, f %>% select(from, to, flow) %>% rename(width = flow),
        edge_f = 0.2, layout = "left2right")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-45-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-47-1.jpeg" style="display: block; margin: auto;" />
 
 ## To go further
 
@@ -548,4 +556,4 @@ A heatmap of the correlation between parameter estimates can be a good way to vi
 mcmc_heatmap(run)
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-46-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-48-1.jpeg" style="display: block; margin: auto;" />

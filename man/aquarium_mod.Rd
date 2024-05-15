@@ -20,7 +20,8 @@ The code used to built the model is given in the example section below.
 The \code{\link{aquarium_run}} dataset is a corresponding MCMC run.
 }
 \examples{
-library(tidyverse)
+library(tibble)
+library(dplyr)
 exp <- tibble::tribble(
   ~time.day,  ~species, ~biomass, ~prop15N,
           0,   "algae",     1.02,  0.00384,
@@ -42,8 +43,8 @@ exp <- tibble::tribble(
         2.5,     "NH4",       NA,    0.295,
           3,     "NH4",     0.27,        NA
   )
-inits <- exp \%>\% filter(time.day == 0)
-obs <- exp \%>\% filter(time.day > 0)
+inits <- exp \%>\% dplyr::filter(time.day == 0)
+obs <- exp \%>\% dplyr::filter(time.day > 0)
 
 aquarium_mod <- new_networkModel() \%>\%
     set_topo("NH4 -> algae -> daphnia -> NH4") \%>\%

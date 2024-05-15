@@ -574,23 +574,31 @@ tidy_trajectories <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 6
 #' Warning: This function is still maturing and its interface and output might
 #' change in the future.
 #'
+#' Note about how steady state sizes for split compartments are calculated: the
+#' steady size of the active portion is calculated divide it is divided by the
+#' active fraction (portion.act parameter) to get the total size including the
+#' refractory portion. In this case we get a "steady-state" refractory portion,
+#' consistent with steady state size of active fraction and with portion.act
+#' parameter.
+#' 
 #' @param nm A \code{networkModel} object.
 #' @param mcmc The corresponding output from \code{run_mcmc}.
 #' @param n_per_chain Integer, number of iterations randomly drawn per
-#'     chain. Note that iterations are in sync across chains (in practice,
-#'     random iterations are chosen, and then parameter values extracted for
-#'     those same iterations from all chains).
+#'   chain. Note that iterations are in sync across chains (in practice, random
+#'   iterations are chosen, and then parameter values extracted for those same
+#'   iterations from all chains).
 #' @param n Integer, number of iterations randomly drawn from \code{mcmc}. Note
-#'     that iterations are *not* drawn in sync across chains in this case (use
-#'     \code{n_per_chain} if you need to have the same iterations taken across
-#'     all chains).
+#'   that iterations are *not* drawn in sync across chains in this case (use
+#'   \code{n_per_chain} if you need to have the same iterations taken across all
+#'   chains).
 #' @param n_grid Size of the time grid used to calculate trajectories
 #' @param steady_state Boolean (default: FALSE). If TRUE, then steady state
-#'     compartment sizes are calculated for each iteration and steady state
-#'     flows are calculated from those compartment sizes.
+#'   compartment sizes are calculated for each iteration and steady state flows
+#'   are calculated from those compartment sizes. Note that any pulse that
+#'   might be specified in the input model \code{nm} is ignored in this case.
 #' @param cores Number of cores to use for parallel calculations. Default is
-#'     \code{NULL}, which means to use the value stored in
-#'     \code{options()[["mc.cores"]]} (or 1 if this value is not set).
+#'   \code{NULL}, which means to use the value stored in
+#'   \code{options()[["mc.cores"]]} (or 1 if this value is not set).
 #' @param dt,grid_size Time step size or grid points, respectively.
 #' @param at Timepoints at which the predictions should be returned.
 #' @param end Final timepoint used in the projections.
@@ -673,7 +681,7 @@ tidy_flows <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 64,
             return(out)
         })
     } else {
-        flows <- purrr::map(seq_len(nrow(nm)), function(k) {
+      flows <- purrr::map(seq_len(nrow(nm)), function(k) {
             nmRow <- nm[k, ]
             flows <- parallel::mclapply(seq_len(nrow(to)), function(i) {
                 nmRow_to <- set_params(nmRow, to$mcmc.parameters[[i]], force = TRUE, quick = TRUE)
@@ -682,7 +690,8 @@ tidy_flows <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 64,
                                            size = ss_sizes,
                                            proportion = 0)
                 nmRow_to$initial <- list(ss_inits)
-                nmRow_to <- project(nmRow_to, grid_size = 3, flows = "average")
+                nmRow_to <- project(nmRow_to, grid_size = 3, flows = "average",
+                                    ignore_pulses = TRUE)
                 return(nmRow_to$flows[[1]])
             }, mc.cores = cores)
             out <- to
@@ -794,6 +803,13 @@ sample_params <- function(nm) {
 #'
 #' If neither \code{n_per_chain} and \code{n} are provided, all iterations are
 #' used.
+#'
+#' Note about how steady state sizes for split compartments are calculated: the
+#' steady size of the active portion is calculated divide it is divided by the
+#' active fraction (portion.act parameter) to get the total size including the
+#' refractory portion. In this case we get a "steady-state" refractory portion,
+#' consistent with steady state size of active fraction and with portion.act
+#' parameter.
 #' 
 #' @param nm A \code{networkModel} object.
 #' @param mcmc The corresponding output from \code{run_mcmc}.

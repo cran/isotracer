@@ -19,33 +19,64 @@
 #' @param use_fixed_values Boolean, if TRUE any parameter value set with
 #'     \code{set_params()} will be taken as fixed during the MCMC run. Default
 #'     is FALSE.
+#' @param vb Boolean, if TRUE will use \code{rstan::vb} for a quick approximate
+#'   sampling of the posterior. Important note from \code{?rstan::vb}:
+#'   "This is still considered an experimental feature.  We recommend calling
+#'   \code{stan} or \code{sampling} for final inferences and only using ‘vb’ to
+#'   get a rough idea of the parameter distributions."
 #' @param ... Passed to \code{rstan::sampling}.
 #'
 #' @keywords internal
 #' @noRd
 
 matrix_exp_stan <- function(nm, iter = 2000, chains = 4, cores = NULL,
-                            stanfit = FALSE, use_fixed_values = FALSE, ...) {
-    # Detect cores
-    cores <- get_n_cores(cores = cores)
-    # Convert network model to stan data
-    stan.data <- prep_stan_data_expm(nm, use_fixed_values = use_fixed_values)
-    # Fit the model
-    stan.data[["ode_method"]] <- 1 # For matrix exponential
-    fit <- rstan::sampling(stanmodels[["networkModel"]],
-                           data = stan.data,
-                           iter = iter,
-                           chains = chains,
-                           cores = cores,
-                           pars = c("nonConstantParams", "log_lik"), ...)
-    stopifnot(!"isotracer_stan_data" %in% names(attributes(fit)))
-    attr(fit, "isotracer_stan_data") <- stan.data
-    # Return
+                            stanfit = FALSE, use_fixed_values = FALSE,
+                            vb = FALSE, ...) {
+  # Detect cores
+  cores <- get_n_cores(cores = cores)
+  # Convert network model to stan data
+  stan.data <- prep_stan_data_expm(nm, use_fixed_values = use_fixed_values)
+  # Fit the model
+  stan.data[["ode_method"]] <- 1 # For matrix exponential
+  # Approximate sampling (vb = TRUE)
+  if (vb) {
     if (stanfit) {
-        return(fit)
-    } else {
-        return(stanfit_to_named_mcmclist(stanfit = fit))
+      stop("vb not implemented for stanfit = TRUE")
     }
+    fits <- lapply(seq_len(chains), function(i) {
+      fit <- rstan::vb(stanmodels[["networkModel"]],
+                       data = stan.data,
+                       iter = iter,
+                       pars = c("nonConstantParams", "log_lik",
+                                "rawUniformParams", "rawHcauchyParams",
+                                "rawBetaParams", "rawTrNormParams",
+                                "rawExponentialParams", "rawGammaParams"), ...)
+      stopifnot(!"isotracer_stan_data" %in% names(attributes(fit)))
+      attr(fit, "isotracer_stan_data") <- stan.data
+      fit
+    })
+    fits <- lapply(fits, stanfit_to_named_mcmclist)
+    fits <- lapply(fits, function(i) i[[1]])
+    return(coda::as.mcmc.list(fits))
+  }
+  # Accurate sampling (vb = FALSE)
+  fit <- rstan::sampling(stanmodels[["networkModel"]],
+                         data = stan.data,
+                         iter = iter,
+                         chains = chains,
+                         cores = cores,
+                         pars = c("nonConstantParams", "log_lik",
+                                  "rawUniformParams", "rawHcauchyParams",
+                                  "rawBetaParams", "rawTrNormParams",
+                                  "rawExponentialParams", "rawGammaParams"), ...)
+  stopifnot(!"isotracer_stan_data" %in% names(attributes(fit)))
+  attr(fit, "isotracer_stan_data") <- stan.data
+  # Return
+  if (stanfit) {
+    return(fit)
+  } else {
+    return(stanfit_to_named_mcmclist(stanfit = fit))
+  }
 }
 
 ### * prep_stan_data_expm()

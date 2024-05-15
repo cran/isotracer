@@ -6,21 +6,22 @@
 #'
 #' @param nm A \code{networkModel} object.
 #' @param dt,grid_size Either the time step size for trajectory calculations
-#'     (\code{dt}) or the number of points for the calculation
-#'     (\code{grid_size}) can be provided. If none is provided, then a default
-#'     grid size of 256 steps is used.
+#'   (\code{dt}) or the number of points for the calculation (\code{grid_size})
+#'   can be provided. If none is provided, then a default grid size of 256 steps
+#'   is used.
 #' @param at Optional, vector of time values at which the trajectory must be
-#'     evaluated.
-#' @param end Time value for end point. If not provided, the last observation
-#'     or event is used.
+#'   evaluated.
+#' @param end Time value for end point. If not provided, the last observation or
+#'   event is used.
 #' @param flows Return flow values? The default is "no" and no flows are
-#'     calculated. Other values are "total" (total flows summed up from
-#'     beginning to end timepoint), "average" (average flows per time unit,
-#'     equal to total flows divided by the projection duration), and "per_dt"
-#'     (detailled flow values are returned for each interval dt of the
-#'     projection).
+#'   calculated. Other values are "total" (total flows summed up from beginning
+#'   to end timepoint), "average" (average flows per time unit, equal to total
+#'   flows divided by the projection duration), and "per_dt" (detailled flow
+#'   values are returned for each interval dt of the projection).
 #' @param cached_ts,cached_ee Used for optimization by other functions, not for
-#'     use by the package user.
+#'   use by the package user.
+#' @param ignore_pulses Default to FALSE (i.e. apply pulses when projecting the
+#'   network system). It is set to TRUE when calculating steady-state flows.
 #'
 #' @return A network model object with a \code{"trajectory"} column.
 #' 
@@ -35,7 +36,8 @@
 #' @export
 
 project <- function(nm, dt = NULL, grid_size = NULL, at = NULL, end = NULL,
-                    flows = "no", cached_ts = NULL, cached_ee = NULL) {
+                    flows = "no", cached_ts = NULL, cached_ee = NULL,
+                    ignore_pulses = FALSE) {
     `!!` <- rlang::`!!`
     if (!flows %in% c("no", "total", "average", "per_dt")) {
         stop("\"flows\" must be on of \"no\", \"total\", \"average\", \"per_dt\".")
@@ -56,7 +58,8 @@ project <- function(nm, dt = NULL, grid_size = NULL, at = NULL, end = NULL,
         z  <- project_row(nm[i, ], dt = dt, grid_size = grid_size,
                           at = at, end = end, flows = get_flows,
                           cached_ts = cached_ts[[i]], cached_ee = cached_ee[[i]],
-                          lambda_decay = attr(nm, "lambda_hl"))
+                          lambda_decay = attr(nm, "lambda_hl"),
+                          ignore_pulses = ignore_pulses)
         trajectories[[i]] <- z[, c("timepoints", "unmarked", "marked", "sizes", "proportions")]
         if (get_flows) {
             flows[[i]] <- z[, c("timepoints", "dt", "flows")]
@@ -268,6 +271,13 @@ sample_from <- function(nm, at, dt = NULL, grid_size = NULL, end = NULL, error.d
 #' This is an experimental function. It attempts to calculate steady-state
 #' compartment sizes using the set parameter values and the initial compartment
 #' sizes. Use it with caution!
+#' 
+#' Note about how steady state sizes for split compartments are calculated: the
+#' steady size of the active portion is calculated divide it is divided by the
+#' active fraction (portion.act parameter) to get the total size including the
+#' refractory portion. In this case we get a "steady-state" refractory portion,
+#' consistent with steady state size of active fraction and with portion.act
+#' parameter.
 #' 
 #' @param nm A network model, with set parameter values.
 #'

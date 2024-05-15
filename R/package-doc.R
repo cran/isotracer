@@ -11,7 +11,6 @@
 #' The isotracer package allows modelling of fluxes across a network of
 #' compartments. Parameters are estimated using a Bayesian MCMC approach.
 #'
-#' @docType package
 #' @name isotracer-package
 #' @aliases isotracer
 #' @useDynLib isotracer, .registration = TRUE
@@ -30,4 +29,4 @@
 #' Stan Development Team (2018). RStan: the R interface to Stan. R package
 #' version 2.18.2. https://mc-stan.org
 #'
-NULL
+"_PACKAGE"

@@ -1,6 +1,6 @@
 ---
 title: "Units and priors"
-date: "2023-09-21"
+date: "2024-05-14"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -88,7 +88,6 @@ For now, a few different types of priors can be specified by the user when build
 
 ```r
 library(isotracer)
-library(tidyverse)
 mod <- new_networkModel() %>% set_topo("NH4 -> algae -> daphnia -> NH4")
 ```
 

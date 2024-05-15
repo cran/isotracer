@@ -1,3 +1,17 @@
+# isotracer 1.1.6 (2024-05-14)
+
+## Bug fixes
+
+- Fix bug with how split compartments were handled when calculating steady state sizes. The issue was in the (internal) function `calculate_steady_state_one_row()` and affected the (exported) functions `tidy_steady_states()`, `tidy_flows()`, and `calculate_steady_state()`.
+- Fix bug in `tidy_flows()` which was present when using `steady_state = TRUE` and pulses were present in the network model. Now running `tidy_flows(..., steady_state = TRUE)` automatically ignores any pulse that might be present in the network model.
+
+## Improvements
+
+- Add function `prop2delta()`.
+- Check arguments to `delta2prop()` more thoroughly and provide helpful error messages.
+- Remove dependency on the tidyverse package in the "Suggests" field of `DESCRIPTION`.
+- Add tests for `tidy_steady_states()` and `tidy_flows()`.
+
 # isotracer 1.1.5 (2023-09-21)
 
 ## Ensure package compatibility with future versions of rstan

@@ -58,7 +58,7 @@
 
 project_row <- function(nm_row, dt = NULL, grid_size = NULL, at = NULL, end = NULL,
                         flows = FALSE, cached_ts = NULL, cached_ee = NULL,
-                        lambda_decay = NULL) {
+                        lambda_decay = NULL, ignore_pulses = FALSE) {
     ### * Preprocessing
     if (is.null(lambda_decay)) {
         lambda_decay <- 0
@@ -163,7 +163,7 @@ project_row <- function(nm_row, dt = NULL, grid_size = NULL, at = NULL, end = NU
     unmarked[1, ] <- init$unmarked[match(comps, init$compartment)]
     marked[1, ] <- init$marked[match(comps, init$compartment)]
     ## Apply pulses
-    if (nPulses > 0) {
+    if (nPulses > 0 & (!ignore_pulses)) {
         if (pulseIndex <= nPulses) {
             while(pulseIndex <= nPulses && pulseEvents[pulseIndex, 1] == 1) {
                 unmarked[1, pulseEvents[pulseIndex, 2]] <- unmarked[1, pulseEvents[pulseIndex, 2]] + pulseQuantities[pulseIndex, 1]
@@ -194,7 +194,7 @@ project_row <- function(nm_row, dt = NULL, grid_size = NULL, at = NULL, end = NU
             marked[t+1,j] <- marked[t,j]
         }
         # Apply pulse events
-        if (nPulses > 0) {
+        if (nPulses > 0 & (!ignore_pulses)) {
             if (pulseIndex <= nPulses) {
                 while(pulseIndex <= nPulses && pulseEvents[pulseIndex, 1] == t+1) {
                     unmarked[t+1, pulseEvents[pulseIndex, 2]] <- unmarked[t+1, pulseEvents[pulseIndex, 2]] + pulseQuantities[pulseIndex, 1]
@@ -543,6 +543,13 @@ potential_steady_state <- function(x) {
 #' This is an experimental function. It attempts to calculate steady-state
 #' compartment sizes using the set parameter values and the initial compartment
 #' sizes. Use it with caution!
+#'
+#' Note about how steady state sizes for split compartments are calculated: the
+#' steady size of the active portion is calculated divide it is divided by the
+#' active fraction (portion.act parameter) to get the total size including the
+#' refractory portion. In this case we get a "steady-state" refractory portion,
+#' consistent with steady state size of active fraction and with portion.act
+#' parameter.
 #' 
 #' @param nm_row A one-row network model, with set parameter values.
 #'
@@ -593,10 +600,12 @@ calculate_steady_state_one_row <- function(nm_row) {
         inits <- nm_row$initial[[1]]
         original_inits <- inits
         original_inits$refr_size <- 0
+        original_inits$p_act <- 1
         for (i in seq_len(nrow(inits))) {
             if (inits$compartment[i] %in% sp_comps) {
                 p_act <- params$value[params$in_replicate == paste0("portion.act_", inits$compartment[i])]
                 original_inits$refr_size[i] <- original_inits$size[i] * (1 - p_act)
+                original_inits$p_act[i] <- p_act
                 inits$size[i] <- inits$size[i] * p_act
             }
         }
@@ -672,9 +681,12 @@ calculate_steady_state_one_row <- function(nm_row) {
     }
     # Process split compartments
     if (has_split_comps) {
-        refr_sizes <- setNames(original_inits$refr_size,
-                               nm = original_inits$compartment)
-        stable_sizes <- stable_sizes + refr_sizes[names(stable_sizes)]
+      p_act <- setNames(original_inits$p_act,
+                        nm = original_inits$compartment)
+      stable_sizes <- stable_sizes / p_act[names(stable_sizes)]
+      ## refr_sizes <- setNames(original_inits$refr_size,
+      ##                        nm = original_inits$compartment)
+      ## stable_sizes <- stable_sizes + refr_sizes[names(stable_sizes)]
     }
     # Return
     return(stable_sizes)

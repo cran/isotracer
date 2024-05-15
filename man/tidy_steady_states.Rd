@@ -30,3 +30,11 @@ A tidy table containing the mcmc iterations (chain, iteration,
 If neither \code{n_per_chain} and \code{n} are provided, all iterations are
 used.
 }
+\details{
+Note about how steady state sizes for split compartments are calculated: the
+steady size of the active portion is calculated divide it is divided by the
+active fraction (portion.act parameter) to get the total size including the
+refractory portion. In this case we get a "steady-state" refractory portion,
+consistent with steady state size of active fraction and with portion.act
+parameter.
+}

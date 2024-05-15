@@ -1,6 +1,6 @@
 ---
 title: "Including fixed effects of covariates"
-date: "2023-09-21"
+date: "2024-05-14"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -31,6 +31,7 @@ The experiment is done in two aquariums as before, but this time one aquarium is
 library(isotracer)
 library(tidyverse)
 ```
+
 
 ## Data preparation
 
@@ -91,7 +92,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-4-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-5-1.jpeg" style="display: block; margin: auto;" />
 
 ## Building the model
 
@@ -349,7 +350,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-20-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-21-1.jpeg" style="display: block; margin: auto;" />
 
 and we do a posterior predictive check:
 
@@ -361,7 +362,7 @@ plot(predictions, facet_row = c("group", "type"),
      scale = "all")
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-22-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-23-1.jpeg" style="display: block; margin: auto;" />
 
 ## Interpreting the output
 
@@ -382,23 +383,23 @@ summary(run %>% select(upsilon))
 ## 1. Empirical mean and standard deviation for each variable,
 ##    plus standard error of the mean:
 ## 
-##                                   Mean       SD   Naive SE Time-series SE
-## upsilon_algae_to_daphnia|dark  0.12346 0.015410 0.00024366     0.00025613
-## upsilon_algae_to_daphnia|light 0.13922 0.018966 0.00029988     0.00031137
-## upsilon_daphnia_to_NH4|dark    0.05686 0.009789 0.00015478     0.00019938
-## upsilon_daphnia_to_NH4|light   0.04069 0.004684 0.00007406     0.00007583
-## upsilon_NH4_to_algae|dark      0.08611 0.011526 0.00018225     0.00018817
-## upsilon_NH4_to_algae|light     0.28402 0.026192 0.00041413     0.00040861
+##                                   Mean       SD  Naive SE Time-series SE
+## upsilon_algae_to_daphnia|dark  0.12338 0.015711 0.0002484     0.00028100
+## upsilon_algae_to_daphnia|light 0.13911 0.019829 0.0003135     0.00033573
+## upsilon_daphnia_to_NH4|dark    0.05696 0.009938 0.0001571     0.00018649
+## upsilon_daphnia_to_NH4|light   0.04064 0.004668 0.0000738     0.00008513
+## upsilon_NH4_to_algae|dark      0.08584 0.011417 0.0001805     0.00021184
+## upsilon_NH4_to_algae|light     0.28320 0.025936 0.0004101     0.00043828
 ## 
 ## 2. Quantiles for each variable:
 ## 
 ##                                   2.5%     25%     50%     75%   97.5%
-## upsilon_algae_to_daphnia|dark  0.09482 0.11363 0.12311 0.13273 0.15433
-## upsilon_algae_to_daphnia|light 0.10599 0.12629 0.13773 0.15065 0.17959
-## upsilon_daphnia_to_NH4|dark    0.04066 0.04999 0.05589 0.06245 0.07905
-## upsilon_daphnia_to_NH4|light   0.03221 0.03748 0.04047 0.04361 0.05024
-## upsilon_NH4_to_algae|dark      0.06582 0.07809 0.08496 0.09351 0.11094
-## upsilon_NH4_to_algae|light     0.23419 0.26616 0.28365 0.30053 0.33714
+## upsilon_algae_to_daphnia|dark  0.09509 0.11274 0.12249 0.13311 0.15639
+## upsilon_algae_to_daphnia|light 0.10417 0.12546 0.13811 0.15057 0.18115
+## upsilon_daphnia_to_NH4|dark    0.04036 0.05008 0.05598 0.06266 0.07987
+## upsilon_daphnia_to_NH4|light   0.03187 0.03749 0.04039 0.04359 0.05057
+## upsilon_NH4_to_algae|dark      0.06614 0.07779 0.08508 0.09266 0.11150
+## upsilon_NH4_to_algae|light     0.23373 0.26632 0.28228 0.29921 0.33807
 ```
 
 Looking at a table of numbers is not the easiest way to visualize the differences between parameter values. One could take advantage of the `bayesplot` package for a more visual output:
@@ -410,7 +411,7 @@ mcmc_intervals(run %>% select(upsilon)) +
     coord_trans(x = "log10")
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-24-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-25-1.jpeg" style="display: block; margin: auto;" />
 
 Based on this plot, it looks like only the rates from ammonium to algae (`upsilon_NH4_to_algae`) actually differ between the `light` and the `dark` treatments.
 
@@ -423,7 +424,7 @@ ratio_upsilons_NH4_algae <- (run[, "upsilon_NH4_to_algae|light"] /
 plot(ratio_upsilons_NH4_algae)
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-25-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-26-1.jpeg" style="display: block; margin: auto;" />
 
 As we can see above, the posterior for the ratio $\frac{\upsilon_{NH4 \rightarrow algae}|light}{\upsilon_{NH4 \rightarrow algae}|dark}$ is far from one. We can check that with the numerical summary:
 
@@ -443,12 +444,12 @@ summary(ratio_upsilons_NH4_algae)
 ##    plus standard error of the mean:
 ## 
 ##           Mean             SD       Naive SE Time-series SE 
-##       3.356027       0.542232       0.008573       0.008573 
+##       3.358536       0.551588       0.008721       0.009415 
 ## 
 ## 2. Quantiles for each variable:
 ## 
 ##  2.5%   25%   50%   75% 97.5% 
-## 2.421 2.970 3.318 3.688 4.575
+## 2.393 2.981 3.319 3.695 4.563
 ```
 
 The model tells us that the algae uptake ammonium more rapidly in the light treatment. What about the nitrogen flows between algae and *Daphnia*? Are the uptake rate coefficients estimated in the light and the dark treatments different?
@@ -460,7 +461,7 @@ ratio_upsilons_algae_daphnia <- (run[, "upsilon_algae_to_daphnia|light"] /
 plot(ratio_upsilons_algae_daphnia)
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-27-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-28-1.jpeg" style="display: block; margin: auto;" />
 
 For this comparison, the posterior of the ratio overlaps one quite generously: the model does not support an effect of the light/dark treatment on the nitrogen flux between algae and *Daphnia*.
 

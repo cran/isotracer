@@ -17,6 +17,14 @@ This is an experimental function. It attempts to calculate steady-state
 compartment sizes using the set parameter values and the initial compartment
 sizes. Use it with caution!
 }
+\details{
+Note about how steady state sizes for split compartments are calculated: the
+steady size of the active portion is calculated divide it is divided by the
+active fraction (portion.act parameter) to get the total size including the
+refractory portion. In this case we get a "steady-state" refractory portion,
+consistent with steady state size of active fraction and with portion.act
+parameter.
+}
 \examples{
 m <- aquarium_mod
 m <- set_prior(m, constant_p(0), "lambda")

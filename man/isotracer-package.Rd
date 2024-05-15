@@ -19,3 +19,20 @@ https://doi.org/10.1086/708546.
 Stan Development Team (2018). RStan: the R interface to Stan. R package
 version 2.18.2. https://mc-stan.org
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://gitlab.com/matthieu-bruneaux/isotracer}
+  \item Report bugs at \url{https://gitlab.com/matthieu-bruneaux/isotracer/-/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Matthieu Bruneaux \email{matthieu.bruneaux@gmail.com} (\href{https://orcid.org/0000-0001-6997-192X}{ORCID})
+
+Authors:
+\itemize{
+  \item Andrés López-Sepulcre \email{lopezsepulcre@gmail.com} (\href{https://orcid.org/0000-0001-9708-0788}{ORCID})
+}
+
+}

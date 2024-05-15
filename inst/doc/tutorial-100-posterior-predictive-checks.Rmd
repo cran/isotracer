@@ -1,6 +1,6 @@
 ---
 title: "Posterior predictive checks"
-date: "2023-09-21"
+date: "2024-05-14"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -20,6 +20,7 @@ Posterior predictive checks are important to ensure that the model makes sense t
 library(isotracer)
 library(tidyverse)
 ```
+
 
 ## Preparation
 
@@ -109,7 +110,7 @@ plot(fit)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-100-unnamed-chunk-5-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-100-unnamed-chunk-6-1.jpeg" style="display: block; margin: auto;" />
 
 ## Posterior predictive check
 
@@ -125,7 +126,7 @@ predictions <- mod %>% predict(fit, probs = 0.95)
 plot(predictions, ylab.size = "Biomass (mg N)", ylab.prop = "Proportion 15N")
 ```
 
-<img src="figures/z-fig-100-unnamed-chunk-7-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-100-unnamed-chunk-8-1.jpeg" style="display: block; margin: auto;" />
 
 We would expect 95% of the observations to fall within the predicted 95% credible intervals if the model is appropriate to describe the dataset.
 
@@ -181,13 +182,13 @@ library(bayesplot)
 ppc_dens_overlay(z_prop[["y"]], z_prop[["y_rep"]])
 ```
 
-<img src="figures/z-fig-100-unnamed-chunk-11-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-100-unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
 
 ```r
 ppc_ecdf_overlay(z_size[["y"]], z_size[["y_rep"]])
 ```
 
-<img src="figures/z-fig-100-unnamed-chunk-11-2.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-100-unnamed-chunk-12-2.jpeg" style="display: block; margin: auto;" />
 
 
 ```r
@@ -198,7 +199,7 @@ ppc_intervals(z_prop[["y"]], z_prop[["y_rep"]],
     facet_grid(~ z_prop[["vars"]][["compartment"]])
 ```
 
-<img src="figures/z-fig-100-unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-100-unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
 
 
 ```r
@@ -207,7 +208,7 @@ ppc_scatter_avg(z_prop[["y"]], z_prop[["y_rep"]]) +
   coord_trans(x = "log10", y = "log10")
 ```
 
-<img src="figures/z-fig-100-unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-100-unnamed-chunk-14-1.jpeg" style="display: block; margin: auto;" />
 
 <nav aria-label="Page navigation">
  <ul class="pagination justify-content-end">

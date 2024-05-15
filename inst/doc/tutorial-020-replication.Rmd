@@ -1,6 +1,6 @@
 ---
 title: "Handling replication"
-date: "2023-09-21"
+date: "2024-05-14"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -33,6 +33,7 @@ Let's get started!
 library(isotracer)
 library(tidyverse)
 ```
+
 
 ## Data preparation
 
@@ -92,7 +93,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-020-unnamed-chunk-4-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-020-unnamed-chunk-5-1.jpeg" style="display: block; margin: auto;" />
 
 ### Building the network model
 
@@ -300,7 +301,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-020-unnamed-chunk-16-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-020-unnamed-chunk-17-1.jpeg" style="display: block; margin: auto;" />
 
 The traces look nice. If we want to check numerically that the convergence is good, we can use the `coda::gelman.diag()` function:
 
@@ -313,18 +314,18 @@ coda::gelman.diag(run)
 ## Potential scale reduction factors:
 ## 
 ##                          Point est. Upper C.I.
-## eta                            1.00       1.00
-## lambda_algae                   1.00       1.01
-## lambda_daphnia                 1.00       1.00
-## lambda_NH4                     1.01       1.02
-## upsilon_algae_to_daphnia       1.00       1.01
+## eta                            1.00       1.01
+## lambda_algae                   1.01       1.03
+## lambda_daphnia                 1.00       1.01
+## lambda_NH4                     1.02       1.05
+## upsilon_algae_to_daphnia       1.01       1.02
 ## upsilon_daphnia_to_NH4         1.00       1.00
-## upsilon_NH4_to_algae           1.00       1.01
-## zeta                           1.01       1.01
+## upsilon_NH4_to_algae           1.01       1.03
+## zeta                           1.00       1.00
 ## 
 ## Multivariate psrf
 ## 
-## 1.01
+## 1.02
 ```
 
 All the diagnostic estimates are very close to one, so we can proceed. Let's have a look at the **posterior predictive check** to see if our model is consistent with the observations:
@@ -335,7 +336,7 @@ predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
 
-<img src="figures/z-fig-020-unnamed-chunk-19-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-020-unnamed-chunk-20-1.jpeg" style="display: block; margin: auto;" />
 
 This looks nice! As far as we can tell, our model is compatible with the observed data.
 

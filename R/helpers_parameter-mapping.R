@@ -28,8 +28,6 @@ add_param_mapping <- function(nm, use_default = FALSE) {
     })
     nm$parameters <- mapping
     # Set default priors
-    # TODO Check out https://vctrs.r-lib.org/articles/s3-vector.html to make
-    # priors better displayed in tibbles.
     priors <- tibble::tibble(in_model = nm_base_params(nm))
     if (use_default) {
         priors$prior <- lapply(seq_len(nrow(priors)), function(i) {

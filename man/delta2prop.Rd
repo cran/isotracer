@@ -7,7 +7,7 @@
 delta2prop(x = NULL, Rstandard = NULL)
 }
 \arguments{
-\item{x}{Vector of delta values}
+\item{x}{Vector of delta values.}
 
 \item{Rstandard}{String describing the isotopic measurement, e.g. "d15N",
 "d13C" and used to set automatically Rstandards (see the Section

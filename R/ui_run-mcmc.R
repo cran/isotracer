@@ -35,12 +35,17 @@
 #'   classical `mcmc.list` object. Note that when an `mcmc.list` object is
 #'   returned, the original `stanfit` object is still accessible as an
 #'   attribute of that object (see Examples).
+#' @param vb Boolean, if TRUE will use \code{rstan::vb} for a quick approximate
+#'   sampling of the posterior. Important note from \code{?rstan::vb}:
+#'   "This is still considered an experimental feature.  We recommend calling
+#'   \code{stan} or \code{sampling} for final inferences and only using ‘vb’ to
+#'   get a rough idea of the parameter distributions."
 #' @param ... Arguments passed to `rstan::sampling` (e.g. iter, chains).
 #'
 #' @return An object of class `stanfit` returned by `rstan::sampling` if
 #'   \code{stanfit = TRUE}, otherwise the result of converting this
-#'   \code{stanfit} object with \code{stanfit_to_named_mcmclist} (i.e. an
-#'   object of class \code{networkModelStanfit} and {mcmc.list}, which still
+#'   \code{stanfit} object with \code{stanfit_to_named_mcmclist} (i.e. an object
+#'   of class \code{networkModelStanfit} and \code{mcmc.list}, which still
 #'   carries the original `stanfit` object stored as an attribute).
 #'
 #' @examples
@@ -67,19 +72,23 @@
 
 run_mcmc <- function(model, iter = 2000, chains = 4, method = "matrix_exp",
                      euler_control = list(),
-                     cores = NULL, stanfit = FALSE, ...) {
+                     cores = NULL, stanfit = FALSE, vb = FALSE, ...) {
     stopifnot(method %in% c("matrix_exp", "euler"))
     if (method != "euler" & length(euler_control) != 0) {
         stop("The `euler_control` parameter is not empty, but `method` is not set to \"euler\".")
     }
     if (method == "euler") {
+      if (vb) {
+        stop("vb not implemented for euler method")
+      }
         fit <- mugen_stan(nm = model, iter = iter, chains = chains,
                           euler_control = euler_control,
                           cores = cores, stanfit = stanfit, ...)
     }
     if (method == "matrix_exp") {
         fit <- matrix_exp_stan(nm = model, iter = iter, chains = chains,
-                               cores = cores, stanfit = stanfit, ...)
+                               cores = cores, stanfit = stanfit,
+                               vb = vb, ...)
     }
     return(fit)
 }
@@ -118,8 +127,9 @@ stanfit_to_named_mcmclist <- function(stanfit) {
     }
     attr(out, "mcpar") <- mcpars
     rawNames <- coda::varnames(out)
-    nonConstantParamNames <- rawNames[startsWith(rawNames, "nonConstantParams[")]
-    loglikNames <- rawNames[startsWith(rawNames, "log_lik[")]
+    nonConstantParamNames <- rawNames[grepl("^nonConstantParams[\\[\\.]",
+                                            rawNames)]
+    loglikNames <- rawNames[grepl("^log_lik[\\[\\.]", rawNames)]
     ll <- out[, loglikNames]
     out <- out[, nonConstantParamNames]
     coda::varnames(out) <- stan_data[["allParams"]][stan_data[["mappingParamPriorType"]] != 0]

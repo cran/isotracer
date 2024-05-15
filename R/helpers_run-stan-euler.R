@@ -46,7 +46,10 @@ mugen_stan <- function(nm, iter = 2000, chains = 4, euler_control = list(),
                            iter = iter,
                            chains = chains,
                            cores = cores,
-                           pars = c("nonConstantParams", "log_lik"), ...)
+                           pars = c("nonConstantParams", "log_lik",
+                                    "rawUniformParams", "rawHcauchyParams",
+                                    "rawBetaParams", "rawTrNormParams",
+                                    "rawExponentialParams", "rawGammaParams"), ...)
     stopifnot(!"isotracer_stan_data" %in% names(attributes(fit)))
     attr(fit, "isotracer_stan_data") <- stan.data
     # Return

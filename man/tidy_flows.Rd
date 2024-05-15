@@ -25,20 +25,21 @@ tidy_flows(
 \item{mcmc}{The corresponding output from \code{run_mcmc}.}
 
 \item{n_per_chain}{Integer, number of iterations randomly drawn per
-chain. Note that iterations are in sync across chains (in practice,
-random iterations are chosen, and then parameter values extracted for
-those same iterations from all chains).}
+chain. Note that iterations are in sync across chains (in practice, random
+iterations are chosen, and then parameter values extracted for those same
+iterations from all chains).}
 
 \item{n}{Integer, number of iterations randomly drawn from \code{mcmc}. Note
 that iterations are *not* drawn in sync across chains in this case (use
-\code{n_per_chain} if you need to have the same iterations taken across
-all chains).}
+\code{n_per_chain} if you need to have the same iterations taken across all
+chains).}
 
 \item{n_grid}{Size of the time grid used to calculate trajectories}
 
 \item{steady_state}{Boolean (default: FALSE). If TRUE, then steady state
-compartment sizes are calculated for each iteration and steady state
-flows are calculated from those compartment sizes.}
+compartment sizes are calculated for each iteration and steady state flows
+are calculated from those compartment sizes. Note that any pulse that
+might be specified in the input model \code{nm} is ignored in this case.}
 
 \item{dt, grid_size}{Time step size or grid points, respectively.}
 
@@ -66,6 +67,13 @@ used.
 \details{
 Warning: This function is still maturing and its interface and output might
 change in the future.
+
+Note about how steady state sizes for split compartments are calculated: the
+steady size of the active portion is calculated divide it is divided by the
+active fraction (portion.act parameter) to get the total size including the
+refractory portion. In this case we get a "steady-state" refractory portion,
+consistent with steady state size of active fraction and with portion.act
+parameter.
 }
 \examples{
 tf <- tidy_flows(aquarium_mod, aquarium_run, n_per_chain = 25, cores = 2)

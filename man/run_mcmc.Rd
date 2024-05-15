@@ -12,6 +12,7 @@ run_mcmc(
   euler_control = list(),
   cores = NULL,
   stanfit = FALSE,
+  vb = FALSE,
   ...
 )
 }
@@ -52,13 +53,19 @@ classical `mcmc.list` object. Note that when an `mcmc.list` object is
 returned, the original `stanfit` object is still accessible as an
 attribute of that object (see Examples).}
 
+\item{vb}{Boolean, if TRUE will use \code{rstan::vb} for a quick approximate
+sampling of the posterior. Important note from \code{?rstan::vb}:
+"This is still considered an experimental feature.  We recommend calling
+\code{stan} or \code{sampling} for final inferences and only using ‘vb’ to
+get a rough idea of the parameter distributions."}
+
 \item{...}{Arguments passed to `rstan::sampling` (e.g. iter, chains).}
 }
 \value{
 An object of class `stanfit` returned by `rstan::sampling` if
   \code{stanfit = TRUE}, otherwise the result of converting this
-  \code{stanfit} object with \code{stanfit_to_named_mcmclist} (i.e. an
-  object of class \code{networkModelStanfit} and {mcmc.list}, which still
+  \code{stanfit} object with \code{stanfit_to_named_mcmclist} (i.e. an object
+  of class \code{networkModelStanfit} and \code{mcmc.list}, which still
   carries the original `stanfit` object stored as an attribute).
 }
 \description{

@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2023-09-21" />
+<meta name="date" content="2024-05-14" />
 
 <title>Prior predictive checks</title>
 
@@ -25,22 +25,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
     if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
     a = h.attributes;
     while (a.length > 0) h.removeAttribute(a[0].name);
-  }
-});
-</script>
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
   }
 });
 </script>
@@ -253,7 +237,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 <h1 class="title toc-ignore">Prior predictive checks</h1>
-<h4 class="date">2023-09-21</h4>
+<h4 class="date">2024-05-14</h4>
 
 
 
@@ -261,10 +245,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <nav aria-label="Page navigation">
 <ul class="pagination justify-content-end">
 <li class="page-item">
-<a class="page-link" href="tutorial-060-units-priors.html">Previous: Units and priors</a>
+<a class="page-link" href="tutorial-060-units-priors.html">Previous:
+Units and priors</a>
 </li>
 <li class="page-item">
-<a class="page-link" href="tutorial-080-mcmc-output-format.html">Next: MCMC output format</a>
+<a class="page-link" href="tutorial-080-mcmc-output-format.html">Next:
+MCMC output format</a>
 </li>
 </ul>
 </nav>
