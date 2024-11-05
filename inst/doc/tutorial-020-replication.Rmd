@@ -1,6 +1,6 @@
 ---
 title: "Handling replication"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -29,7 +29,7 @@ We keep the foodweb model of this example simple, with only three compartments a
 Let's get started!
 
 
-```r
+``` r
 library(isotracer)
 library(tidyverse)
 ```
@@ -40,7 +40,7 @@ library(tidyverse)
 The simulated data we use in this example can be loaded into your R session by running the code below:
 
 
-```r
+``` r
 exp <- tibble::tribble(
   ~time.day,  ~species, ~biomass, ~prop15N, ~aquariumID,
           0,   "algae",     1.03,        0,      "aq01",
@@ -81,7 +81,7 @@ As you can see in this table, the data contains the total amount of nitrogen (`b
 We can visualize the data using `ggplot2`:
 
 
-```r
+``` r
 library(ggplot2)
 library(gridExtra)
 p1 <- ggplot(exp, aes(x = time.day, y = biomass, col = species)) +
@@ -100,7 +100,7 @@ grid.arrange(p1, p2, nrow = 2)
 As in the [Quick Start](tutorial-010-quick-start.html) tutorial, we start by creating an empty network model to which we add a network topology:
 
 
-```r
+``` r
 m <- new_networkModel() %>% set_topo("NH4 -> algae -> daphnia -> NH4")
 m
 ```
@@ -117,7 +117,7 @@ For now, the model just contains the topology (and the list of parameters to be 
 Let's add the initial conditions for both aquaria. We can get them by extracting the data from the `exp` table at $t_0$:
 
 
-```r
+``` r
 inits <- exp %>% filter(time.day == 0)
 inits
 ```
@@ -137,7 +137,7 @@ inits
 We add them to the model using `set_init()` as in the previous tutorial, but note how we use `group_by = "aquariumID"` to indicate that we have initial conditions for different replicates:
 
 
-```r
+``` r
 m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
                     group_by = "aquariumID")
 ```
@@ -145,7 +145,7 @@ m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
 Let's have a look at our model at this stage:
 
 
-```r
+``` r
 m
 ```
 
@@ -160,7 +160,7 @@ m
 We now have two rows in the model table: each row corresponds to one replicate. The `initial` column has been populated with the appropriate initial conditions for each replicate and the network topology has been duplicated as many times as needed. The `group` column now contains the grouping variables defining the replicates, and the grouping structure can be quickly accessed with the `groups()` function:
 
 
-```r
+``` r
 groups(m)
 ```
 
@@ -177,7 +177,7 @@ In this case we have only one grouping variable (`aquariumID`), but we could hav
 The final step of the model preparation is to add the observations. Let's extract them from the `exp` table, keeping only rows after $t_0$:
 
 
-```r
+``` r
 obs <- exp %>% filter(time.day > 0)
 obs
 ```
@@ -202,7 +202,7 @@ obs
 We add them to the model with `add_obs()` (note how the same `group_by` argument as the one used with `set_init()` is used by default):
 
 
-```r
+``` r
 m <- m %>% set_obs(obs, time = "time.day")
 m
 ```
@@ -222,7 +222,7 @@ Perfect! Now the model is ready to be run with the MCMC sampler.
 Let's have a look at the model parameters that are going to be estimated during the MCMC run and set some reasonable priors:
 
 
-```r
+``` r
 priors(m)
 ```
 
@@ -243,7 +243,7 @@ priors(m)
 Time values for the observations were in days, so the `lambda_*` and `upsilon_*` parameters will be rates per day. We wouldn't expect the whole compartments to be renewed within one day, so a normal prior centered at 0 and with a standard deviation of 1 or 2 is probably quite generous already:
 
 
-```r
+``` r
 m <- set_priors(m, normal_p(0, 2), "lambda|upsilon")
 ```
 
@@ -260,7 +260,7 @@ m <- set_priors(m, normal_p(0, 2), "lambda|upsilon")
 As for `eta` and `zeta`, they represent coefficients of variation for the observed proportions of marked material and compartment sizes, so again `normal_p(0, 2)` is probably fine:
 
 
-```r
+``` r
 m <- set_priors(m, normal_p(0, 2), "eta")
 ```
 
@@ -270,7 +270,7 @@ m <- set_priors(m, normal_p(0, 2), "eta")
 ##   - zeta
 ```
 
-```r
+``` r
 priors(m)
 ```
 
@@ -295,7 +295,7 @@ Note that even though we have two experimental replicates in our dataset, they s
 Let's run the MCMC sampler:
 
 
-```r
+``` r
 run <- run_mcmc(m, iter = 1000)
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -306,7 +306,7 @@ plot(run)
 The traces look nice. If we want to check numerically that the convergence is good, we can use the `coda::gelman.diag()` function:
 
 
-```r
+``` r
 coda::gelman.diag(run)
 ```
 
@@ -331,7 +331,7 @@ coda::gelman.diag(run)
 All the diagnostic estimates are very close to one, so we can proceed. Let's have a look at the **posterior predictive check** to see if our model is consistent with the observations:
 
 
-```r
+``` r
 predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```

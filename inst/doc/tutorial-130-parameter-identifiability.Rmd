@@ -1,6 +1,6 @@
 ---
 title: "Testing parameter identifiability"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -18,7 +18,7 @@ Here again, using simulations to test for parameter identifiability can help to 
 In this vignette, we'll illustrate how to use simulated data to detect this kind of problem and to test different approaches to solve it.
 
 
-```r
+``` r
 library(isotracer)
 library(tidyverse)
 ```
@@ -30,7 +30,7 @@ library(tidyverse)
 Let's start with a simple design. We use again a simple aquarium experiment with dissolved nutrients, algae and Daphnia, but this time we will assume that two algal species are present in the aquarium and that they can feed on both ammonium (NH4) and nitrate (NO3):
 
 
-```r
+``` r
 mod <- new_networkModel() %>%
   set_topo(c("NH4, NO3 -> algae.sp1, algae.sp2 -> daphnia -> NH4",
              "algae.sp1, algae.sp2 -> NO3"))
@@ -55,7 +55,7 @@ mod <- new_networkModel() %>%
 Let's set up some initial values:
 
 
-```r
+``` r
 inits <- tibble::tribble(
      ~comps, ~sizes, ~props,
       "NH4",    0.2,    0.8, 
@@ -69,7 +69,7 @@ mod <- mod %>% set_init(inits, comp = "comps", size = "sizes", prop = "props")
 What are the parameters of the model?
 
 
-```r
+``` r
 params(mod)
 ```
 
@@ -98,7 +98,7 @@ params(mod)
 Let's assume that the two algae species have different preference for ammonium and nitrate:
 
 
-```r
+``` r
 params <- c("upsilon_NH4_to_algae.sp1" = 0.07,
             "upsilon_NO3_to_algae.sp1" = 0.01,
             "upsilon_NH4_to_algae.sp2" = 0.02,
@@ -108,7 +108,7 @@ params <- c("upsilon_NH4_to_algae.sp1" = 0.07,
 We will simulate the case where Daphnia only consumes the first species of algae:
 
 
-```r
+``` r
 params <- c(params, "upsilon_algae.sp1_to_daphnia" = 0.12,
             "upsilon_algae.sp2_to_daphnia" = 0)
 ```
@@ -116,7 +116,7 @@ params <- c(params, "upsilon_algae.sp1_to_daphnia" = 0.12,
 and we will set some excretion rates for each species:
 
 
-```r
+``` r
 params <- c(params, "upsilon_algae.sp1_to_NO3" = 0.05,
             "upsilon_algae.sp2_to_NO3" = 0.07,
             "upsilon_daphnia_to_NH4" = 0.04)
@@ -125,7 +125,7 @@ params <- c(params, "upsilon_algae.sp1_to_NO3" = 0.05,
 We assume that the aquarium is a closed system and that there are no losses (i.e. no nutrient exits the network system):
 
 
-```r
+``` r
 params <- c(params, "lambda_NH4" = 0, "lambda_NO3" = 0,
             "lambda_algae.sp1" = 0, "lambda_algae.sp2" = 0,
             "lambda_daphnia" = 0)
@@ -134,14 +134,14 @@ params <- c(params, "lambda_NH4" = 0, "lambda_NO3" = 0,
 Finally, we set up the variability of compartment sizes and tracer proportions:
 
 
-```r
+``` r
 params <- c(params, "eta" = 0.2, "zeta" = 0.1)
 ```
 
 That was quite a lot of parameters to define! Let's add them all to the model and run one projection to see how things look like:
 
 
-```r
+``` r
 mod <- mod %>%
   set_params(params)
 proj <- mod %>% project(end = 10)
@@ -153,7 +153,7 @@ plot(proj)
 Looks good! Now let's simulate some observed data from this system:
 
 
-```r
+``` r
 spl <- proj %>% sample_from(at = c(2, 4, 6, 8, 10))
 spl
 ```
@@ -178,7 +178,7 @@ spl
 Let's add this data to the model:
 
 
-```r
+``` r
 mod <- mod %>% set_obs(spl, comp = "comp", size = "size", prop = "prop",
                        time = "time")
 plot(mod)
@@ -189,12 +189,12 @@ plot(mod)
 We are ready to set some reasonable vague priors and run the MCMC fit:
 
 
-```r
+``` r
 mod <- set_priors(mod, normal_p(0, 6))
 ```
 
 
-```r
+``` r
 run <- run_mcmc(mod, iter = 1000)
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -207,7 +207,7 @@ Notice how spread the posteriors for some parameters are. For example,  compare 
 In addition, the chains for the uptake rates from nutrients to the algae species, and from algae to Daphnia, are extremely correlated, as visible on the heatmap below:
 
 
-```r
+``` r
 mcmc_heatmap(run)
 ```
 
@@ -220,7 +220,7 @@ We have low identifiability for those parameters: many combinations of their val
 Let's simulate the data we would get if we started with only NH4 being enriched in marker, while NO3 starts with the background isotopic signature. For this, we have to modify the initial conditions:
 
 
-```r
+``` r
 inits_impr <- tibble::tribble(
      ~comps, ~sizes, ~props,
       "NH4",    0.2,    0.8, 
@@ -234,7 +234,7 @@ mod_impr <- mod %>% set_init(inits_impr, comp = "comps", size = "sizes", prop = 
 Let's see how the trajectories look like now:
 
 
-```r
+``` r
 proj <- mod_impr %>% set_obs(NULL) %>% project(end = 10)
 plot(proj)
 ```
@@ -246,14 +246,14 @@ Nice! Notice how the trajectories for the proportions of marked tracer differ be
 Let's simulate some observations:
 
 
-```r
+``` r
 spl <- proj %>% sample_from(at = c(2, 4, 6, 8, 10))
 ```
 
 and let's add those to the model:
 
 
-```r
+``` r
 mod_impr <- mod_impr %>% set_obs(spl, comp = "comp", size = "size", prop = "prop",
                                  time = "time")
 plot(mod_impr)
@@ -264,7 +264,7 @@ plot(mod_impr)
 We are ready to run the MCMC fit:
 
 
-```r
+``` r
 run_impr <- run_mcmc(mod_impr, iter = 1000)
 plot(run_impr)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -292,7 +292,7 @@ plot(run_impr)
 The uncertainty in the posteriors of the uptake rates seem to have decreased a lot. Let's double-check with a heatmap:
 
 
-```r
+``` r
 mcmc_heatmap(run_impr)
 ```
 

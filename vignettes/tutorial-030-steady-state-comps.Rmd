@@ -1,6 +1,6 @@
 ---
 title: "Setting steady-state compartments"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -20,7 +20,7 @@ In some experiments, you might want to specify that some compartments are in a *
 In this tutorial, we will learn how to define a compartment as being in a steady state in a network model.
 
 
-```r
+``` r
 library(isotracer)
 library(tidyverse)
 ```
@@ -33,7 +33,7 @@ library(tidyverse)
 The simulated data we use in this example can be loaded into your R session by running the code below:
 
 
-```r
+``` r
 exp <- tibble::tribble(
   ~time.day,    ~species, ~biomass, ~prop15N,    ~transect,
           0,       "NH4",    0.313,   0.0259, "transect_1",
@@ -68,7 +68,7 @@ The simulated experiment is taking place in a stream at two locations (`transect
 Let's have a look at the data:
 
 
-```r
+``` r
 library(ggplot2)
 library(gridExtra)
 p1 <- ggplot(exp, aes(x = time.day, y = biomass, col = species)) +
@@ -97,7 +97,7 @@ As long as the drip is also stable during the experiment, the assumption of stea
 Let's start by creating a new network model and specifying its topology:
 
 
-```r
+``` r
 m <- new_networkModel() %>% set_topo("NH4 -> epilithon")
 ```
 
@@ -110,7 +110,7 @@ The next step is to define the initial conditions. In our simulated experiment, 
 </div>
 
 
-```r
+``` r
 init_bm <- exp %>%
     group_by(species, transect) %>%
     summarize(biomass = mean(biomass, na.rm = TRUE))
@@ -121,7 +121,7 @@ init_bm <- exp %>%
 ## argument.
 ```
 
-```r
+``` r
 init_bm
 ```
 
@@ -139,7 +139,7 @@ init_bm
 For the initial proportion of $^{15}$N in the dissolved ammonium, we will also use mean values since we expect ammonium to be in a steady state during the experiment (the drip is on during the whole experiment):
 
 
-```r
+``` r
 init_prop_NH4 <- exp %>%
     filter(species == "NH4") %>%
     group_by(transect, species) %>%
@@ -151,7 +151,7 @@ init_prop_NH4 <- exp %>%
 ## argument.
 ```
 
-```r
+``` r
 init_prop_NH4
 ```
 
@@ -167,7 +167,7 @@ init_prop_NH4
 For the epilithon, we know that the proportion of $^{15}$N will increase during the experiment, so our best guess is to use only the proportion measured at $t_0$:
 
 
-```r
+``` r
 init_prop_epi <- exp %>%
     filter(species == "epilithon" & time.day == 0) %>%
     select(species, prop15N, transect)
@@ -185,7 +185,7 @@ init_prop_epi
 Now we can wrap up all those numbers into a single table containing the initial conditions:
 
 
-```r
+``` r
 init_prop <- bind_rows(init_prop_NH4, init_prop_epi)
 inits <- full_join(init_bm, init_prop)
 inits
@@ -205,7 +205,7 @@ inits
 We can use this table to specify the initial conditions of the model:
 
 
-```r
+``` r
 m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
                     group_by = "transect")
 ```
@@ -213,7 +213,7 @@ m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
 We finally add all the observations:
 
 
-```r
+``` r
 m <- m %>% set_obs(exp, time = "time.day")
 m
 ```
@@ -229,7 +229,7 @@ m
 Let's check the grouping structure of our model:
 
 
-```r
+``` r
 groups(m)
 ```
 
@@ -248,7 +248,7 @@ Good!
 The last step before we can run the MCMC is to specify that the NH$_4^+$ compartment is in steady state. Let's have a look at the current topology of the model:
 
 
-```r
+``` r
 topo(m)
 ```
 
@@ -262,14 +262,14 @@ topo(m)
 All compartments in the current topology are "standard" compartments (i.e. not in imposed steady-state). We use the `set_steady()` function to indicate which compartments are to be considered into steady-state:
 
 
-```r
+``` r
 m <- m %>% set_steady(comps = "NH4")
 ```
 
 `NH4` is set to steady-state: the compartment size and the proportion of $^{15}$N for `NH4` will be considered constant within each replicate. Let's look again at the topology:
 
 
-```r
+``` r
 topo(m)
 ```
 
@@ -288,7 +288,7 @@ NH$_4^+$ is now marked with an asterisk, which indicates a steady state compartm
 As usual, we need to specify the priors for the parameters we will be sampling during MCMC run:
 
 
-```r
+``` r
 priors(m)
 ```
 
@@ -306,14 +306,14 @@ priors(m)
 Since NH$_4^+$ is in a steady state in the model, the `lambda_NH4` parameter will not influence the likelihood of the model, so let's just set it to a constant so that the sampler does not waste efforts on it:
 
 
-```r
+``` r
 m <- set_priors(m, constant_p(0), "lambda_NH4")
 ```
 
 The observation times were in days, and it is unlikely than the loss rate for epilithon will be more than 1 per day, so `normal_p(0, 1)` is quite generous:
 
 
-```r
+``` r
 m <- set_priors(m, normal_p(0, 1), "lambda_epilithon")
 ```
 
@@ -322,7 +322,7 @@ What about `upsilon_NH4_to_epilithon`? NH4 is a small compartment, but it is in 
 To get an idea of how big it could be, how large would it need to be to renew all of epilithon compartment during a day? For an epilithon biomass of 100 and an NH4 biomass of 0.3, the rate would need to be about 333 per day. Let's set a prior which would allow it but with a lot more probability mass below 333:
 
 
-```r
+``` r
 m <- set_prior(m, normal_p(0, 350), "upsilon_NH4_to_epilithon")
 ```
 
@@ -334,7 +334,7 @@ m <- set_prior(m, normal_p(0, 350), "upsilon_NH4_to_epilithon")
 Finally, here `eta` and `zeta` represent coefficients of variation for the observations. A reasonable prior could be:
 
 
-```r
+``` r
 # "eta" will match both `eta` and `zeta`
 m <- set_priors(m, normal_p(0, 5), "eta")
 ```
@@ -342,7 +342,7 @@ m <- set_priors(m, normal_p(0, 5), "eta")
 Let's have a look at all our priors and then run the model:
 
 
-```r
+``` r
 priors(m)
 ```
 
@@ -358,7 +358,7 @@ priors(m)
 ```
 
 
-```r
+``` r
 run <- run_mcmc(m, iter = 1000)
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -369,7 +369,7 @@ plot(run)
 The traces look good. Let's do a posterior predictive check to ensure that the model makes sense:
 
 
-```r
+``` r
 predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
@@ -379,7 +379,7 @@ plot(predictions, facet_row = "group")
 Let's use a log scale on the y axis to make visualization of the two compartments in the same plots easier:
 
 
-```r
+``` r
 plot(predictions, facet_row = "group", log = TRUE)
 ```
 

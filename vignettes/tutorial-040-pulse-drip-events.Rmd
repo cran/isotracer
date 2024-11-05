@@ -1,6 +1,6 @@
 ---
 title: "Defining pulse or drip events"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -18,7 +18,7 @@ In the first case, the corresponding network model can be specified by using app
 In this tutorial, you will learn how to define **pulse** and **drip events** for your network model. The first section will teach you how to define pulse events, and the second how to define drip events.
 
 
-```r
+``` r
 library(isotracer)
 library(tidyverse)
 ```
@@ -33,7 +33,7 @@ library(tidyverse)
 The simulated data we use in this example can be loaded into your R session by running the code below:
 
 
-```r
+``` r
 exp <- tibble::tribble(
   ~time.day, ~species, ~biomass, ~prop15N, ~aquariumID,
           0,    "NH4",   0.2054,   0.0045,      "aq01",
@@ -67,7 +67,7 @@ In this simulated experiment, we have two replicated aquariums in which there is
 Let's have a look at the data:
 
 
-```r
+``` r
 library(ggplot2)
 library(gridExtra)
 p1 <- ggplot(exp, aes(x = time.day, y = biomass, col = species)) +
@@ -86,21 +86,21 @@ grid.arrange(p1, p2, nrow = 2)
 The model topology is very simple:
 
 
-```r
+``` r
 m <- new_networkModel() %>% set_topo("NH4 -> algae")
 ```
 
 The initial conditions are taken from the `exp` table for $t=t_0$:
 
 
-```r
+``` r
 inits <- exp %>% filter(time.day == 0)
 ```
 
 We set the initial conditions in the model:
 
 
-```r
+``` r
 m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
                     group_by = "aquariumID")
 ```
@@ -108,7 +108,7 @@ m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
 And we use all the rows from the `exp` table for which $t>t_0$ as the observations:
 
 
-```r
+``` r
 obs <- exp %>% filter(time.day > 0)
 m <- m %>% set_obs(obs, time = "time.day")
 m
@@ -139,14 +139,14 @@ The arguments needed to define a pulse event are:
 In our example, the pulse event is an addition of pure $^{15}$N-ammonium. The equivalent of 0.4 mg $^{15}$N were added to each aquarium at $t=2$ days. We specify this pulse event in the model with:
 
 
-```r
+``` r
 m <- m %>% add_pulse_event(time = 2, comp = "NH4", unmarked = 0, marked = 0.4)
 ```
 
 and we can see that the model now contains some addition events in the `events` columns:
 
 
-```r
+``` r
 m
 ```
 
@@ -158,7 +158,7 @@ m
 ## 2 <topology [2 × 2]> <tibble [2 × 3]> <tibble [9 × 4]>  <tibble>   <chr [1]> <tibble>
 ```
 
-```r
+``` r
 m$events
 ```
 
@@ -181,7 +181,7 @@ m$events
 The rest of the model fitting works as usual. We quickly set some reasonable priors for the particular model at hand:
 
 
-```r
+``` r
 m <- set_priors(m, normal_p(0, 4), "")
 priors(m)
 ```
@@ -200,7 +200,7 @@ priors(m)
 We run the MCMC and check the traces:
 
 
-```r
+``` r
 run <- run_mcmc(m, iter = 1000)
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -211,7 +211,7 @@ plot(run)
 Let's have a quick look at the posterior predictive check:
 
 
-```r
+``` r
 predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
@@ -231,7 +231,7 @@ Drip events are different from pulse events: while a pulse is a one-time, discre
 The simulated data we use in this example can be loaded into your R session by running the code below:
 
 
-```r
+``` r
 exp <- tibble::tribble(
   ~time.day,    ~species, ~biomass, ~prop15N,    ~transect,
           0,       "NH4",    0.313,   0.0038, "transect_1",
@@ -267,7 +267,7 @@ The design of that experiment is that we start with two days of measurements dur
 First let's have a look at the data:
 
 
-```r
+``` r
 library(ggplot2)
 library(gridExtra)
 p1 <- ggplot(exp, aes(x = time.day, y = biomass, col = species)) +
@@ -286,21 +286,21 @@ grid.arrange(p1, p2, nrow = 2)
 We define the model topology:
 
 
-```r
+``` r
 m <- new_networkModel() %>% set_topo("NH4 -> epilithon")
 ```
 
 The initial conditions are taken from the `exp` table for $t=t_0$:
 
 
-```r
+``` r
 inits <- exp %>% filter(time.day == 0)
 ```
 
 We set the initial conditions in the model:
 
 
-```r
+``` r
 m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
                     group_by = "transect")
 ```
@@ -308,7 +308,7 @@ m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
 And we use all the rows from the `exp` table for which $t>t_0$ as the observations:
 
 
-```r
+``` r
 obs <- exp %>% filter(time.day > 0)
 m <- m %>% set_obs(obs, time = "time.day")
 ```
@@ -321,7 +321,7 @@ m <- m %>% set_obs(obs, time = "time.day")
 ##   group_by = "transect"
 ```
 
-```r
+``` r
 m
 ```
 
@@ -336,7 +336,7 @@ m
 Finally, we tell the model that the NH$_4^+$ compartment is to be considered as a steady-state compartment since it is continuously renewed by the stream flow:
 
 
-```r
+``` r
 m <- m %>% set_steady(comps = "NH4")
 ```
 
@@ -362,7 +362,7 @@ In the simulated experiment, the drip upstream of each transect increased the am
 We define the "on" event of the drip by a corresponding pulse:
 
 
-```r
+``` r
 m <- m %>%
     add_pulse_event(time = 2, comp = "NH4", unmarked = 0, marked = 0.008)
 ```
@@ -372,7 +372,7 @@ Because NH$_4^+$ is set to "steady state", the pulse event will actually be equi
 Similarly, we define the "off" event of the drip by an opposite pulse in which we **remove** 0.008 mg N/m$^2$ in the steady-state compartment:
 
 
-```r
+``` r
 m <- m %>%
     add_pulse_event(time = 10, comp = "NH4", unmarked = 0, marked = -0.008)
 ```
@@ -382,7 +382,7 @@ Again, since NH$_4^+$ is set to steady-state, those two pulses will result in a 
 Let's look at the events in the `events` column of the model:
 
 
-```r
+``` r
 m$events
 ```
 
@@ -413,7 +413,7 @@ Note that in a real life experiment, the increase in tracer quantities resulting
 The rest of the model fitting works as usual. The parameters and their default priors are:
 
 
-```r
+``` r
 priors(m)
 ```
 
@@ -431,7 +431,7 @@ priors(m)
 We run the MCMC and check the traces:
 
 
-```r
+``` r
 run <- run_mcmc(m, iter = 1000)
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -449,7 +449,7 @@ plot(run)
 Let's have a quick look at the posterior predictive check:
 
 
-```r
+``` r
 predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```

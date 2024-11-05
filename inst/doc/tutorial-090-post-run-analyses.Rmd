@@ -1,6 +1,6 @@
 ---
 title: "Post-run diagnostics and analyses"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -22,7 +22,7 @@ tutorial](tutorial-010-quick-start.html). Please go back and run the code of
 that vignette to generate the MCMC data if you haven't already!
 
 
-```r
+``` r
 # Load the tidyverse package for easier data manipulation
 library(tidyverse)
 ```
@@ -41,7 +41,7 @@ In the **Quick Start** tutorial, we generated the `run` object by running `run <
 `mcmc.list` object as implemented in the `coda` package:
 
 
-```r
+``` r
 is(run, "mcmc.list")
 ```
 
@@ -63,7 +63,7 @@ parameters](tutorial-110-derived-parameters.html).
 <b>Tip:</b> `isotracer` uses Stan behind the scenes to run the MCMC. If you prefer to get the raw `stanfit` object instead of the processed `mcmc.list`, you can set `stanfit = TRUE` when you run the model:
 
 
-```r
+``` r
 run <- run_mcmc(model = m, stanfit = TRUE)
 ```
 
@@ -90,7 +90,7 @@ to tweak the settings of the Stan run.
 This is the trace plot we obtained from the previous vignette:
 
 
-```r
+``` r
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
@@ -110,7 +110,7 @@ coda documentation `?gelman.diag` for more details about this diagnostic.
 Let's have a look at the diagnostic for our chains:
 
 
-```r
+``` r
 library(coda)
 run %>% gelman.diag()
 ```
@@ -146,7 +146,7 @@ In order to check the quality of the model fit, the consistency between the para
 To do a posterior predictive check, the first step is to generate predictions for the model based on the MCMC posteriors with `predict()`:
 
 
-```r
+``` r
 # From the Quick Start tutorial:
 # 'm' is the network model we used when calling 'run <- run_mcmc(m, iter = 1000)'
 predictions <- predict(m, run, probs = 0.95)
@@ -157,7 +157,7 @@ predictions <- predict(m, run, probs = 0.95)
 We can then visualize the predictions along with the observations with the `plot()` method:
 
 
-```r
+``` r
 plot(predictions)
 ```
 
@@ -173,7 +173,7 @@ The quickest way to get parameter estimates is to use the `summary()` function
 on the posterior:
 
 
-```r
+``` r
 run %>% summary()
 ```
 
@@ -214,7 +214,7 @@ If you need to store those values, for example to plot them, you can assign the
 output of `summary()` to an object:
 
 
-```r
+``` r
 estimates <- run %>% summary()
 names(estimates)
 ```
@@ -226,7 +226,7 @@ names(estimates)
 The means and standard deviations are accessible in `$statistics`:
 
 
-```r
+``` r
 estimates$statistics
 ```
 
@@ -245,7 +245,7 @@ estimates$statistics
 and the quantiles are in `$quantiles`:
 
 
-```r
+``` r
 estimates$quantiles
 ```
 
@@ -272,7 +272,7 @@ The `isotracer` package comes with the minimalist function `mcmc_heatmap()` to
 draw the strength of parameter correlations:
 
 
-```r
+``` r
 mcmc_heatmap(run)
 ```
 
@@ -291,7 +291,7 @@ But of course you could use other functions provided by other packages, such as:
 If you are interested in getting detailed tables containing all the samples of the parameter posteriors, you can use the `tidy_mcmc()` function:
 
 
-```r
+``` r
 tidy_mcmc(run)
 ```
 
@@ -315,7 +315,7 @@ tidy_mcmc(run)
 By default the parameter values are nested into a list column, but you can also get a flat table with `spread = TRUE`:
 
 
-```r
+``` r
 tidy_mcmc(run, spread = TRUE)
 ```
 
@@ -341,7 +341,7 @@ tidy_mcmc(run, spread = TRUE)
 The above table only contains the primary parameters. If you are interested in getting the predicted trajectories for individual MCMC samples, you can use the `tidy_trajectories()` function:
 
 
-```r
+``` r
 # We have to also provide the original network model `m`
 tt <- tidy_trajectories(m, run, n = 200)
 tt
@@ -368,7 +368,7 @@ tt
 As you can see, the `tt` object is a tidy table which contains the parameter values and the corresponding trajectories calculated for 200 randomly selected MCMC samples. The calculated trajectories are stored in the `trajectories` column and provide the quantities of unmarked and marked tracer (e.g. light and heavy isotope) for each compartment at each time step:
 
 
-```r
+``` r
 tt$trajectories[[1]]
 ```
 
@@ -384,7 +384,7 @@ Because each trajectory is itself a table containing a time series for each comp
 Here is an example of what can be done using the predicted trajectories:
 
 
-```r
+``` r
 algae <- tt %>%
   mutate(prop_algae = map(trajectories, function(tr) {
     tr[["proportions"]][[1]][, "algae"]
@@ -405,7 +405,7 @@ invisible(sapply(seq_len(nrow(algae)), function(i) {
 Finally, if what you are interested in are not the trajectories per se but the actual flows of nutrient during the experiment, you can use the `tidy_flows()` function to extract flows in a similar way:
 
 
-```r
+``` r
 #' Again, note that we also provide the original network model `m`
 tf <- tidy_flows(m, run, n = 200)
 tf
@@ -432,7 +432,7 @@ tf
 The returned object is very similar to the output of `tidy_trajectories()`, except that the `trajectories` column is replaced by a `flows` column:
 
 
-```r
+``` r
 tf$flows[[1]]
 ```
 

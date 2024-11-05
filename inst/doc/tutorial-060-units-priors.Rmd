@@ -1,6 +1,6 @@
 ---
 title: "Units and priors"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -86,7 +86,7 @@ For **coefficients of variation**, normal priors are again a reasonable choice. 
 For now, a few different types of priors can be specified by the user when building a network model. Let's illustrate this with our usual example of an aquarium with NH4, algae and Daphnia:
 
 
-```r
+``` r
 library(isotracer)
 mod <- new_networkModel() %>% set_topo("NH4 -> algae -> daphnia -> NH4")
 ```
@@ -94,7 +94,7 @@ mod <- new_networkModel() %>% set_topo("NH4 -> algae -> daphnia -> NH4")
 What are the parameters of the model?
 
 
-```r
+``` r
 params(mod)
 ```
 
@@ -124,7 +124,7 @@ The priors available in **isotracer** are:
 Priors of a network model are set using the `set_priors()` function:
 
 
-```r
+``` r
 mod <- mod %>% set_priors(uniform_p(0, 10), "zeta")
 priors(mod)
 ```
@@ -146,7 +146,7 @@ priors(mod)
 Note that by default `set_priors()` assigns priors to all parameters that match the name provided:
 
 
-```r
+``` r
 mod <- mod %>% set_priors(scaled_beta_p(4, 8, 5), "lambda")
 priors(mod)
 ```
@@ -168,7 +168,7 @@ priors(mod)
 If you want to avoid using partial matching, you can use the argument `use_regexp = FALSE`:
 
 
-```r
+``` r
 mod <- mod %>% set_priors(constant_p(0.2), "eta", use_regexp = FALSE)
 priors(mod)
 ```

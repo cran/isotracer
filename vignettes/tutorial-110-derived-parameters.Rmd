@@ -1,6 +1,6 @@
 ---
 title: "Calculating derived parameters"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -18,13 +18,13 @@ One of the advantages of Bayesian MCMC analysis is the ability to compute derive
 In this vignette, we wil use the same network model as in the [Quick Start](tutorial-010-quick-start.html) tutorial.
 
 
-```r
+``` r
 library(isotracer)
 library(tibble)
 ```
 
 
-```r
+``` r
 exp <- tibble::tribble(
   ~time.day,  ~species, ~biomass, ~prop15N,
           0,   "algae",     1.02,  0.00384,
@@ -76,7 +76,7 @@ mod <- new_networkModel() %>%
 ##   (zeta is the coefficient of variation of normal distributions.)
 ```
 
-```r
+``` r
 # Set reasonable but vague priors for this model
 mod <- set_priors(mod, normal_p(0, 5))
 ```
@@ -84,7 +84,7 @@ mod <- set_priors(mod, normal_p(0, 5))
 We run the MCMC sampler to fit the model:
 
 
-```r
+``` r
 fit <- run_mcmc(mod, iter = 1000)
 plot(fit)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -97,7 +97,7 @@ plot(fit)
 The primary parameters sampled during MCMC are:
 
 
-```r
+``` r
 coda::varnames(fit)
 ```
 
@@ -110,7 +110,7 @@ coda::varnames(fit)
 We can select parameters using the `select()` function. For example:
 
 
-```r
+``` r
 plot(fit %>% select(zeta))
 ```
 
@@ -119,7 +119,7 @@ plot(fit %>% select(zeta))
 Note that selecting parameters in a MCMC output uses partial matching:
 
 
-```r
+``` r
 plot(fit %>% select(upsilon))
 ```
 
@@ -128,7 +128,7 @@ plot(fit %>% select(upsilon))
 Selecting chains with `select()` is mostly useful in interactive mode, when exploring the results of an MCMC run. You can select individual parameters without any partial matching using the unambiguous`[, ""]` notation:
 
 
-```r
+``` r
 summary(fit[, "eta"])
 ```
 
@@ -158,14 +158,14 @@ The `[, ""]` notation is the one to use when you want to combine primary paramet
 Basic arithmetic operations as well as $\log$ and $\exp$ can be used when doing calculation on parameter chains. For example, to calculate the turnover rate of algae (i.e. the proportion of nutrient exiting the algae compartment per unit time), we can sum the rates of all the outgoing fluxes from algae, in this case the transfer rate from algae to daphnia and the loss rate from algae:
 
 
-```r
+``` r
 trate_algae <- fit[, "upsilon_algae_to_daphnia"] + fit[, "lambda_algae"]
 ```
 
 The newly formed object, `trate_algae`, is a legitimate `mcmc.list` object itself:
 
 
-```r
+``` r
 str(trate_algae)
 ```
 
@@ -185,7 +185,7 @@ str(trate_algae)
 All the usual operations done on `mcmc.list` objects can be used with it, such as visualizing the trace:
 
 
-```r
+``` r
 plot(trate_algae)
 ```
 
@@ -194,7 +194,7 @@ plot(trate_algae)
 or calculating summaries:
 
 
-```r
+``` r
 summary(trate_algae)
 ```
 
@@ -220,7 +220,7 @@ summary(trate_algae)
 A derived parameter can itself be used in subsequent calculations! For example, if we want to calculate the turnover time for the nutrient in algae, we can take the inverse of the turnover rate:
 
 
-```r
+``` r
 ttime_algae <- 1 / trate_algae
 plot(ttime_algae)
 ```

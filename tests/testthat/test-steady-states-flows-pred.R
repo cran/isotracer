@@ -69,7 +69,7 @@ test_that("Predictions for closed network, single unit, no steady, no split", {
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-13))
+    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
   }
 })
 
@@ -168,7 +168,7 @@ test_that("Predictions for closed network, multiple units, no steady, no split",
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-13))
+    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
   }
   
 })
@@ -271,7 +271,7 @@ test_that("Predictions for open network, multiple units, one steady, no split", 
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-13))
+    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
   }
 
 })
@@ -378,8 +378,7 @@ test_that("Predictions for open network, multiple units, one steady, one split",
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-13))
-    
+    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
   }
 })
 
@@ -478,7 +477,7 @@ test_that("Predictions for open network, single unit, one steady, one split", {
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-13))
+    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
   }
 
 })

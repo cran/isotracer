@@ -1,6 +1,6 @@
 ---
 title: "Quick start"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -25,7 +25,7 @@ A foodweb is modelled as a **network** of compartments which are **connected** b
 
 For a detailed explanation of the statistical framework used by the package, you can read the original manuscript:
 
-- López-Sepulcre, Andrés, Matthieu Bruneaux, Sarah M. Collins, Rana El-Sabaawi, Alexander S. Flecker, and Steven A. Thomas. **A New Method to Reconstruct Quantitative Food Webs and Nutrient Flows from Isotope Tracer Addition Experiments.** [Am. Nat. (2020)](https://www.journals.uchicago.edu/doi/10.1086/708546).
+- López-Sepulcre, Andrés, Matthieu Bruneaux, Sarah M. Collins, Rana El-Sabaawi, Alexander S. Flecker, and Steven A. Thomas. **A New Method to Reconstruct Quantitative Food Webs and Nutrient Flows from Isotope Tracer Addition Experiments.** [Am. Nat. (2020)](https://doi.org/10.1086/708546).
 
 ### What is needed to model a foodweb?
 
@@ -59,7 +59,7 @@ Our focal nutrient is nitrogen (N): we want to quantify the nitrogen flows in th
 Let's load the package and get started!
 
 
-```r
+``` r
 library(isotracer)
 # We recommend to use several cores (if available) to speed-up calculations:
 options(mc.cores = parallel::detectCores())
@@ -72,7 +72,7 @@ options(mc.cores = parallel::detectCores())
 This is the data from a simulated experiment. You can copy-paste the code below to create the `exp` table in your own R session.
 
 
-```r
+``` r
 library(tibble)
 exp <- tibble::tribble(
   ~time.day,  ~species, ~biomass, ~prop15N,
@@ -102,7 +102,7 @@ Note that the data in the `exp` table contains some `NA` in the `biomass` and `p
 Let's visualize the data. Below we use the `ggplot2` package to do that:
 
 
-```r
+``` r
 library(ggplot2)
 library(gridExtra)
 p1 <- ggplot(exp, aes(x = time.day, y = biomass, col = species)) +
@@ -119,7 +119,7 @@ As you can see, our simulated data is a time series over three days. For each sp
 The initial conditions are stored in the `exp` table along with the later observations. We can extract them by filtering the row for $t_0$:
 
 
-```r
+``` r
 exp %>% filter(time.day == 0)
 ```
 
@@ -145,7 +145,7 @@ In this experiment we added the $^{15}$N-enriched ammonium at the very beginning
 We first create a new, empty network model that we will populate later with the data:
 
 
-```r
+``` r
 m <- new_networkModel()
 ```
 
@@ -154,7 +154,7 @@ You might notice a message informing you about the default distribution family u
 What does our model object look like?
 
 
-```r
+``` r
 m
 ```
 
@@ -168,14 +168,14 @@ At this stage, our model `m` is quite boring: it is completely empty! It is just
 Let's first set the topology of the network we want to model:
 
 
-```r
+``` r
 m <- m %>% set_topo("NH4 -> algae -> daphnia -> NH4")
 ```
 
 The basic foodweb topology is `NH4 -> algae -> daphnia`, but since *Daphnia* excrete ammonium back into the aquarium water we also included the link `daphnia -> NH4`. Our topology basically describes the full nitrogen cycle in this simple case! What does our model object `m` contain at this stage?
 
 
-```r
+``` r
 m
 ```
 
@@ -193,7 +193,7 @@ Note how adding a topology to the model automatically created a `parameters` col
 <b>Tip:</b> `isotracer` stores network topology as a matrix defining one-way connections between compartments. The topology of a model can be accessed with `topo()`:
 
 
-```r
+``` r
 topo(m)
 ```
 
@@ -210,7 +210,7 @@ In this representation, **source compartments** are the **columns** and **destin
 If you have the [ggraph](https://cran.r-project.org/package=ggraph) package installed, you can quickly visualize the topology with `ggtopo()`:
 
 
-```r
+``` r
 ggtopo(m)
 ```
 
@@ -221,7 +221,7 @@ ggtopo(m)
 After providing a topology, the second element we need to specify is the initial conditions. In this example and as we mentioned before, they are stored in the rows of the `exp` table for which time is 0 days. Let's extract them from the `exp` table:
 
 
-```r
+``` r
 inits <- exp %>% filter(time.day == 0)
 inits
 ```
@@ -238,7 +238,7 @@ inits
 and let's add them to our model with the `set_init()` function:
 
 
-```r
+``` r
 # We specify the names of the columns containing the data
 m <- m %>% set_init(inits, comp = "species", size = "biomass", prop = "prop15N")
 m
@@ -256,7 +256,7 @@ As we can see above, our model now contains the initial conditions in its `initi
 Finally the last piece of information we need are the observations. Those are stored in the rows of the `exp` table for which time is $>0$ days:
 
 
-```r
+``` r
 obs <- exp %>% filter(time.day > 0)
 head(obs)
 ```
@@ -276,7 +276,7 @@ head(obs)
 We add the observations to the model with the `add_obs()` function:
 
 
-```r
+``` r
 m <- m %>% set_obs(obs, time = "time.day")
 m
 ```
@@ -302,7 +302,7 @@ Now that our model is fully specified, what are the parameters that are going to
 Those parameters were automatically added to the model object in the `parameters` column, and we can get their names with the `params()` function:
 
 
-```r
+``` r
 params(m)
 ```
 
@@ -341,7 +341,7 @@ The package loses a bit in user-friendliness, but this is outweighed by the grea
 The current priors can be accessed with the `priors()` function, and for now they are al set to `NULL`:
 
 
-```r
+``` r
 priors(m)
 ```
 
@@ -362,7 +362,7 @@ priors(m)
 We will learn in a [later tutorial](tutorial-060-units-priors.html) how to customize priors more in depth, and there will also be advices about how to set priors throughout the tutorials. Here we will just quickly set them to something reasonable for this particular model:
 
 
-```r
+``` r
 m <- m %>%
   set_priors(normal_p(0, 5), "lambda|upsilon") %>%
   set_priors(normal_p(0, 2), "eta")
@@ -386,14 +386,14 @@ priors(m)
 Good. At this stage, everything is ready to fit the model, or in other words to sample the parameter posteriors using MCMC. We run the MCMC with the `runMCMC()` function:
 
 
-```r
+``` r
 run <- run_mcmc(m, iter = 1000)
 ```
 
 We can examine the chains and the posterior distributions of the parameters by plotting the run output:
 
 
-```r
+``` r
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
@@ -403,7 +403,7 @@ plot(run)
 We can get some numerical estimates from those posteriors with the `summary()` function:
 
 
-```r
+``` r
 summary(run)
 ```
 
@@ -443,7 +443,7 @@ summary(run)
 Finally, doing a **posterior predictive check** where we compare the observations and the corresponding predicted 95% credible intervals is a good way to check that the chosen model makes sense for this dataset:
 
 
-```r
+``` r
 predictions <- predict(m, run, probs = 0.95)
 plot(predictions, ylab.size = "Biomass (mg N)", ylab.prop = "Proportion 15N")
 ```

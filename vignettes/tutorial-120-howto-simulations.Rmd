@@ -1,6 +1,6 @@
 ---
 title: "How to simulate experiments"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -22,7 +22,7 @@ In this vignette, you will learn:
 By repeating those basic steps, one can test different assumptions on the real system under study and different experimental designs to decide on the most cost-effective approach for the real experiment to be run.
 
 
-```r
+``` r
 library(isotracer)
 library(tidyverse)
 ```
@@ -46,7 +46,7 @@ The first step is to build the network model structure. This is done in exactly 
 Let's start with the topology:
 
 
-```r
+``` r
 mod <- new_networkModel() %>%
     set_topo("NH4 -> algae -> daphnia -> NH4")
 ```
@@ -70,7 +70,7 @@ mod <- new_networkModel() %>%
 We prepare a table of initial values which could be used in the real-life experiment we want to prepare:
 
 
-```r
+``` r
 inits <- tibble::tribble(
      ~comps, ~sizes, ~props, ~treatment,
       "NH4",    0.2,    0.8,    "light",
@@ -84,7 +84,7 @@ inits <- tibble::tribble(
 We had the initial values to the model, and we indicate that we want to group initial values by `"treatment"`:
 
 
-```r
+``` r
 mod <- set_init(mod, inits, comp = "comps", size = "sizes",
                 prop = "props", group_by = "treatment")
 mod
@@ -103,7 +103,7 @@ mod
 We have the basic model ready to be given some "true" parameter values. What are the parameters we have to specify?
 
 
-```r
+``` r
 params(mod)
 ```
 
@@ -124,14 +124,14 @@ params(mod)
 Let's say that we want to simulate an effect of `"treatment"` (light/dark) on the uptake of NH4 by the algae:
 
 
-```r
+``` r
 mod <- add_covariates(mod, upsilon_NH4_to_algae ~ treatment)
 ```
 
 Now we have more parameters to specify:
 
 
-```r
+``` r
 params(mod)
 ```
 
@@ -153,7 +153,7 @@ params(mod)
 We can set the parameter values with the `set_params()` function:
 
 
-```r
+``` r
 mod <- mod %>%
   set_params(c("eta" = 0.2, "lambda_algae" = 0, "lambda_daphnia" = 0,
                "lambda_NH4" = 0, "upsilon_NH4_to_algae|light" = 0.3,
@@ -165,7 +165,7 @@ mod <- mod %>%
 Once the parameter values are stored in the network model, they are visible in the `parameters` column:
 
 
-```r
+``` r
 mod$parameters
 ```
 
@@ -204,7 +204,7 @@ The model is now complete and can be used to generate data!
 One can calculate predicted trajectories with the `project()` function:
 
 
-```r
+``` r
 proj <- mod %>% project(end = 10)
 plot(proj, facet_row = "type", facet_col = "group")
 ```
@@ -214,7 +214,7 @@ plot(proj, facet_row = "type", facet_col = "group")
 Real-life data will incorporate some variability around those trajectories. To simulate data with variability around expected compartment size (coefficient of variation `"zeta"`) and around expected proportion of tracer (c.v. `"eta"`), one can use the `sample_from()` function:
 
 
-```r
+``` r
 spl <- mod %>% sample_from(at = 1:10)
 spl
 ```
@@ -239,7 +239,7 @@ spl
 To visualize the simulated data, we can add it to the projected trajectories:
 
 
-```r
+``` r
 proj <- proj %>%
   set_obs(spl, comp = "comp", size = "size", prop = "prop", time = "time",
           group = "treatment")
@@ -253,7 +253,7 @@ plot(proj, facet_row = "type", facet_col = "group")
 We can use the simulated data in `spl` to fit parameters using MCMC. By using different versions of the dataset, we can compare different experimental designs. Here, to **test how sample size affects the uncertainty of parameter estimates**, we will perform MCMC runs with either the full `spl` dataset (ten time points) or a reduced dataset with only three time points:
 
 
-```r
+``` r
 spl_reduced <- spl %>% filter(time %in% c(4, 7, 10))
 ```
 
@@ -264,7 +264,7 @@ spl_reduced <- spl %>% filter(time %in% c(4, 7, 10))
 We add the simulated data to the model as we would do for real data:
 
 
-```r
+``` r
 mod_full <- mod %>%
   set_obs(spl, comp = "comp", size = "size", prop = "prop", time = "time",
           group = "treatment")
@@ -272,7 +272,7 @@ mod_full <- mod %>%
 
 We have to define the priors for our model:
 
-```r
+``` r
 mod_full <- mod_full %>%
   set_priors(normal_p(0, 5), "lambda|upsilon") %>%
   set_priors(normal_p(0, 2), "eta")
@@ -298,7 +298,7 @@ mod_full <- mod_full %>%
 We run the MCMC:
 
 
-```r
+``` r
 run_full <- run_mcmc(mod_full, iter = 2000)
 plot(run_full)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -309,7 +309,7 @@ plot(run_full)
 and we do a posterior predictive check:
 
 
-```r
+``` r
 pred_full <- predict(mod_full, run_full)
 plot(pred_full, facet_row = c("group", "type"),
      facet_col = "compartment",
@@ -323,7 +323,7 @@ plot(pred_full, facet_row = c("group", "type"),
 We use the reduced dataset this time:
 
 
-```r
+``` r
 mod_red <- mod %>%
   set_obs(spl_reduced, comp = "comp", size = "size", prop = "prop",
           time = "time", group = "treatment")
@@ -332,7 +332,7 @@ mod_red <- mod %>%
 We set the priors:
 
 
-```r
+``` r
 mod_red <- mod_red %>%
   set_priors(normal_p(0, 5), "lambda|upsilon") %>%
   set_priors(normal_p(0, 2), "eta")
@@ -358,7 +358,7 @@ mod_red <- mod_red %>%
 We run the MCMC:
 
 
-```r
+``` r
 run_red <- run_mcmc(mod_red, iter = 2000)
 plot(run_red)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -369,7 +369,7 @@ plot(run_red)
 and we do a posterior predictive check:
 
 
-```r
+``` r
 pred_red <- predict(mod_red, run_red)
 plot(pred_red, facet_row = c("group", "type"),
      facet_col = "compartment",
@@ -383,7 +383,7 @@ plot(pred_red, facet_row = c("group", "type"),
 Does using ten time points (`spl`) instead of three (`spl_reduced`) improve a lot the parameter estimates? Let's compare the uncertainty in their posteriors:
 
 
-```r
+``` r
 signif(summary(run_full)$quantiles, 2)
 ```
 
@@ -400,7 +400,7 @@ signif(summary(run_full)$quantiles, 2)
 ## zeta                       0.070000 0.07800 0.0830 0.0890 0.1000
 ```
 
-```r
+``` r
 signif(summary(run_red)$quantiles, 2)
 ```
 
@@ -418,7 +418,7 @@ signif(summary(run_red)$quantiles, 2)
 ```
 
 
-```r
+``` r
 library(bayesplot)
 library(cowplot)
 plot_grid(nrow = 2, 
@@ -436,7 +436,7 @@ plot_grid(nrow = 2,
 
 <img src="figures/z-fig-120-unnamed-chunk-30-1.jpeg" style="display: block; margin: auto;" />
 
-```r
+``` r
 plot_grid(nrow = 2, 
   mcmc_intervals(run_full %>% select("upsilon")) + xlim(0, 0.35) +
     ggtitle("10 time points"),

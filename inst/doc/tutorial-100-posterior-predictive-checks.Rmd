@@ -1,6 +1,6 @@
 ---
 title: "Posterior predictive checks"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -16,7 +16,7 @@ This tutorial explains how to check that the fitted model is compatible with the
 Posterior predictive checks are important to ensure that the model makes sense to explain the observed data. Typically, before doing a posterior predictive check, one would check that the MCMC run was successful and that no problem arised during the MCMC itself (see the previous vignette about [Post-run diagnostics](tutorial-090-post-run-analyses.html)).
 
 
-```r
+``` r
 library(isotracer)
 library(tidyverse)
 ```
@@ -27,7 +27,7 @@ library(tidyverse)
 To illustrate posterior predictive checks, we will use the same simulated data as in the [Quick Start](tutorial-010-quick-start.html) tutorial:
 
 
-```r
+``` r
 exp <- tibble::tribble(
   ~time.day,  ~species, ~biomass, ~prop15N,
           0,   "algae",     1.02,  0.00384,
@@ -84,7 +84,7 @@ mod <- new_networkModel() %>%
 ##   prop = "prop15N"
 ```
 
-```r
+``` r
 # Set reasonable but vague priors for this model
 mod <- set_priors(mod, normal_p(0, 5))
 ```
@@ -104,7 +104,7 @@ mod <- set_priors(mod, normal_p(0, 5))
 We run the MCMC sampler to fit the model:
 
 
-```r
+``` r
 fit <- run_mcmc(mod, iter = 1000)
 plot(fit)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -121,7 +121,7 @@ A posterior predictive check is the comparison between what the fitted model pre
 The fastest and simplest way to perform a posterior predictive check for a network model is to predict the trajectories of the compartment sizes and proportions of marked material, and compare it with the data points. This is what we did in previous tutorials:
 
 
-```r
+``` r
 predictions <- mod %>% predict(fit, probs = 0.95)
 plot(predictions, ylab.size = "Biomass (mg N)", ylab.prop = "Proportion 15N")
 ```
@@ -143,7 +143,7 @@ Posterior predictive checks rely on three objects:
 Given the complexity of network model data, which are time series for sizes and proportions of different compartments, the `tidy_dpp()` does the heavy work of preparing tidy versions of `y`, `y_rep` and `vars` from the network model and the corresponding MCMC run:
 
 
-```r
+``` r
 z <- tidy_dpp(mod, fit)
 names(z)
 # Note that z can be filtered based on the columns in z[["vars"]].
@@ -172,26 +172,26 @@ z_prop <- z %>% filter(type == "proportion")
 The elements of `z`, `z_size` or `z_prop` can be used directly with `bayesplot` functions, are illustrated below:
 
 
-```r
+``` r
 library(bayesplot)
 ```
 
 
-```r
+``` r
 # Distributions
 ppc_dens_overlay(z_prop[["y"]], z_prop[["y_rep"]])
 ```
 
 <img src="figures/z-fig-100-unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
 
-```r
+``` r
 ppc_ecdf_overlay(z_size[["y"]], z_size[["y_rep"]])
 ```
 
 <img src="figures/z-fig-100-unnamed-chunk-12-2.jpeg" style="display: block; margin: auto;" />
 
 
-```r
+``` r
 # Intervals
 ppc_intervals(z_prop[["y"]], z_prop[["y_rep"]],
               x = z_prop[["vars"]][["time"]]) +
@@ -202,7 +202,7 @@ ppc_intervals(z_prop[["y"]], z_prop[["y_rep"]],
 <img src="figures/z-fig-100-unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
 
 
-```r
+``` r
 # Scatterplot
 ppc_scatter_avg(z_prop[["y"]], z_prop[["y_rep"]]) +
   coord_trans(x = "log10", y = "log10")

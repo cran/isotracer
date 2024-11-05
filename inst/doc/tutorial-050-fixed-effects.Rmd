@@ -1,6 +1,6 @@
 ---
 title: "Including fixed effects of covariates"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -27,7 +27,7 @@ We will use a simulated dataset quite similar to the one from the [replication t
 The experiment is done in two aquariums as before, but this time one aquarium is exposed to light while the other is kept in the dark. How does this treatment affect nitrogen flow? Note that in a real life experiment, we would need more than one replicate per level of the light treatment (otherwise we could not differentiate between treatment effect and replicate effect) - the example in this tutorial is kept excessively simple to focus on the package interface to specify fixed effects.
 
 
-```r
+``` r
 library(isotracer)
 library(tidyverse)
 ```
@@ -38,7 +38,7 @@ library(tidyverse)
 The simulated data we use in this example can be loaded into your R session by running the code below:
 
 
-```r
+``` r
 exp <- tibble::tribble(
   ~time.day,  ~species, ~biomass, ~prop15N, ~treatment,
           0,     "NH4",    0.205,    0.739,    "light",
@@ -80,7 +80,7 @@ exp <- tibble::tribble(
 As shown in the dataset, the first aquarium is exposed to light and the second one is kept in the dark. We trace the nitrogen fluxes by adding $^{15}$N-enriched ammonium at the beginning of the experiment. Let's visualize the data:
 
 
-```r
+``` r
 library(ggplot2)
 library(gridExtra)
 p1 <- ggplot(exp, aes(x = time.day, y = biomass, col = species)) +
@@ -99,7 +99,7 @@ grid.arrange(p1, p2, nrow = 2)
 We separate the initial conditions and the observations:
 
 
-```r
+``` r
 inits <- exp %>% filter(time.day == 0)
 obs <- exp %>% filter(time.day > 0)
 ```
@@ -107,7 +107,7 @@ obs <- exp %>% filter(time.day > 0)
 We build the network model, using `treatment` as a grouping variable:
 
 
-```r
+``` r
 m <- new_networkModel() %>%
   set_topo("NH4 -> algae -> daphnia -> NH4") %>%
   set_init(inits, comp = "species", size = "biomass", prop = "prop15N",
@@ -127,7 +127,7 @@ m
 The network model object `m` has two rows, corresponding to the two treatments:
 
 
-```r
+``` r
 groups(m)
 ```
 
@@ -148,14 +148,14 @@ We specify covariates with the `add_covariates()` function and the formula synta
 For example, to tell the model that the nitrogren flux from NH$_4^+$ to algae should depend on the treatment, we type:
 
 
-```r
+``` r
 m <- m %>% add_covariates(upsilon_NH4_to_algae ~ treatment)
 ```
 
 Let's have a look at the model parameters at this stage:
 
 
-```r
+``` r
 params(m)
 ```
 
@@ -179,14 +179,14 @@ We can see that there are now two entries for `upsilon_NH4_to_algae`: `upsilon_N
 We can specify covariate specifications sequentially. For example, we can now tell the model that the nitrogen flux from algae to *Daphnia* also depends on the treatment:
 
 
-```r
+``` r
 m <- m %>% add_covariates(upsilon_algae_to_daphnia ~ treatment)
 ```
 
 and we can have a detailed look at the current covariate specification by looking at the parameter mapping in each replicate:
 
 
-```r
+``` r
 m$parameters
 ```
 
@@ -223,14 +223,14 @@ Here, we can see that `upsilon_NH4_to_algae` and `upsilon_algae_to_daphnia` with
 The formula syntax in `add_covariates()` is quite versatile and can perform partial matching. For example, if we want **all** the loss rates to depend on the treatment, we can use:
 
 
-```r
+``` r
 m <- m %>% add_covariates(lambda ~ treatment)
 ```
 
 and all the parameters containing the string `lambda` will be affected in one go:
 
 
-```r
+``` r
 m$parameters
 ```
 
@@ -271,28 +271,28 @@ m$parameters
 To affect all parameters, one can use `.` on the left-hand side of the formula:
 
 
-```r
+``` r
 m <- m %>% add_covariates(. ~ treatment)
 ```
 
 Finally, to specify that a parameter does not depend on any covariate and is shared across replicates, one can use `1` on the right-hand side of the formula:
 
 
-```r
+``` r
 m <- m %>% add_covariates(zeta ~ 1)
 ```
 
 which means that we can remove all fixed effects for all parameters with:
 
 
-```r
+``` r
 m <- m %>% add_covariates(. ~ 1)
 ```
 
 For this tutorial, let's assume that all nitrogen fluxes across compartments can depend on the light treatment. The parameters corresponding to those fluxes are the ones starting with `upsilon`:
 
 
-```r
+``` r
 m <- m %>% add_covariates(upsilon ~ treatment)
 params(m)
 ```
@@ -319,7 +319,7 @@ params(m)
 We quickly set some reasonable vague priors for the particular model at hand:
 
 
-```r
+``` r
 m <- set_priors(m, normal_p(0, 4), "")
 priors(m)
 ```
@@ -344,7 +344,7 @@ priors(m)
 We run the MCMC as usual:
 
 
-```r
+``` r
 run <- run_mcmc(m, iter = 2000)
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -355,7 +355,7 @@ plot(run)
 and we do a posterior predictive check:
 
 
-```r
+``` r
 predictions <- predict(m, run)
 plot(predictions, facet_row = c("group", "type"),
      facet_col = "compartment",
@@ -369,7 +369,7 @@ plot(predictions, facet_row = c("group", "type"),
 Let's see if the upsilon parameters were actually different between the light and dark treatments:
 
 
-```r
+``` r
 summary(run %>% select(upsilon))
 ```
 
@@ -405,7 +405,7 @@ summary(run %>% select(upsilon))
 Looking at a table of numbers is not the easiest way to visualize the differences between parameter values. One could take advantage of the `bayesplot` package for a more visual output:
 
 
-```r
+``` r
 library(bayesplot)
 mcmc_intervals(run %>% select(upsilon)) +
     coord_trans(x = "log10")
@@ -418,7 +418,7 @@ Based on this plot, it looks like only the rates from ammonium to algae (`upsilo
 Let's check this more rigorously. One nice thing about Bayesian MCMC is that we can combine the traces of **primary parameters** sampled during the MCMC to generate posteriors for **derived parameters**. We want to see the posterior for the ratio between the uptake rate coefficients for `NH4 -> algae` in the light and in the dark treatments:
 
 
-```r
+``` r
 ratio_upsilons_NH4_algae <- (run[, "upsilon_NH4_to_algae|light"] /
                              run[, "upsilon_NH4_to_algae|dark"])
 plot(ratio_upsilons_NH4_algae)
@@ -429,7 +429,7 @@ plot(ratio_upsilons_NH4_algae)
 As we can see above, the posterior for the ratio $\frac{\upsilon_{NH4 \rightarrow algae}|light}{\upsilon_{NH4 \rightarrow algae}|dark}$ is far from one. We can check that with the numerical summary:
 
 
-```r
+``` r
 summary(ratio_upsilons_NH4_algae)
 ```
 
@@ -455,7 +455,7 @@ summary(ratio_upsilons_NH4_algae)
 The model tells us that the algae uptake ammonium more rapidly in the light treatment. What about the nitrogen flows between algae and *Daphnia*? Are the uptake rate coefficients estimated in the light and the dark treatments different?
 
 
-```r
+``` r
 ratio_upsilons_algae_daphnia <- (run[, "upsilon_algae_to_daphnia|light"] /
                                  run[, "upsilon_algae_to_daphnia|dark"])
 plot(ratio_upsilons_algae_daphnia)

@@ -1,6 +1,6 @@
 ---
 title: "MCMC output format"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -18,7 +18,7 @@ In this tutorial, we will have a closer look at the object returned by calling `
 To quickly obtain an MCMC run output for us to examine, let's run the simple model `aquarium_mod` which is provided with the package. Feel free to read the help `?aquarium_mod` if you are curious about the model itself.
 
 
-```r
+``` r
 library(isotracer)
 aquarium_mod
 fit <- run_mcmc(aquarium_mod, iter = 1000)
@@ -29,7 +29,7 @@ fit <- run_mcmc(aquarium_mod, iter = 1000)
 By default, `run_mcmc()` returns an `mcmc.list` object. An `mcmc.list` has a simple format to store the content of parallel MCMC chains:
 
 
-```r
+``` r
 length(fit)
 ```
 
@@ -37,7 +37,7 @@ length(fit)
 ## [1] 4
 ```
 
-```r
+``` r
 str(fit[[1]])
 ```
 
@@ -56,7 +56,7 @@ The `mcmc.list` class is implemented by the [coda](https://cran.r-project.org/pa
 In the **isotracer** package, the returned `fit` is very slightly extended compared to the base `mcmc.list` class:
 
 
-```r
+``` r
 class(fit)
 ```
 
@@ -67,7 +67,7 @@ class(fit)
 By having also a `networkModelStanfit` class, the output from `run_mcmc()` can be recognized automatically by some methods implemented in **isotracer**, such as `plot()`:
 
 
-```r
+``` r
 plot(fit)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
@@ -79,7 +79,7 @@ plot(fit)
 An `mcmc.list` object can be converted to an even simpler, flat matrix:
 
 
-```r
+``` r
 z <- as.matrix(fit)
 head(z)
 ```
@@ -101,7 +101,7 @@ head(z)
 ## [6,]             0.04213412            0.2952007 0.4537903
 ```
 
-```r
+``` r
 str(z)
 ```
 
@@ -115,7 +115,7 @@ str(z)
 or to a data frame:
 
 
-```r
+``` r
 z <- as.data.frame(as.matrix(fit))
 head(z)
 ```
@@ -137,7 +137,7 @@ head(z)
 ## 6             0.04213412            0.2952007 0.4537903
 ```
 
-```r
+``` r
 str(z)
 ```
 
@@ -156,7 +156,7 @@ str(z)
 or to a tibble:
 
 
-```r
+``` r
 z <- tibble::as_tibble(as.matrix(fit))
 z
 ```
@@ -187,7 +187,7 @@ Converting your output to one of those simple tabular formats can be useful if y
 However, for simple manipulations, `isotracer` provides convenient methods to perform calculations on parameter chains directly from the output of `run_mcmc()`. You can thus produce derived parameter chains directly from the `mcmc.list` object, without having to convert your output to another format:
 
 
-```r
+``` r
 algal_total_out <- fit[, "upsilon_algae_to_daphnia"] + fit[, "lambda_algae"]
 algal_turnover <- 1 / algal_total_out
 plot(algal_turnover)
@@ -202,14 +202,14 @@ You can read more about this in the vignette about [calculating derived paramete
 You can combine derived parameters into a single `mcmc.list`object using the usual `c()` syntax. This can be convenient for more compact plotting or summary calculations:
 
 
-```r
+``` r
 my_derived <- c("out rate" = algal_total_out, "turnover" = algal_turnover)
 plot(my_derived)
 ```
 
 <img src="figures/z-fig-080-unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
 
-```r
+``` r
 summary(my_derived)
 ```
 
@@ -241,7 +241,7 @@ Calling `run_mcmc()` will run a Stan model behind the scenes. Stan is great sinc
 In any case, if something went wrong with your run, you might want to have a more complete output than simply the `mcmc.list` object. You can ask `run_mcmc()` to return the original `stanfit` object produced by Stan with:
 
 
-```r
+``` r
 fit2 <- run_mcmc(aquarium_mod, iter = 1000, stanfit = TRUE)
 ```
 
@@ -250,7 +250,7 @@ fit2 <- run_mcmc(aquarium_mod, iter = 1000, stanfit = TRUE)
 `fit2` is now a regular `stanfit` object:
 
 
-```r
+``` r
 class(fit2)
 ```
 
@@ -263,7 +263,7 @@ class(fit2)
 This is a more complicated type of object than an `mcmc.list`, but it also contains much more information about the Stan run. It also comes with the benefit of the existing methods for `stanfit` object, for example:
 
 
-```r
+``` r
 rstan::plot(fit2)
 ```
 
@@ -274,7 +274,7 @@ You can go through [Stan documentation](https://mc-stan.org/rstan/reference/stan
 For example, you can examine it with ShinyStan:
 
 
-```r
+``` r
 library(shinystan)
 launch_shinystan(fit2)
 ```

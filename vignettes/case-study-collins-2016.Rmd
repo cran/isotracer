@@ -1,6 +1,6 @@
 ---
 title: "Case study: Trinidadian streams (Collins et al. 2016)"
-date: "2024-05-14"
+date: "2024-11-04"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -21,7 +21,7 @@ The goal is to quantify the nitrogen exchanges in the stream foodweb, from the d
 - test for the existence of suspected trophic links between some species of interest.
 
 
-```r
+``` r
 # Setup
 library(isotracer)
 library(tidyverse)
@@ -34,7 +34,7 @@ library(tidyverse)
 In brief, $^{15}N$-enriched ammonium was dripped in two streams in Trinidad, and samples of the different foodweb compartments were taken during the drip and after the drip in several transects in each stream. The transects were located at different locations downstream of each drip. The drip phase lasted 10 days, and the post-drip phase lasted 30 days. Here is a glimpse of the dataset (we will use only the data from one stream for simplicity, but for a real analysis one could keep both streams and use stream identity as a covariate to estimate the stream effect on flows - see the [case study about eelgrasses](https://matthieu-bruneaux.gitlab.io/isotracer/articles/case-study-mcroy-1970.html) for an example of treatments comparison):
 
 
-```r
+``` r
 lalaja
 ```
 
@@ -77,7 +77,7 @@ We will only model a simplified version of the foodweb described by Collins et a
 We initialize the network model with the corresponding topology:
 
 
-```r
+``` r
 m <- new_networkModel() %>%
   set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph", "FBOM -> tricor",
            "petro, tricor -> arg")
@@ -88,14 +88,14 @@ m <- new_networkModel() %>%
 Since the inorganic nutrients are being constantly renewed by the stream flow, we will consider them in a steady state. We set both NH4 and NO3 to a steady state in the model:
 
 
-```r
+``` r
 m <- m %>% set_steady(c("NH4", "NO3"))
 ```
 
 This is how our network look like at this stage:
 
 
-```r
+``` r
 ggtopo(m, "sugiyama")
 ```
 
@@ -108,14 +108,14 @@ The drip of $^{15}N$-enriched ammonium was started at the very beginning of the 
 The initial conditions are obtained by taking the values when t=0:
 
 
-```r
+``` r
 inits <- lalaja %>% filter(time.days == 0)
 ```
 
 We add them to the model, specifying the grouping variable (`transect`, each transect being a different location downstream the drip station in the `UL` stream):
 
 
-```r
+``` r
 m <- m %>% set_init(inits, comp = "compartment", size = "mgN.per.m2", prop = "prop15N",
                     group_by = c("transect"))
 ```
@@ -123,7 +123,7 @@ m <- m %>% set_init(inits, comp = "compartment", size = "mgN.per.m2", prop = "pr
 The replication structure of the model can be examined using the `groups()` function:
 
 
-```r
+``` r
 groups(m)
 ```
 
@@ -139,7 +139,7 @@ groups(m)
 The next step is to add the observations made during the experiment:
 
 
-```r
+``` r
 obs <- lalaja %>% filter(time.days > 0)
 m <- m %>% set_obs(obs, time = "time.days")
 ```
@@ -147,7 +147,7 @@ m <- m %>% set_obs(obs, time = "time.days")
 The enrichment data can be visualized with the `plot()` method:
 
 
-```r
+``` r
 # Note the log scale for better visualization
 plot(m, facet_row = "group", facet_col = "compartment", type = "prop",
      scale = "all", log = TRUE,
@@ -165,7 +165,7 @@ Some compartment are sampled "in bulk" by the field scientist, but are really co
 To account for that in our model, we can allow for epilithon and FBOM to be split compartments with an active and a refractory portions:
 
 
-```r
+``` r
 m <- m %>% set_split(c("epi", "FBOM"))
 ```
 
@@ -178,7 +178,7 @@ The NH4 and NO3 quantities during the "on" phase of the drip (when the experimen
 The `add_pulse_event()` function accepts either a single pulse specification, or bulk pulses defined in a table. We use the table syntax here:
 
 
-```r
+``` r
 pulses <- tribble(
   ~ stream,    ~ transect, ~ comp, ~ time, ~ qty_14N, ~ qty_15N,
       "UL",  "transect.1",  "NH4",     11,         0,  -0.00569,
@@ -191,7 +191,7 @@ pulses <- tribble(
 ```
 
 
-```r
+``` r
 m <- m %>% add_pulse_event(pulses = pulses, comp = "comp", time = "time",
                            unmarked = "qty_14N", marked = "qty_15N")
 ```
@@ -203,7 +203,7 @@ Let's think a moment about the modelling of the observed compartment sizes. By d
 To illustrate this point, let's calculate the standard deviations and the corresponding coefficients of variation for the observed compartment sizes:
 
 
-```r
+``` r
 obs %>% select(compartment, mgN.per.m2) %>%
   na.omit() %>%
   group_by(compartment) %>%
@@ -234,14 +234,14 @@ One way to handle this in our model is to allow for $\zeta$ to be compartment-sp
 First, we specify that $\zeta$ depends on the compartment, and that it represents the standard deviation of the distributions:
 
 
-```r
+``` r
 m <- m %>% set_size_family("normal_sd", by_compartment = TRUE)
 ```
 
 Then, we provide constant priors for those parameters based on the values calculated above:
 
 
-```r
+``` r
 m <- set_prior(m, constant_p(0.1), "zeta_NH4") %>%  # Dummy values for the steady
   set_prior(constant_p(0.1), "zeta_NO3") %>%        # state dissolved nutrients
   set_prior(constant_p(115), "zeta_epi") %>%
@@ -259,7 +259,7 @@ m <- set_prior(m, constant_p(0.1), "zeta_NH4") %>%  # Dummy values for the stead
 Before we run the model, let's see which priors we still have to set:
 
 
-```r
+``` r
 missing_priors(m)
 ```
 
@@ -294,14 +294,14 @@ Here, the time units are days, and so a rate value of 0.5 would mean that about 
 Let's first set some reasonable priors for rates globally:
 
 
-```r
+``` r
 m <- set_priors(m, normal_p(0, 0.5), "upsilon|lambda")
 ```
 
 Next, let's modify the priors for the uptakes from dissolved nutrients to allow for higher daily uptake rates. In addtion, we also set their loss rate to a constant dummy value: since those compartments are in a steady state, we don't need the sampler to sample their loss rate.
 
 
-```r
+``` r
 m <- m %>%
   set_prior(normal_p(0, 1000), "upsilon_N") %>%
   set_prior(constant_p(0), "lambda_N")
@@ -310,7 +310,7 @@ m <- m %>%
 Which priors remain to be set?
 
 
-```r
+``` r
 missing_priors(m)
 ```
 
@@ -326,7 +326,7 @@ missing_priors(m)
 What is `eta` again?
 
 
-```r
+``` r
 prop_family(m)
 ```
 
@@ -341,14 +341,14 @@ prop_family(m)
 For a coefficient of variation of the observed proportions, let's use the sligthly informative `normal_p(0, 3)`:
 
 
-```r
+``` r
 m <- set_priors(m, normal_p(0, 3), "^eta")
 ```
 
 Finally, for the $pi$ parameters defining the active portions of split compartments, let's just use a uniform prior on [0,1]:
 
 
-```r
+``` r
 m <- set_priors(m, uniform_p(0, 1), "portion")
 ```
 
@@ -359,7 +359,7 @@ We are now ready to run the model.
 We run the model fit:
 
 
-```r
+``` r
 run <- run_mcmc(m, iter = 2000)
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -372,14 +372,14 @@ plot(run)
 Once the fit is completed (and provided that no issues arised during the Stan run), we can calculate the posterior predicted trajectories and check if they match with the observed data:
 
 
-```r
+``` r
 pred <- predict(m, run, draws = 200)
 ```
 
 
 
 
-```r
+``` r
 plot(pred, facet_row = "group", facet_col = "compartment", type = "prop",
      scale = "all", log = TRUE,
      comps = c("epi", "FBOM", "petro", "pseph", "tricor", "arg"))
@@ -396,7 +396,7 @@ For example, one putative link is that *Argia* might feed on *Psephenus* in addi
 The data used for this alternative model is the same, only the topology of the model is changed:
 
 
-```r
+``` r
 m2 <- m %>% set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph",
                      "FBOM -> tricor", "petro, pseph, tricor -> arg")
 ```
@@ -404,7 +404,7 @@ m2 <- m %>% set_topo("NH4, NO3 -> epi, FBOM", "epi -> petro, pseph",
 Changing the topology resets steady and split compartments and priors. Let's apply the same settings as for the first model:
 
 
-```r
+``` r
 m2 <- m2 %>%
   set_steady(c("NH4", "NO3")) %>%
   set_split(c("epi", "FBOM"))
@@ -413,7 +413,7 @@ m2 <- m2 %>%
 The structure of the alternative model is:
 
 
-```r
+``` r
 ggtopo(m2, "sugiyama")
 ```
 
@@ -422,14 +422,14 @@ ggtopo(m2, "sugiyama")
 Let's apply the same priors as for the first model:
 
 
-```r
+``` r
 m2 <- set_priors(m2, priors(m))
 ```
 
 Do we have any new prior we have to set in `m2`?
 
 
-```r
+``` r
 missing_priors(m2)
 ```
 
@@ -443,14 +443,14 @@ missing_priors(m2)
 Let's use the same prior as for the other `upsilon_*` rates from biological compartments:
 
 
-```r
+``` r
 m2 <- set_priors(m2, normal_p(0, 0.5), "upsilon_pseph_to_arg")
 ```
 
 We run the model:
 
 
-```r
+``` r
 run2 <- run_mcmc(m2, iter = 2000)
 plot(run2)
 # Note: the figure below only shows a few of the traceplots for vignette concision
@@ -461,14 +461,14 @@ plot(run2)
 We check the model fit with a posterior predictive fit:
 
 
-```r
+``` r
 pred2 <- predict(m2, run2, draws = 200)
 ```
 
 
 
 
-```r
+``` r
 plot(pred2, facet_row = "group", facet_col = "compartment", type = "prop",
      scale = "all", log = TRUE,
      comps = c("epi", "FBOM", "petro", "pseph", "tricor", "arg"))
@@ -491,7 +491,7 @@ An alternative to DIC is to use LOO (leave-one-out validation). However, LOO req
 We use the `dic()` function to calculate the model DIC values and the corresponding DIC weight:
 
 
-```r
+``` r
 dic(run, run2)
 ```
 
@@ -510,7 +510,7 @@ dic(run, run2)
 Let's estimate the flows between compartments. Since this network has steady state sources, we can estimate flows at equilibrium:
 
 
-```r
+``` r
 flows <- tidy_flows(m, run, n = 500, steady_state = TRUE)
 ```
 
@@ -519,7 +519,7 @@ flows <- tidy_flows(m, run, n = 500, steady_state = TRUE)
 Sankey plot:
 
 
-```r
+``` r
 f <- flows %>%
   select(flows) %>%
   unnest(flows) %>%
@@ -535,7 +535,7 @@ f <- flows %>%
 ## argument.
 ```
 
-```r
+``` r
 nodes <- inits %>%
   ungroup() %>%
   filter(transect == "transect.1") %>%
@@ -552,7 +552,7 @@ sankey(topo(m), nodes, f %>% select(from, to, flow) %>% rename(width = flow),
 A heatmap of the correlation between parameter estimates can be a good way to visualize the strength of the interdependence between parameters:
 
 
-```r
+``` r
 mcmc_heatmap(run)
 ```
 
