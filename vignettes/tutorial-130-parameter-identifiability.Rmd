@@ -1,6 +1,6 @@
 ---
 title: "Testing parameter identifiability"
-date: "2024-11-04"
+date: "2025-03-07"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -198,6 +198,13 @@ mod <- set_priors(mod, normal_p(0, 6))
 run <- run_mcmc(mod, iter = 1000)
 plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
+```
+
+
+```
+##               12.369 seconds (Sampling)
+## Chain 1:                25.729 seconds (Total)
+## Chain 1:
 ```
 
 <img src="figures/z-fig-130-unnamed-chunk-17-1.jpeg" style="display: block; margin: auto;" />

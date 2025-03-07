@@ -1,3 +1,15 @@
+# isotracer 1.1.8 (2025-03-07)
+
+## Minor fix
+
+- Remove an unexpected dependency on the `lubridate` package when loading the isotracer dataset `aquarium_run`.
+
+# isotracer 1.1.7 (2024-11-05)
+
+## Minor fix
+
+- Relax some thresholds used when performing numerical comparisons in the test suite to avoid spurious test failures.
+
 # isotracer 1.1.6 (2024-05-14)
 
 ## Bug fixes

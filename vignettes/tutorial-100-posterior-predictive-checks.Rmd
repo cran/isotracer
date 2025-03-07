@@ -1,6 +1,6 @@
 ---
 title: "Posterior predictive checks"
-date: "2024-11-04"
+date: "2025-03-07"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
