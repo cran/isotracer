@@ -32,6 +32,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Matthieu Bruneaux \email{matthieu.bruneaux@gmail.com} (\href{https://orcid.org/0000-0001-6997-192X}{ORCID})
   \item Andrés López-Sepulcre \email{lopezsepulcre@gmail.com} (\href{https://orcid.org/0000-0001-9708-0788}{ORCID})
 }
 

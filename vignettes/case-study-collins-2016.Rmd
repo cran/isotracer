@@ -1,6 +1,6 @@
 ---
 title: "Case study: Trinidadian streams (Collins et al. 2016)"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -99,7 +99,7 @@ This is how our network look like at this stage:
 ggtopo(m, "sugiyama")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-8-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-8-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ### Initial conditions and observations
 
@@ -154,7 +154,7 @@ plot(m, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("NH4", "NO3", "epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-13-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Interestingly, we see that one of the consumer, `tricor`, is over-enriched compared to its resources (`epi` and `FBOM`). This is due to the "bulk" nature of the epilithon and FBOM compartments.
 
@@ -365,7 +365,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-28-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-28-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ### Posterior predictive fits
 
@@ -385,7 +385,7 @@ plot(pred, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-31-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-31-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 The quality of the fit looks quite good. We could use this fit to estimate flows between compartments and make quantitative conclusions from those results. We can also use this model as a base model to test for putative trophic link.
 
@@ -417,7 +417,7 @@ The structure of the alternative model is:
 ggtopo(m2, "sugiyama")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-34-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-34-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Let's apply the same priors as for the first model:
 
@@ -456,7 +456,7 @@ plot(run2)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-39-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-39-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 We check the model fit with a posterior predictive fit:
 
@@ -474,7 +474,7 @@ plot(pred2, facet_row = "group", facet_col = "compartment", type = "prop",
      comps = c("epi", "FBOM", "petro", "pseph", "tricor", "arg"))
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-42-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-42-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 When comparing with the first fit, this one looks equally good as before. Which model should we prefer?
 
@@ -499,8 +499,8 @@ dic(run, run2)
 ## # A tibble: 2 × 6
 ##   fit     Dbar    pD    DIC delta_DIC weight
 ##   <chr>  <dbl> <dbl>  <dbl>     <dbl>  <dbl>
-## 1 run   -1821.  23.1 -1798.      0     0.815
-## 2 run2  -1819.  23.5 -1795.      2.96  0.185
+## 1 run   -1822.  20.4 -1801.      0    0.979 
+## 2 run2  -1819.  25.2 -1793.      7.71 0.0207
 ```
 
 `run` is from the model fit without the trophic link `pseph -> arg`. According to the DIC, this model is slightly more likely than the alternative model with the extra trophic link. The evidence is not overwhelming though, as evidenced by the $\Delta$DIC value and the DIC weights.
@@ -531,8 +531,11 @@ f <- flows %>%
 ```
 
 ```
-## `summarise()` has grouped output by 'from'. You can override using the `.groups`
-## argument.
+## `summarise()` has regrouped the output.
+## ℹ Summaries were computed grouped by from and to.
+## ℹ Output is grouped by from.
+## ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+## ℹ Use `summarise(.by = c(from, to))` for per-operation grouping (`?dplyr::dplyr_by`) instead.
 ```
 
 ``` r
@@ -545,7 +548,7 @@ sankey(topo(m), nodes, f %>% select(from, to, flow) %>% rename(width = flow),
        edge_f = 0.2, layout = "left2right")
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-47-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-47-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ## To go further
 
@@ -556,4 +559,4 @@ A heatmap of the correlation between parameter estimates can be a good way to vi
 mcmc_heatmap(run)
 ```
 
-<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-48-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-cs-collins-2016-unnamed-chunk-48-1.jpeg" alt="" style="display: block; margin: auto;" />

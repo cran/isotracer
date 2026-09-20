@@ -1,5 +1,7 @@
 ### * Setup
 
+set.seed(42)
+
 new_networkModel <- function() {
     isotracer::new_networkModel(quiet = TRUE)
 }

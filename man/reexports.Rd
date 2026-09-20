@@ -15,10 +15,10 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{coda}{\code{\link[coda:mcmc.list]{as.mcmc.list}}, \code{\link[coda]{varnames}}}
+  \item{coda}{\code{\link[coda:as.mcmc.list]{as.mcmc.list()}}, \code{\link[coda:varnames]{varnames()}}}
 
-  \item{dplyr}{\code{\link[dplyr:group_data]{groups}}, \code{\link[dplyr]{select}}}
+  \item{dplyr}{\code{\link[dplyr:groups]{groups()}}, \code{\link[dplyr:select]{select()}}}
 
-  \item{magrittr}{\code{\link[magrittr:pipe]{\%>\%}}}
+  \item{magrittr}{\code{\link[magrittr:\%>\%]{\%>\%}}}
 }}
 

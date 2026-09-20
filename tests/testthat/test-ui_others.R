@@ -1,3 +1,5 @@
+set.seed(42)
+
 ### * delta2prop()
 
 test_that("delta2prop() works as expected", {

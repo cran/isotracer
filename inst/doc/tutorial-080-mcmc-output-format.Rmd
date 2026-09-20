@@ -1,6 +1,6 @@
 ---
 title: "MCMC output format"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -72,7 +72,7 @@ plot(fit)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-080-unnamed-chunk-7-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-080-unnamed-chunk-7-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ### How to convert the default output to a table?
 
@@ -193,7 +193,7 @@ algal_turnover <- 1 / algal_total_out
 plot(algal_turnover)
 ```
 
-<img src="figures/z-fig-080-unnamed-chunk-11-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-080-unnamed-chunk-11-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 You can read more about this in the vignette about [calculating derived parameters](tutorial-110-derived-parameters.html).
 
@@ -207,7 +207,7 @@ my_derived <- c("out rate" = algal_total_out, "turnover" = algal_turnover)
 plot(my_derived)
 ```
 
-<img src="figures/z-fig-080-unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-080-unnamed-chunk-12-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ``` r
 summary(my_derived)
@@ -267,7 +267,7 @@ This is a more complicated type of object than an `mcmc.list`, but it also conta
 rstan::plot(fit2)
 ```
 
-<img src="figures/z-fig-080-unnamed-chunk-16-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-080-unnamed-chunk-16-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 You can go through [Stan documentation](https://mc-stan.org/rstan/reference/stanfit-class.html) for more details about this format. If you are reading about solving Stan model issues on online forums and the suggested solutions require to examine some Stan output, that's the object you want to look at!
 

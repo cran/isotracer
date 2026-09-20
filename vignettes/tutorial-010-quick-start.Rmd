@@ -1,6 +1,6 @@
 ---
 title: "Quick start"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -112,7 +112,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, ncol = 2)
 ```
 
-<img src="figures/z-fig-010-plot-data-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-plot-data-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 As you can see, our simulated data is a time series over three days. For each species, we have measurements of total N biomass (left panel) and of the proportion of $^{15}$N in the N biomass (right panel).
 
@@ -138,7 +138,7 @@ In this experiment we added the $^{15}$N-enriched ammonium at the very beginning
 
 <div class="alert-primary" role="alert"> 
 
-<b>Note:</b> In this example and in all later tutorials, we use the [pipe operator](https://magrittr.tidyverse.org/) `%>%` which you are probably familiar with if you have been using the [tidyverse](https://www.tidyverse.org/) packages. Of course, you can also use the isotracer functions without the pipe operator if you prefer!
+<b>Note:</b> In this example and in all later tutorials, we use the [pipe operator](https://magrittr.tidyverse.org/) `%>%` which you are probably familiar with if you have been using the [tidyverse](https://tidyverse.org/) packages. Of course, you can also use the isotracer functions without the pipe operator if you prefer!
 
 </div>
 
@@ -214,7 +214,7 @@ If you have the [ggraph](https://cran.r-project.org/package=ggraph) package inst
 ggtopo(m)
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-8-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-8-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 </div>
 
@@ -398,7 +398,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-18-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-18-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 We can get some numerical estimates from those posteriors with the `summary()` function:
 
@@ -448,7 +448,7 @@ predictions <- predict(m, run, probs = 0.95)
 plot(predictions, ylab.size = "Biomass (mg N)", ylab.prop = "Proportion 15N")
 ```
 
-<img src="figures/z-fig-010-unnamed-chunk-21-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-010-unnamed-chunk-21-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 We would expect 95% of the observations to fall within the predicted 95% credible intervals if the model is appropriate to describe the dataset.
 

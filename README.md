@@ -53,20 +53,20 @@ if you want to cite isotracer.
 
 The first reference is the paper describing the original method:
 
--   López-Sepulcre A, Bruneaux M, Collins SM, El-Sabaawi R, Flecker AS,
-    Thomas SA (2020). “A new method to reconstruct quantitative food
-    webs and nutrient flows from isotope tracer addition experiments.”
-    *The American Naturalist*, *195*(6), 964-985. doi: 10.1086/708546
-    (URL: <https://doi.org/10.1086/708546>).
+- López-Sepulcre A, Bruneaux M, Collins SM, El-Sabaawi R, Flecker AS,
+  Thomas SA (2020). “A new method to reconstruct quantitative food webs
+  and nutrient flows from isotope tracer addition experiments.” *The
+  American Naturalist*, *195*(6), 964-985. doi: 10.1086/708546 (URL:
+  <https://doi.org/10.1086/708546>).
 
 The second reference is the paper introducing isotracer itself:
 
--   Bruneaux M, López-Sepulcre A (2022). “isotracer: An R package for
-    the analysis of tracer addition experiments.” *Methods in Ecology
-    and Evolution*, *13*(5), 1119-1134. doi: 10.1111/2041-210X.13822
-    (URL: <https://doi.org/10.1111/2041-210X.13822>).
+- Bruneaux M, López-Sepulcre A (2022). “isotracer: An R package for the
+  analysis of tracer addition experiments.” *Methods in Ecology and
+  Evolution*, *13*(5), 1119-1134. doi: 10.1111/2041-210X.13822 (URL:
+  <https://doi.org/10.1111/2041-210X.13822>).
 
 ## Contact
 
--   [Matthieu Bruneaux](mailto:matthieu.bruneaux@gmail.com)
--   [Andrés López-Sepulcre](mailto:lopezsepulcre@gmail.com)
+- [Matthieu Bruneaux](mailto:matthieu.bruneaux@gmail.com)
+- [Andrés López-Sepulcre](mailto:lopezsepulcre@gmail.com)

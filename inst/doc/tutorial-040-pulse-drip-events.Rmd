@@ -1,6 +1,6 @@
 ---
 title: "Defining pulse or drip events"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -79,7 +79,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-5-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-5-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ### Building the network model
 
@@ -206,7 +206,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-14-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-14-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Let's have a quick look at the posterior predictive check:
 
@@ -216,7 +216,7 @@ predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-16-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-16-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 The effect of the pulse is clearly visible in the proportion of marked tracer, both for ammonium and for algae (right panel). The pulse is also visible as an increase in the predicted ammonium compartment size (left panel)).
 
@@ -279,7 +279,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-18-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-18-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ### Building the model
 
@@ -439,12 +439,13 @@ plot(run)
 
 
 ```
-## Error in encode_priors(params_nm, priors_nm): One or several parameters are missing a prior.
+## Error in `encode_priors()`:
+## ! One or several parameters are missing a prior.
 ## You can list the current model priors with `priors(...)`.
 ## You can list the missing model priors with `missing_priors(...)`.
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-29-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-29-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Let's have a quick look at the posterior predictive check:
 
@@ -456,13 +457,13 @@ plot(predictions, facet_row = "group")
 
 
 ```
-## Error in `purrr::map()`:
+## Error in `purrr::map()` at 2018-05_isotracer/R/ui_predictions.R:97:5:
 ## ℹ In index: 1.
-## Caused by error in `project()`:
+## Caused by error in `project()` at 2018-05_isotracer/R/ui_projection-simulation.R:163:5:
 ## ! !any(is.na(params$value)) is not TRUE
 ```
 
-<img src="figures/z-fig-040-unnamed-chunk-31-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-040-unnamed-chunk-31-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Nice! The drip phase is clearly visible in the NH$_4^+$ enrichment profile.
 

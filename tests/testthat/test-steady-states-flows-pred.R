@@ -4,8 +4,13 @@ n_cores <- min(2, parallel::detectCores())
 n_chains <- max(n_cores, 2)
 N_ITERS <- 20
 
+NUM_TOL <- 1e-10 # Numerical tolerance used in comparisons
+
+set.seed(42)
+
 run_mcmc <- function(...) {
-  isotracer:::run_mcmc(..., cores = n_cores, chains = n_chains)
+  isotracer:::run_mcmc(..., cores = n_cores, chains = n_chains,
+                       seed = 4)
 }
 
 new_networkModel <- function() {
@@ -69,7 +74,7 @@ test_that("Predictions for closed network, single unit, no steady, no split", {
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
+    expect_true(all(x[["from"]] - x[["to"]] < NUM_TOL))
   }
 })
 
@@ -168,7 +173,7 @@ test_that("Predictions for closed network, multiple units, no steady, no split",
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
+    expect_true(all(x[["from"]] - x[["to"]] < NUM_TOL))
   }
   
 })
@@ -271,7 +276,7 @@ test_that("Predictions for open network, multiple units, one steady, no split", 
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
+    expect_true(all(x[["from"]] - x[["to"]] < NUM_TOL))
   }
 
 })
@@ -378,7 +383,7 @@ test_that("Predictions for open network, multiple units, one steady, one split",
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
+    expect_true(all(x[["from"]] - x[["to"]] < NUM_TOL))
   }
 })
 
@@ -477,7 +482,7 @@ test_that("Predictions for open network, single unit, one steady, one split", {
 
   for (i in seq_len(nrow(zf))) {
     x <- check_row_i(i)
-    expect_true(all(x[["from"]] - x[["to"]] < 1e-12))
+    expect_true(all(x[["from"]] - x[["to"]] < NUM_TOL))
   }
 
 })

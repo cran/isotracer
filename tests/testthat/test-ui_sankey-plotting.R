@@ -3,8 +3,11 @@
 n_cores <- min(2, parallel::detectCores())
 n_chains <- max(n_cores, 2)
 
+set.seed(42)
+
 run_mcmc <- function(...) {
-  isotracer:::run_mcmc(..., cores = n_cores, chains = n_chains)
+  isotracer:::run_mcmc(..., cores = n_cores, chains = n_chains,
+                       seed = 4)
 }
 
 new_networkModel <- function() {

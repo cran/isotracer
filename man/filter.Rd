@@ -3,12 +3,13 @@
 \name{filter}
 \alias{filter}
 \title{Filter (alias for filter function from dplyr)}
+\usage{
+filter(.data, ..., .by = NULL, .preserve = FALSE)
+}
 \arguments{
 \item{.data}{Data to filter.}
 
-\item{...}{Passed to dplyr::filter.}
-
-\item{preserve}{Ignored.}
+\item{..., .by, .preserve}{Passed to dplyr::filter.}
 }
 \value{
 See the returned value for dplyr::filter.

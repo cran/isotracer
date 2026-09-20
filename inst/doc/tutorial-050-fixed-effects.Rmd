@@ -1,6 +1,6 @@
 ---
 title: "Including fixed effects of covariates"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -92,7 +92,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-5-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-5-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ## Building the model
 
@@ -350,7 +350,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-21-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-21-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 and we do a posterior predictive check:
 
@@ -362,7 +362,7 @@ plot(predictions, facet_row = c("group", "type"),
      scale = "all")
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-23-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-23-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ## Interpreting the output
 
@@ -383,23 +383,23 @@ summary(run %>% select(upsilon))
 ## 1. Empirical mean and standard deviation for each variable,
 ##    plus standard error of the mean:
 ## 
-##                                   Mean       SD  Naive SE Time-series SE
-## upsilon_algae_to_daphnia|dark  0.12338 0.015711 0.0002484     0.00028100
-## upsilon_algae_to_daphnia|light 0.13911 0.019829 0.0003135     0.00033573
-## upsilon_daphnia_to_NH4|dark    0.05696 0.009938 0.0001571     0.00018649
-## upsilon_daphnia_to_NH4|light   0.04064 0.004668 0.0000738     0.00008513
-## upsilon_NH4_to_algae|dark      0.08584 0.011417 0.0001805     0.00021184
-## upsilon_NH4_to_algae|light     0.28320 0.025936 0.0004101     0.00043828
+##                                   Mean       SD   Naive SE Time-series SE
+## upsilon_algae_to_daphnia|dark  0.12298 0.015456 0.00024438     0.00029627
+## upsilon_algae_to_daphnia|light 0.13879 0.019066 0.00030146     0.00032179
+## upsilon_daphnia_to_NH4|dark    0.05678 0.009942 0.00015720     0.00020036
+## upsilon_daphnia_to_NH4|light   0.04064 0.004765 0.00007535     0.00008177
+## upsilon_NH4_to_algae|dark      0.08623 0.011569 0.00018293     0.00023259
+## upsilon_NH4_to_algae|light     0.28404 0.027236 0.00043064     0.00044733
 ## 
 ## 2. Quantiles for each variable:
 ## 
 ##                                   2.5%     25%     50%     75%   97.5%
-## upsilon_algae_to_daphnia|dark  0.09509 0.11274 0.12249 0.13311 0.15639
-## upsilon_algae_to_daphnia|light 0.10417 0.12546 0.13811 0.15057 0.18115
-## upsilon_daphnia_to_NH4|dark    0.04036 0.05008 0.05598 0.06266 0.07987
-## upsilon_daphnia_to_NH4|light   0.03187 0.03749 0.04039 0.04359 0.05057
-## upsilon_NH4_to_algae|dark      0.06614 0.07779 0.08508 0.09266 0.11150
-## upsilon_NH4_to_algae|light     0.23373 0.26632 0.28228 0.29921 0.33807
+## upsilon_algae_to_daphnia|dark  0.09445 0.11246 0.12260 0.13268 0.15504
+## upsilon_algae_to_daphnia|light 0.10488 0.12551 0.13772 0.15080 0.17922
+## upsilon_daphnia_to_NH4|dark    0.04051 0.04992 0.05580 0.06234 0.07982
+## upsilon_daphnia_to_NH4|light   0.03219 0.03732 0.04040 0.04355 0.05073
+## upsilon_NH4_to_algae|dark      0.06637 0.07819 0.08518 0.09320 0.11211
+## upsilon_NH4_to_algae|light     0.23420 0.26565 0.28291 0.30114 0.34142
 ```
 
 Looking at a table of numbers is not the easiest way to visualize the differences between parameter values. One could take advantage of the `bayesplot` package for a more visual output:
@@ -411,7 +411,14 @@ mcmc_intervals(run %>% select(upsilon)) +
     coord_trans(x = "log10")
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-25-1.jpeg" style="display: block; margin: auto;" />
+```
+## Warning: `coord_trans()` was deprecated in ggplot2 4.0.0.
+## ℹ Please use `coord_transform()` instead.
+## This warning is displayed once per session.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
+```
+
+<img src="figures/z-fig-050-unnamed-chunk-25-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Based on this plot, it looks like only the rates from ammonium to algae (`upsilon_NH4_to_algae`) actually differ between the `light` and the `dark` treatments.
 
@@ -424,7 +431,7 @@ ratio_upsilons_NH4_algae <- (run[, "upsilon_NH4_to_algae|light"] /
 plot(ratio_upsilons_NH4_algae)
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-26-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-26-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 As we can see above, the posterior for the ratio $\frac{\upsilon_{NH4 \rightarrow algae}|light}{\upsilon_{NH4 \rightarrow algae}|dark}$ is far from one. We can check that with the numerical summary:
 
@@ -444,12 +451,12 @@ summary(ratio_upsilons_NH4_algae)
 ##    plus standard error of the mean:
 ## 
 ##           Mean             SD       Naive SE Time-series SE 
-##       3.358536       0.551588       0.008721       0.009415 
+##       3.352762       0.551455       0.008719       0.009697 
 ## 
 ## 2. Quantiles for each variable:
 ## 
 ##  2.5%   25%   50%   75% 97.5% 
-## 2.393 2.981 3.319 3.695 4.563
+## 2.374 2.973 3.320 3.695 4.559
 ```
 
 The model tells us that the algae uptake ammonium more rapidly in the light treatment. What about the nitrogen flows between algae and *Daphnia*? Are the uptake rate coefficients estimated in the light and the dark treatments different?
@@ -461,7 +468,7 @@ ratio_upsilons_algae_daphnia <- (run[, "upsilon_algae_to_daphnia|light"] /
 plot(ratio_upsilons_algae_daphnia)
 ```
 
-<img src="figures/z-fig-050-unnamed-chunk-28-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-050-unnamed-chunk-28-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 For this comparison, the posterior of the ratio overlaps one quite generously: the model does not support an effect of the light/dark treatment on the nitrogen flux between algae and *Daphnia*.
 

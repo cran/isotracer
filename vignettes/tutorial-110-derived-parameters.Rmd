@@ -1,6 +1,6 @@
 ---
 title: "Calculating derived parameters"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -90,7 +90,7 @@ plot(fit)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-5-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-5-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ## Selecting primary parameters
 
@@ -114,7 +114,7 @@ We can select parameters using the `select()` function. For example:
 plot(fit %>% select(zeta))
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-7-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-7-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Note that selecting parameters in a MCMC output uses partial matching:
 
@@ -123,7 +123,7 @@ Note that selecting parameters in a MCMC output uses partial matching:
 plot(fit %>% select(upsilon))
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-8-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-8-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Selecting chains with `select()` is mostly useful in interactive mode, when exploring the results of an MCMC run. You can select individual parameters without any partial matching using the unambiguous`[, ""]` notation:
 
@@ -189,7 +189,7 @@ All the usual operations done on `mcmc.list` objects can be used with it, such a
 plot(trate_algae)
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-12-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 or calculating summaries:
 
@@ -225,7 +225,7 @@ ttime_algae <- 1 / trate_algae
 plot(ttime_algae)
 ```
 
-<img src="figures/z-fig-110-unnamed-chunk-14-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-110-unnamed-chunk-14-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 <nav aria-label="Page navigation">
  <ul class="pagination justify-content-end">

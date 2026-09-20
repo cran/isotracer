@@ -1,6 +1,6 @@
 ---
 title: "Handling replication"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -93,7 +93,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-020-unnamed-chunk-5-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-020-unnamed-chunk-5-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 ### Building the network model
 
@@ -301,7 +301,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-020-unnamed-chunk-17-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-020-unnamed-chunk-17-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 The traces look nice. If we want to check numerically that the convergence is good, we can use the `coda::gelman.diag()` function:
 
@@ -336,7 +336,7 @@ predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
 
-<img src="figures/z-fig-020-unnamed-chunk-20-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-020-unnamed-chunk-20-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 This looks nice! As far as we can tell, our model is compatible with the observed data.
 

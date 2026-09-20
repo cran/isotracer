@@ -94,41 +94,51 @@ export(varnames)
 import(Rcpp)
 import(methods)
 importFrom(Rcpp,sourceCpp)
-importFrom(coda,as.mcmc.list)
-importFrom(coda,varnames)
-importFrom(dplyr,filter)
-importFrom(dplyr,groups)
-importFrom(dplyr,select)
-importFrom(grDevices,adjustcolor)
-importFrom(grDevices,colorRampPalette)
-importFrom(grDevices,dev.flush)
-importFrom(grDevices,dev.hold)
-importFrom(grDevices,dev.off)
-importFrom(grDevices,dev.size)
-importFrom(grDevices,extendrange)
-importFrom(grDevices,grey)
-importFrom(grDevices,heat.colors)
+importFrom(coda,
+  as.mcmc.list,
+  varnames
+)
+importFrom(dplyr,
+  filter,
+  groups,
+  select
+)
+importFrom(grDevices,
+  adjustcolor,
+  colorRampPalette,
+  dev.flush,
+  dev.hold,
+  dev.off,
+  dev.size,
+  extendrange,
+  grey,
+  heat.colors
+)
 importFrom(graphics,hist)
 importFrom(magrittr,"%>%")
-importFrom(pillar,obj_sum)
-importFrom(pillar,pillar_shaft)
-importFrom(pillar,type_sum)
+importFrom(pillar,
+  obj_sum,
+  pillar_shaft,
+  type_sum
+)
 importFrom(rstan,sampling)
-importFrom(stats,aggregate)
-importFrom(stats,cor)
-importFrom(stats,density)
-importFrom(stats,dist)
-importFrom(stats,hclust)
-importFrom(stats,heatmap)
-importFrom(stats,na.omit)
-importFrom(stats,optim)
-importFrom(stats,quantile)
-importFrom(stats,rbeta)
-importFrom(stats,rcauchy)
-importFrom(stats,rgamma)
-importFrom(stats,rnorm)
-importFrom(stats,runif)
-importFrom(stats,setNames)
-importFrom(stats,update)
-importFrom(stats,var)
+importFrom(stats,
+  aggregate,
+  cor,
+  density,
+  dist,
+  hclust,
+  heatmap,
+  na.omit,
+  optim,
+  quantile,
+  rbeta,
+  rcauchy,
+  rgamma,
+  rnorm,
+  runif,
+  setNames,
+  update,
+  var
+)
 useDynLib(isotracer, .registration = TRUE)

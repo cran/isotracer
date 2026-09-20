@@ -1,3 +1,5 @@
+set.seed(42)
+
 ### * potential_steady_state()
 
 test_that("potential_steady_state() works", {

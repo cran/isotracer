@@ -23,9 +23,9 @@
 #' @param ... Not used.
 #'
 #' @return A network model object with an added column \code{"prediction"}.
-#' 
+#'
 #' @importFrom stats quantile
-#' 
+#'
 #' @export
 
 predict.networkModel <- function(object, fit, draws = NULL, error.draws = 5,
@@ -147,11 +147,11 @@ predict.networkModel <- function(object, fit, draws = NULL, error.draws = 5,
 #'
 #' @param object Model from which posterior predictions can be made.
 #' @param ... Passed to the appropriate method.
-#' 
+#'
 #' @return Usually methods will implement a \code{draw} parameter, and the
 #'     returned object is a "draw" by N matrix where N is the number of data
 #'     points predicted per draw.
-#' 
+#'
 #' @export
 
 posterior_predict <- function(object, ...) {
@@ -172,10 +172,10 @@ posterior_predict <- function(object, ...) {
 #'     \code{NULL}, which means to use the value stored in
 #'     \code{options()[["mc.cores"]]} (or 1 if this value is not set).
 #' @param ... Not used for now.
-#' 
+#'
 #' @return A "draw" by N matrix where N is the number of data points predicted
 #'     per draw.
-#' 
+#'
 #' @export
 
 posterior_predict.networkModelStanfit <- function(object, newdata, draw = NULL,
@@ -271,7 +271,7 @@ tidy_data <- function(x) {
 #'     \code{NULL}, which means to use the value stored in
 #'     \code{options()[["mc.cores"]]} (or 1 if this value is not set).
 #' @param ... Not used for now.
-#' 
+#'
 #' @return A tidy table.
 #'
 #' @export
@@ -411,12 +411,13 @@ tidy_dpp <- function(model, fit, draw = NULL, cores = NULL) {
 
 #' Filter (alias for filter function from dplyr)
 #'
+#' @usage filter(.data, ..., .by = NULL, .preserve = FALSE)
+#'
 #' @param .data Data to filter.
-#' @param ... Passed to dplyr::filter.
-#' @param preserve Ignored.
+#' @param ...,.by,.preserve Passed to dplyr::filter.
 #'
 #' @return See the returned value for dplyr::filter.
-#' 
+#'
 #' @name filter
 #' @importFrom dplyr filter
 #' @export filter
@@ -435,7 +436,7 @@ NULL
 #' @importFrom dplyr filter
 #' @method filter ppcNetworkModel
 #' @export
-#' 
+#'
 
 filter.ppcNetworkModel <- function(.data, ..., .preserve = FALSE) {
     out <- .data
@@ -456,7 +457,7 @@ filter.ppcNetworkModel <- function(.data, ..., .preserve = FALSE) {
 #'
 #' Warning: This function is still maturing and its interface and output might
 #' change in the future.
-#' 
+#'
 #' @param nm A \code{networkModel} object.
 #' @param mcmc The corresponding output from \code{run_mcmc}.
 #' @param n_per_chain Integer, number of iterations randomly drawn per
@@ -483,7 +484,7 @@ filter.ppcNetworkModel <- function(.data, ..., .preserve = FALSE) {
 #' @examples
 #' tt <- tidy_trajectories(aquarium_mod, aquarium_run, n = 10, cores = 2)
 #' tt
-#' 
+#'
 #' @export
 
 tidy_trajectories <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 64,
@@ -537,7 +538,7 @@ tidy_trajectories <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 6
         nmRow <- nm[k, ]
         projections <- parallel::mclapply(seq_len(nrow(to)), function(i) {
             nmRow <- set_params(nmRow, to$mcmc.parameters[[i]], force = TRUE, quick = TRUE)
-            nmRow <- project(nmRow, grid_size = n_grid, dt = dt, 
+            nmRow <- project(nmRow, grid_size = n_grid, dt = dt,
                              at = at, end = end, cached_ts = cache[["rows_time_schemes"]][k],
                              cached_ee = cache[["rows_encoded_events"]][k])
             return(nmRow$trajectory[[1]])
@@ -580,7 +581,7 @@ tidy_trajectories <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 6
 #' refractory portion. In this case we get a "steady-state" refractory portion,
 #' consistent with steady state size of active fraction and with portion.act
 #' parameter.
-#' 
+#'
 #' @param nm A \code{networkModel} object.
 #' @param mcmc The corresponding output from \code{run_mcmc}.
 #' @param n_per_chain Integer, number of iterations randomly drawn per
@@ -609,13 +610,13 @@ tidy_trajectories <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 6
 #'     flows. The returned flow values are the average flow per unit of time
 #'     over the trajectory calculations (or steady state flows if
 #'     \code{steady_state} is TRUE).
-#' 
+#'
 #' @examples
 #' tf <- tidy_flows(aquarium_mod, aquarium_run, n_per_chain = 25, cores = 2)
 #' tf
 #' tfmcmc <- as.mcmc.list(tf)
 #' plot(tfmcmc)
-#' 
+#'
 #' @export
 
 tidy_flows <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 64,
@@ -671,7 +672,7 @@ tidy_flows <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 64,
             nmRow <- nm[k, ]
             flows <- parallel::mclapply(seq_len(nrow(to)), function(i) {
                 nmRow <- set_params(nmRow, to$mcmc.parameters[[i]], force = TRUE, quick = TRUE)
-                nmRow <- project(nmRow, flows = "average", grid_size = n_grid, dt = dt, 
+                nmRow <- project(nmRow, flows = "average", grid_size = n_grid, dt = dt,
                                  at = at, end = end, cached_ts = cache[["rows_time_schemes"]][k],
                                  cached_ee = cache[["rows_encoded_events"]][k])
                 return(nmRow$flows[[1]])
@@ -729,7 +730,7 @@ tidy_flows <- function(nm, mcmc, n_per_chain = NULL, n = NULL, n_grid = 64,
 #' @return A \code{mcmc.list} object, with ordered iterations.
 #'
 #' @method as.mcmc.list tidy_flows
-#' 
+#'
 #' @export
 
 as.mcmc.list.tidy_flows <- function(x, ...) {
@@ -782,13 +783,13 @@ as.mcmc.list.tidy_flows <- function(x, ...) {
 #'
 #' @examples
 #' library(magrittr)
-#' 
+#'
 #' p <- sample_params(aquarium_mod)
 #' p
-#' 
+#'
 #' proj <- aquarium_mod %>% set_params(p) %>% project(end = 10)
 #' plot(proj)
-#' 
+#'
 #' @export
 
 sample_params <- function(nm) {
@@ -810,7 +811,7 @@ sample_params <- function(nm) {
 #' refractory portion. In this case we get a "steady-state" refractory portion,
 #' consistent with steady state size of active fraction and with portion.act
 #' parameter.
-#' 
+#'
 #' @param nm A \code{networkModel} object.
 #' @param mcmc The corresponding output from \code{run_mcmc}.
 #' @param n_per_chain Integer, number of iterations randomly drawn per
@@ -825,7 +826,7 @@ sample_params <- function(nm) {
 #' @return A tidy table containing the mcmc iterations (chain, iteration,
 #'     parameters), the grouping variables from the network model and the
 #'     steady state sizes.
-#' 
+#'
 #' @export
 
 tidy_steady_states <- function(nm, mcmc, n_per_chain = NULL, n = NULL) {
@@ -884,7 +885,7 @@ tidy_steady_states <- function(nm, mcmc, n_per_chain = NULL, n = NULL) {
 #' @return A \code{mcmc.list} object, with ordered iterations.
 #'
 #' @method as.mcmc.list tidy_steady_states
-#' 
+#'
 #' @export
 
 as.mcmc.list.tidy_steady_states <- function(x, ...) {
@@ -993,4 +994,3 @@ tidy_mcmc <- function(x, spread = FALSE, include_constant = TRUE) {
     out <- dplyr::bind_rows(mcmc_parameters)
     return(out)
 }
-

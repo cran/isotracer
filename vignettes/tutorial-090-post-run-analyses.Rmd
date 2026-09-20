@@ -1,6 +1,6 @@
 ---
 title: "Post-run diagnostics and analyses"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -95,7 +95,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-090-unnamed-chunk-7-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-090-unnamed-chunk-7-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 In this case, the chains have converged towards the same region, and the mixing
 looks good for all of them. There is no obvious problem visible in those traces.
@@ -161,7 +161,7 @@ We can then visualize the predictions along with the observations with the `plot
 plot(predictions)
 ```
 
-<img src="figures/z-fig-090-unnamed-chunk-11-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-090-unnamed-chunk-11-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 This plot enables to compare both the **size** and the **proportion** observations with the predictions.
 
@@ -276,7 +276,7 @@ draw the strength of parameter correlations:
 mcmc_heatmap(run)
 ```
 
-<img src="figures/z-fig-090-unnamed-chunk-16-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-090-unnamed-chunk-16-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 But of course you could use other functions provided by other packages, such as:
 
@@ -400,7 +400,7 @@ invisible(sapply(seq_len(nrow(algae)), function(i) {
 }))
 ```
 
-<img src="figures/z-fig-090-unnamed-chunk-22-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-090-unnamed-chunk-22-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Finally, if what you are interested in are not the trajectories per se but the actual flows of nutrient during the experiment, you can use the `tidy_flows()` function to extract flows in a similar way:
 

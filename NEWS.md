@@ -1,3 +1,9 @@
+# isotracer 1.1.9 (xxxx-xx-xx)
+
+## Minor fix
+
+- Use RNG seeds in all relevant test files to avoid occasional test failures.
+
 # isotracer 1.1.8 (2025-03-07)
 
 ## Minor fix

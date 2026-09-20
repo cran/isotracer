@@ -1,6 +1,6 @@
 ---
 title: "Setting steady-state compartments"
-date: "2025-03-07"
+date: "2026-09-18"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -80,7 +80,7 @@ p2 <- ggplot(exp, aes(x = time.day, y = prop15N, col = species)) +
 grid.arrange(p1, p2, nrow = 2)
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-5-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-5-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 <div class="alert-primary" role="alert">
 
@@ -117,8 +117,11 @@ init_bm <- exp %>%
 ```
 
 ```
-## `summarise()` has grouped output by 'species'. You can override using the `.groups`
-## argument.
+## `summarise()` has regrouped the output.
+## ℹ Summaries were computed grouped by species and transect.
+## ℹ Output is grouped by species.
+## ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+## ℹ Use `summarise(.by = c(species, transect))` for per-operation grouping (`?dplyr::dplyr_by`) instead.
 ```
 
 ``` r
@@ -147,8 +150,11 @@ init_prop_NH4 <- exp %>%
 ```
 
 ```
-## `summarise()` has grouped output by 'transect'. You can override using the `.groups`
-## argument.
+## `summarise()` has regrouped the output.
+## ℹ Summaries were computed grouped by transect and species.
+## ℹ Output is grouped by transect.
+## ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+## ℹ Use `summarise(.by = c(transect, species))` for per-operation grouping (`?dplyr::dplyr_by`) instead.
 ```
 
 ``` r
@@ -364,7 +370,7 @@ plot(run)
 # Note: the figure below only shows a few of the traceplots for vignette concision
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-24-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-24-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 The traces look good. Let's do a posterior predictive check to ensure that the model makes sense:
 
@@ -374,7 +380,7 @@ predictions <- predict(m, run)
 plot(predictions, facet_row = "group")
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-26-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-26-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 Let's use a log scale on the y axis to make visualization of the two compartments in the same plots easier:
 
@@ -383,7 +389,7 @@ Let's use a log scale on the y axis to make visualization of the two compartment
 plot(predictions, facet_row = "group", log = TRUE)
 ```
 
-<img src="figures/z-fig-030-unnamed-chunk-27-1.jpeg" style="display: block; margin: auto;" />
+<img src="figures/z-fig-030-unnamed-chunk-27-1.jpeg" alt="" style="display: block; margin: auto;" />
 
 The model looks ok.
 

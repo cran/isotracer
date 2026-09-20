@@ -9,8 +9,11 @@ FORCE_STAN_COVR <- TRUE
 n_cores <- min(2, parallel::detectCores())
 n_chains <- max(n_cores, 2)
 
+set.seed(42)
+
 run_mcmc <- function(...) {
-    isotracer:::run_mcmc(..., cores = n_cores, chains = n_chains)
+  isotracer:::run_mcmc(..., cores = n_cores, chains = n_chains,
+                       seed = 4)
 }
 
 new_networkModel <- function() {
@@ -281,13 +284,11 @@ test_that("Models using Euler and matrix exponential solvers give similar poster
         expect_error(
             capture_warnings(capture_output({f_euler <- run_mcmc(m, iter = 250,
                                                                  euler_control = list(grid_size = 128),
-                                                                 method = "euler",
-                                                                 seed = 4)})),
+                                                                 method = "euler")})),
             NA)
         expect_error(
             capture_warnings(capture_output({f_matrix_exp <- run_mcmc(m, iter = 1000,
-                                                                      method = "matrix_exp",
-                                                                      seed = 4)})),
+                                                                      method = "matrix_exp")})),
             NA)
     }
     # Check that the 95%CI overlaps generously between the two approaches
@@ -436,12 +437,12 @@ test_that("Model runs when eta and zeta have covariates", {
 test_that("Thinning does not crash the MCMC run", {
   m <- aquarium_mod
   expect_error(capture_warnings(capture_output({
-    r <- isotracer::run_mcmc(m, seed = 40, iter = 100, thin = 1, chains = 2,
+    r <- isotracer::run_mcmc(m, iter = 100, thin = 1, chains = 2,
                              cores = n_cores)
   })), NA)
   expect_equal(nrow(as.matrix(r)), 100)
   expect_error(capture_warnings(capture_output({
-    r <- isotracer::run_mcmc(m, seed = 40, iter = 100, thin = 7, chains = 2,
+    r <- isotracer::run_mcmc(m, iter = 100, thin = 7, chains = 2,
                   cores = n_cores)
   })), NA)
   expect_equal(nrow(as.matrix(r)), 16)
